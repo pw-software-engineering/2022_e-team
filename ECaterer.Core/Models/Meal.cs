@@ -16,9 +16,9 @@ namespace ECaterer.Core.Models
         [Required]
         public virtual string Name { get; set; }
         [Required]
-        public virtual string IngredientList { get; set; }
+        public virtual ICollection<Ingredient> IngredientList { get; set; }
         [Required]
-        public virtual string AllergentList { get; set; }
+        public virtual ICollection<Allergent> AllergentList { get; set; }
         [Required]
         public virtual int Calories { get; set; }
         [Required]

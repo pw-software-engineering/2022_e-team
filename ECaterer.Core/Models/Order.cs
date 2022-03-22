@@ -24,7 +24,7 @@ namespace ECaterer.Core.Models
         [Required]
         public virtual Decimal Price { get; set; }
         [Required]
-        public virtual string  Status { get; set; }
+        public virtual OrderStatusEnum  Status { get; set; }
         public virtual Complaint Complaint { get; set; }
     }
 }

@@ -18,6 +18,6 @@ namespace ECaterer.Core.Models
         [Required]
         public virtual DateTime Date { get; set; }
         [Required]
-        public virtual string Status { get; set; }
+        public virtual ComplaintStatusEnum Status { get; set; }
     }
 }
