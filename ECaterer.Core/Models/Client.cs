@@ -14,15 +14,19 @@ namespace ECaterer.Core.Models
         [Key, Required]
         public virtual int ClientId { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string Name { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string LastName { get; set; }
         [Required]
+        [StringLength(250)]
         public virtual string Email { get; set; }
         [Required]
         public virtual Address Address { get; set; }
         [Required]
-        public virtual string PhooneNumber { get; set; }
+        [StringLength(20)]
+        public virtual string PhoneNumber { get; set; }
 
     }
 }

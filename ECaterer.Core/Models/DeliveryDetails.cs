@@ -16,7 +16,9 @@ namespace ECaterer.Core.Models
         [Required]
         public virtual Address Address { get; set; }
         [Required]
+        [StringLength(20)]
         public virtual String PhoneNumber { get; set; }
+        [StringLength(250)]
         public virtual String CommentForDeliverer { get; set; }
     }
 }

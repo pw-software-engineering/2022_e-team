@@ -14,6 +14,7 @@ namespace ECaterer.Core.Models
         [Key, Required]
         public virtual int IngredientId { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string Name { get; set; }
     }
 }

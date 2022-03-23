@@ -14,6 +14,7 @@ namespace ECaterer.Core.Models
         [Key, Required]
         public virtual int OrderStatusId { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string OrderStatusValue { get; set; }
     }
 }

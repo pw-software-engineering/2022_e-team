@@ -13,6 +13,7 @@ namespace ECaterer.Core.Models
     {
         [Key, Required]
         public virtual int AllergentId { get; set; }
+        [StringLength(250)]
         [Required]
         public virtual string Name { get; set; }
     }

@@ -14,6 +14,7 @@ namespace ECaterer.Core.Models
         [Key, Required]
         public virtual int MealId { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string Name { get; set; }
         [Required]
         public virtual ICollection<Ingredient> IngredientList { get; set; }

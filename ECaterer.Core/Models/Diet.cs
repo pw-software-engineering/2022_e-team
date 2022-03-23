@@ -14,6 +14,7 @@ namespace ECaterer.Core.Models
         [Key, Required]
         public virtual int DietId { get; set; }
         [Required]
+        [StringLength(50)]
         public virtual string Title { get; set; }
         [Required]
         public virtual string Description { get; set; }
