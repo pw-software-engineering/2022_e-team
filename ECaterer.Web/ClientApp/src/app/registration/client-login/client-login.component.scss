@@ -9,6 +9,7 @@ main#client-login {
   width: 100vw;
   height: 1000px;
   align-items: center;
+  overflow-x: hidden;
 
   h1 {
     color: white;
@@ -21,10 +22,10 @@ main#client-login {
   }
 
   .notification {
-      position: absolute;
-      width: 400px;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
+    position: absolute;
+    width: 400px;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }

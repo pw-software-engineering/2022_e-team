@@ -1,7 +1,7 @@
 
 <main id="client-registration">
   <h1>Zarejestruj się</h1>
-  <div id="registrationForm">
+  <div id="registrationForm" class="userInfo">
     <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
     <form class="k-form" [formGroup]="form">
       <fieldset class="k-form-fieldset">
@@ -43,6 +43,51 @@
                                required
                                [mask]="phoneNumberMask"
                                placeholder="Wpisz swój numer telefonu (np. +48-213-721-370)"></kendo-maskedtextbox>
+        </kendo-formfield>
+        <button class="wideBtn" kendoButton themeColor="primary" (click)="moveToAddressTab()">Przejdź dalej</button>
+        <button class="shortBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
+      </fieldset>
+    </form>
+  </div>
+  <div *ngIf="secondTab" id="registrationForm" class="addressInfo">
+    <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
+    <form class="k-form" [formGroup]="addressForm">
+      <fieldset class="k-form-fieldset">
+        <kendo-formfield>
+          <kendo-label [for]="Street" text="Ulica"></kendo-label>
+          <kendo-textbox formControlName="street"
+                         #street
+                         required
+                         placeholder="Wpisz nazwę ulicy"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="buildingNumber" text="Nr budynku"></kendo-label>
+          <kendo-textbox formControlName="buildingNumber"
+                         #buildingNumber
+                         required
+                         placeholder="Wpisz nr budynku"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="apartmentNumber" text="Nr mieszkania"></kendo-label>
+          <kendo-textbox formControlName="apartmentNumber"
+                         #apartmentNumber
+                         placeholder="Wpisz nr mieszkania"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="postCode" text="Kod pocztowy"></kendo-label>
+          <kendo-maskedtextbox formControlName="postCode"
+                         #postCode
+                         required
+                         [mask]="postCodeMask"
+                         placeholder="Wpisz kod pocztowy">
+          </kendo-maskedtextbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="city" text="Miasto"></kendo-label>
+          <kendo-textbox formControlName="city"
+                               #city
+                               required
+                               placeholder="Wpisz miasto"></kendo-textbox>
         </kendo-formfield>
         <button class="wideBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
         <button class="shortBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>

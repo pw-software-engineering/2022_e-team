@@ -1,23 +1,58 @@
 
 
+@keyframes slideIn {
+  0% {
+    transform: translate(-130vw, -50%);
+  }
+
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+
+  100% {
+    transform: translate(100vw, -50%);
+  }
+}
+
+
 main#client-registration {
   background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) ), url("../../../assets/images/loginscreen1.jpg") no-repeat center;
   background-size: cover;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   width: 100vw;
   height: 1100px;
-  align-items: center;
+  overflow-x: hidden;
+  position: relative;
 
   h1 {
     color: white;
     margin-bottom: 30px;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   #registrationForm {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     height: 800px;
     padding: 90px 50px;
+  }
+
+  #registrationForm.modalLeave {
+    animation: 1s linear 0s 1 slideOut;
+  }
+
+  #registrationForm.addressInfo {
+    animation: 1s linear 0s 1 slideIn;
   }
 
   .notification {

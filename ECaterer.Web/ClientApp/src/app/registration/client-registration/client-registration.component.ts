@@ -14,8 +14,10 @@ import { Router } from "@angular/router";
 
 export class ClientRegistration implements OnInit {
 
+  public secondTab = false;
 
   public phoneNumberMask = "+48-000-000-000";
+  public postCodeMask = "00-000";
   public passwordReg = "^(?=(.*[A-Z]){1,})(?=(.*[!@#$%^&*()+.]){1,})(?=(.*[0-9]){1,})(?=(.*[a-z]){1,}).{8,25}$";
 
   public registrationData: IRegistrationData = {
@@ -26,9 +28,18 @@ export class ClientRegistration implements OnInit {
     phone: ""
   }
 
+  public addressData: IAddressData = {
+    street: "",
+    buildingNumber: "",
+    apartmentNumber: "",
+    postCode: "",
+    city: ""
+  }
+
   public errorMessage = '';
 
   public form: FormGroup;
+  public addressForm: FormGroup;
 
   constructor(private TitleService: Title, private router: Router, private registrationService: RegistrationService) {
 
@@ -42,17 +53,36 @@ export class ClientRegistration implements OnInit {
         Validators.required, Validators.maxLength(25), Validators.pattern(this.passwordReg)]),
       phone: new FormControl(this.registrationData.phone, [Validators.required, Validators.maxLength(20)])
     });
+
+    this.addressForm = new FormGroup({
+      street: new FormControl(this.addressData.street, [Validators.required, Validators.maxLength(250), Validators.minLength(4)]),
+      buildingNumber: new FormControl(this.addressData.buildingNumber, [Validators.required, Validators.maxLength(50), Validators.minLength(1)]),
+      apartmentNumber: new FormControl(this.addressData.apartmentNumber, [Validators.maxLength(50)]),
+      postCode: new FormControl(this.addressData.postCode, [Validators.required, Validators.maxLength(10), Validators.minLength(5)]),
+      city: new FormControl(this.addressData.city, [Validators.required, Validators.minLength(2), Validators.maxLength(50)])
+    });
 }
 
   ngOnInit(): void {
     $("#passwordTextBox input").attr("type", "password");
   }
 
-
-  submitForm(): void {
+  moveToAddressTab() {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
+      $("#registrationForm.userInfo").addClass("modalLeave");
+      this.secondTab = true;
+    }
+    else {
+      this.showError("Niepoprawne dane.");
+    }
+  }
+
+  submitForm(): void {
+    this.addressForm.markAllAsTouched();
+    this.clearError();
+    if (this.addressForm.valid) {
       this.registrationService.registerUser()
         .then(() => {
           console.log("Pomyślnie zarejestrowano.");
@@ -86,4 +116,12 @@ export interface IRegistrationData {
   email: string,
   password: string,
   phone: string
+}
+
+export interface IAddressData {
+  street: string,
+  buildingNumber: string,
+  apartmentNumber: string,
+  postCode: string,
+  city: string
 }
