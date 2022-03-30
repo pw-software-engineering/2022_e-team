@@ -1,7 +1,8 @@
 
 <main id="client-registration">
   <h1>Zarejestruj się</h1>
-  <div class="formHandler">
+  <div id="registrationForm">
+    <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
     <form class="k-form" [formGroup]="form">
       <fieldset class="k-form-fieldset">
         <kendo-formfield>
@@ -28,10 +29,10 @@
         <kendo-formfield>
           <kendo-label [for]="password" text="Hasło"></kendo-label>
           <kendo-textbox formControlName="password"
-                               #password
-                               required
-                               placeholder="Wpisz hasło"
-                               id="passwordTextBox">
+                         #password
+                         required
+                         placeholder="Wpisz hasło"
+                         id="passwordTextBox">
           </kendo-textbox>
           <kendo-formerror>Hasło musi zawierać 8-25 znaków, dużą i małą literę, cyfrę, i znak specjalny.</kendo-formerror>
         </kendo-formfield>
@@ -43,8 +44,8 @@
                                [mask]="phoneNumberMask"
                                placeholder="Wpisz swój numer telefonu (np. +48-213-721-370)"></kendo-maskedtextbox>
         </kendo-formfield>
-        <button id="submitBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
-        <button id="loginBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
+        <button class="wideBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
+        <button class="shortBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
       </fieldset>
     </form>
   </div>

@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { TextBoxComponent } from "@progress/kendo-angular-inputs";
 import { Title } from '@angular/platform-browser';
 import { IRegistrationService, RegistrationService } from '../api/registration.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-client-registration',
@@ -13,7 +14,6 @@ import { IRegistrationService, RegistrationService } from '../api/registration.s
 
 export class ClientRegistration implements OnInit {
 
-  private registrationService: IRegistrationService;
 
   public phoneNumberMask = "+48-000-000-000";
   public passwordReg = "^(?=(.*[A-Z]){1,})(?=(.*[!@#$%^&*()+.]){1,})(?=(.*[0-9]){1,})(?=(.*[a-z]){1,}).{8,25}$";
@@ -26,11 +26,12 @@ export class ClientRegistration implements OnInit {
     phone: ""
   }
 
+  public errorMessage = '';
+
   public form: FormGroup;
 
-  constructor(private TitleService: Title, private RegistrationService: RegistrationService) {
+  constructor(private TitleService: Title, private router: Router, private registrationService: RegistrationService) {
 
-    this.registrationService = RegistrationService;
     this.TitleService.setTitle("Rejestracja");
 
     this.form = new FormGroup({
@@ -50,14 +51,32 @@ export class ClientRegistration implements OnInit {
 
   submitForm(): void {
     this.form.markAllAsTouched();
+    this.clearError();
     if (this.form.valid) {
-      this.registrationService.registerUser();
+      this.registrationService.registerUser()
+        .then(() => {
+          console.log("Pomyślnie zarejestrowano.");
+        })
+        .catch((err) => {
+          this.showError(err);
+        });
+    }
+    else {
+      this.showError("Niepoprawne dane.");
     }
   }
 
 
   redirectToLogin(): void {
+    this.router.navigate(['/client/login']);
+  }
 
+  clearError() {
+    this.errorMessage = "";
+  }
+
+  showError(message: string) {
+    this.errorMessage = message;
   }
 }
 

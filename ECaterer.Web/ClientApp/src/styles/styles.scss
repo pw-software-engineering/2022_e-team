@@ -23,3 +23,66 @@ h1 {
   font-weight: 700;
   font-size: 3rem;
 }
+
+.notification {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.notification-error {
+    background-color: red;
+    color: white;
+}
+
+.notification-info {
+  background-color: green;
+  color: white;
+}
+
+
+#registrationForm {
+  background-color: white;
+  width: 500px;
+  border-radius: 20px 20px;
+  position: relative;
+
+  fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    label {
+      margin-bottom: 0%;
+    }
+
+    input {
+      background-color: #e5e5e5;
+      padding: 10px 12px;
+      border-radius: 20px;
+    }
+
+    kendo-formfield {
+      width: 100%;
+
+      kendo-textbox, kendo-maskedtextbox {
+        border-radius: 20px;
+      }
+    }
+
+    button {
+      text-transform: uppercase;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 10px 30px;
+    }
+
+    .wideBtn {
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .shortBtn {
+      margin-top: 60px;
+    }
+  }
+}

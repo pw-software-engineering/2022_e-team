@@ -1,13 +1,13 @@
 
 
-main#client-registration {
+main#client-login {
   background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) ), url("../../../assets/images/loginscreen1.jpg") no-repeat center;
   background-size: cover;
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100vw;
-  height: 1100px;
+  height: 1000px;
   align-items: center;
 
   h1 {
@@ -16,15 +16,15 @@ main#client-registration {
   }
 
   #registrationForm {
-    height: 800px;
+    height: 500px;
     padding: 90px 50px;
   }
 
   .notification {
-    position: absolute;
-    width: 400px;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+      position: absolute;
+      width: 400px;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
   }
 }
