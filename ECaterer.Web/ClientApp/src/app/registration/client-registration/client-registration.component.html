@@ -1,0 +1,51 @@
+
+<main id="client-registration">
+  <h1>Zarejestruj się</h1>
+  <div class="formHandler">
+    <form class="k-form" [formGroup]="form">
+      <fieldset class="k-form-fieldset">
+        <kendo-formfield>
+          <kendo-label [for]="Name" text="Imię"></kendo-label>
+          <kendo-textbox formControlName="name"
+                         #name
+                         required
+                         placeholder="Wpisz swoje imię"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="surname" text="Nazwisko"></kendo-label>
+          <kendo-textbox formControlName="surname"
+                         #surname
+                         required
+                         placeholder="Wpisz swoje nazwisko"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="email" text="Email"></kendo-label>
+          <kendo-textbox formControlName="email"
+                         #email
+                         required
+                         placeholder="Wpisz prawidłowy adres email"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="password" text="Hasło"></kendo-label>
+          <kendo-textbox formControlName="password"
+                               #password
+                               required
+                               placeholder="Wpisz hasło"
+                               id="passwordTextBox">
+          </kendo-textbox>
+          <kendo-formerror>Hasło musi zawierać 8-25 znaków, dużą i małą literę, cyfrę, i znak specjalny.</kendo-formerror>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="phone" text="Numer telefonu"></kendo-label>
+          <kendo-maskedtextbox formControlName="phone"
+                               #phone
+                               required
+                               [mask]="phoneNumberMask"
+                               placeholder="Wpisz swój numer telefonu (np. +48-213-721-370)"></kendo-maskedtextbox>
+        </kendo-formfield>
+        <button id="submitBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
+        <button id="loginBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
+      </fieldset>
+    </form>
+  </div>
+</main>
