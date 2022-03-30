@@ -86,7 +86,9 @@
               "src/styles/styles.scss",
               "src/styles/ecaterer_theme_1_1.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js"
+            ],
             "assets": [
               "src/assets"
             ]

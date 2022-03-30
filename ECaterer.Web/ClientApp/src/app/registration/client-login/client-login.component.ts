@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { TextBoxComponent } from "@progress/kendo-angular-inputs";
 import { Title } from '@angular/platform-browser';
 import { IRegistrationService, RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";

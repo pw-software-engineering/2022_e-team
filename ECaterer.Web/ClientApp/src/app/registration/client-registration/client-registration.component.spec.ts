@@ -1,9 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { GridModule } from '@progress/kendo-angular-grid';
 
 import { ClientRegistration } from './client-registration.component';
+import { BrowserModule, Title } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+import { GridModule } from '@progress/kendo-angular-grid';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DateInputsModule } from "@progress/kendo-angular-dateinputs";
+import { LabelModule } from "@progress/kendo-angular-label";
+import { InputsModule } from "@progress/kendo-angular-inputs";
+import { LayoutModule } from "@progress/kendo-angular-layout";
+import { ButtonsModule } from "@progress/kendo-angular-buttons";
 
-describe('AppComponent', () => {
+describe('ClientRegistration', () => {
   let component: ClientRegistration;
   let fixture: ComponentFixture<ClientRegistration>;
 
@@ -13,8 +24,27 @@ describe('AppComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ClientRegistration],
-      imports: [GridModule]
+      declarations: [
+        ClientRegistration
+      ],
+      imports: [
+        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot([
+          { path: 'client/register', component: ClientRegistration, pathMatch: 'full' }
+        ]),
+        GridModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        DateInputsModule,
+        InputsModule,
+        LayoutModule,
+        LabelModule,
+        ButtonsModule
+      ],
+      providers: [Title],
     })
       .compileComponents();
   }));
