@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 
-export class RegistrationService implements IRegistrationService {
+export class RegistrationService {
 
   constructor() {
   }
@@ -43,11 +43,6 @@ export class RegistrationService implements IRegistrationService {
     });
   }
 
-}
-
-export interface IRegistrationService {
-  registerUser(): Promise<object>,
-  loginUser(): Promise<object>
 }
 
 

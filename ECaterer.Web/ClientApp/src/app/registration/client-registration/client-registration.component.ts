@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { TextBoxComponent } from "@progress/kendo-angular-inputs";
 import { Title } from '@angular/platform-browser';
-import { IRegistrationService, RegistrationService } from '../api/registration.service';
+import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
 
 @Component({
@@ -18,7 +18,7 @@ export class ClientRegistration implements OnInit {
   public phoneNumberMask = "+48-000-000-000";
   public passwordReg = "^(?=(.*[A-Z]){1,})(?=(.*[!@#$%^&*()+.]){1,})(?=(.*[0-9]){1,})(?=(.*[a-z]){1,}).{8,25}$";
 
-  public registrationData: RegistrationData = {
+  public registrationData: IRegistrationData = {
     name: "",
     surname: "",
     email: "",
@@ -80,7 +80,7 @@ export class ClientRegistration implements OnInit {
   }
 }
 
-interface RegistrationData {
+export interface IRegistrationData {
   name: string,
   surname: string,
   email: string,

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Title } from '@angular/platform-browser';
-import { IRegistrationService, RegistrationService } from '../api/registration.service';
+import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
 
 @Component({
@@ -13,9 +13,7 @@ import { Router } from "@angular/router";
 
 export class ClientLogin implements OnInit {
 
-  private registrationService: IRegistrationService;
-
-  public loginData: LoginData = {
+  public loginData: ILoginData = {
     email: "",
     password: ""
   }
@@ -24,9 +22,8 @@ export class ClientLogin implements OnInit {
 
   public form: FormGroup;
 
-  constructor(private TitleService: Title, private router: Router, private RegistrationService: RegistrationService) {
+  constructor(private TitleService: Title, private router: Router, private registrationService: RegistrationService) {
 
-    this.registrationService = RegistrationService;
     this.TitleService.setTitle("Logowanie");
 
     this.form = new FormGroup({
@@ -71,7 +68,7 @@ export class ClientLogin implements OnInit {
   }
 }
 
-interface LoginData {
+export interface ILoginData {
   email: string,
   password: string
 }

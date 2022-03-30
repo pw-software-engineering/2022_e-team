@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ClientLogin } from './client-login.component';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +12,11 @@ import { InputsModule } from "@progress/kendo-angular-inputs";
 import { LayoutModule } from "@progress/kendo-angular-layout";
 import { ButtonsModule } from "@progress/kendo-angular-buttons";
 
+/* Components */
+import { HomeComponent } from '../../home/home.component';
+import { ClientRegistration, IRegistrationData } from '../client-registration/client-registration.component';
+import { ClientLogin } from '../client-login/client-login.component';
+
 describe('ClientLogin', () => {
   let component: ClientLogin;
   let fixture: ComponentFixture<ClientLogin>;
@@ -24,6 +28,8 @@ describe('ClientLogin', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
+        HomeComponent,
+        ClientRegistration,
         ClientLogin
       ],
       imports: [
@@ -31,6 +37,8 @@ describe('ClientLogin', () => {
         HttpClientModule,
         FormsModule,
         RouterModule.forRoot([
+          { path: '', component: HomeComponent, pathMatch: 'full' },
+          { path: 'client/register', component: ClientRegistration, pathMatch: 'full' },
           { path: 'client/login', component: ClientLogin, pathMatch: 'full' }
         ]),
         GridModule,
