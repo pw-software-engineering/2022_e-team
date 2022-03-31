@@ -45,6 +45,8 @@
     <TypeScriptCompile Remove="ClientApp\src\app\client-registration\client-registration.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.ts" />
   </ItemGroup>
 
   <ItemGroup>

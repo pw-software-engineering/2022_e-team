@@ -4,6 +4,7 @@ import { TextBoxComponent } from "@progress/kendo-angular-inputs";
 import { Title } from '@angular/platform-browser';
 import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
+import { setTime } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 
 @Component({
   selector: 'app-client-registration',
@@ -16,9 +17,12 @@ export class ClientRegistration implements OnInit {
 
   public secondTab = false;
 
-  public phoneNumberMask = "+48-000-000-000";
-  public postCodeMask = "00-000";
-  public passwordReg = "^(?=(.*[A-Z]){1,})(?=(.*[!@#$%^&*()+.]){1,})(?=(.*[0-9]){1,})(?=(.*[a-z]){1,}).{8,25}$";
+  public phoneNumberMask = '+48-000-000-000';
+  public postCodeMask = '00-000';
+  public passwordReg = '^(?=(.*[A-Z]){1,})(?=(.*[!@#$%^&*()+.]){1,})(?=(.*[0-9]){1,})(?=(.*[a-z]){1,}).{8,25}$';
+  public letterReg = '^[a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ]*$';
+  public letterRegWithSpaceInside = '^[a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ]+[a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ ]*[a-zA-ZżźćńółęąśŻŹĆĄŚĘŁÓŃ]+$';
+  public alphaNumReg = '^[a-zA-Z0-9]*$'
 
   public registrationData: IRegistrationData = {
     name: "",
@@ -46,8 +50,10 @@ export class ClientRegistration implements OnInit {
     this.TitleService.setTitle("Rejestracja");
 
     this.form = new FormGroup({
-      name: new FormControl(this.registrationData.name, [Validators.required, Validators.maxLength(50), Validators.minLength(2)]),
-      surname: new FormControl(this.registrationData.surname, [Validators.required, Validators.maxLength(50), Validators.minLength(2)]),
+      name: new FormControl(this.registrationData.name, [Validators.required,
+        Validators.maxLength(50), Validators.minLength(2), Validators.pattern(this.letterReg)]),
+      surname: new FormControl(this.registrationData.surname, [Validators.required,
+        Validators.maxLength(50), Validators.minLength(2), Validators.pattern(this.letterReg)]),
       email: new FormControl(this.registrationData.email, [Validators.required, Validators.email, Validators.maxLength(250)]),
       password: new FormControl(this.registrationData.password, [
         Validators.required, Validators.maxLength(25), Validators.pattern(this.passwordReg)]),
@@ -55,11 +61,14 @@ export class ClientRegistration implements OnInit {
     });
 
     this.addressForm = new FormGroup({
-      street: new FormControl(this.addressData.street, [Validators.required, Validators.maxLength(250), Validators.minLength(4)]),
-      buildingNumber: new FormControl(this.addressData.buildingNumber, [Validators.required, Validators.maxLength(50), Validators.minLength(1)]),
-      apartmentNumber: new FormControl(this.addressData.apartmentNumber, [Validators.maxLength(50)]),
-      postCode: new FormControl(this.addressData.postCode, [Validators.required, Validators.maxLength(10), Validators.minLength(5)]),
-      city: new FormControl(this.addressData.city, [Validators.required, Validators.minLength(2), Validators.maxLength(50)])
+      street: new FormControl(this.addressData.street, [Validators.required, Validators.maxLength(250), Validators.minLength(4),
+        Validators.pattern(this.letterRegWithSpaceInside)]),
+      buildingNumber: new FormControl(this.addressData.buildingNumber, [Validators.required, Validators.maxLength(50), Validators.minLength(1),
+        Validators.pattern(this.alphaNumReg)]),
+      apartmentNumber: new FormControl(this.addressData.apartmentNumber, [Validators.maxLength(50), Validators.pattern(this.alphaNumReg)]),
+      postCode: new FormControl(this.addressData.postCode, [Validators.required, Validators.maxLength(6), Validators.minLength(6)]),
+      city: new FormControl(this.addressData.city, [Validators.required, Validators.minLength(2), Validators.maxLength(50),
+        Validators.pattern(this.letterRegWithSpaceInside)])
     });
 }
 

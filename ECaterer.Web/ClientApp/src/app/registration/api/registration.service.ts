@@ -43,6 +43,22 @@ export class RegistrationService {
     });
   }
 
+  public loginWorker(): Promise<object> {
+    return new Promise<object>((resolve, reject) => {
+      $.get("someinvalidurl")
+        .then((data) => resolve(data))
+        .catch((err: any) => {
+          switch (err.status) {
+            case "501":
+              reject(err.responseText);
+              break;
+            default:
+              reject("Wystąpił błąd serwera. Spróbuj później.");
+          }
+        });
+    });
+  }
+
 }
 
 

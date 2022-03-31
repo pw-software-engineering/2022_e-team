@@ -17,35 +17,37 @@ import { RouterTestingModule } from '@angular/router/testing';
 /* Components */
 import { HomeComponent } from '../../home/home.component';
 import { ClientRegistration } from '../client-registration/client-registration.component';
-import { ClientLogin, ILoginData } from '../client-login/client-login.component';
+import { ClientLogin } from '../client-login/client-login.component';
 import { RegistrationService } from '../api/registration.service';
+import { WorkerLogin, ILoginData } from './worker-login.component';
 
-describe('ClientLogin', () => {
-  let component: ClientLogin;
-  let fixture: ComponentFixture<ClientLogin>;
+describe('WorkerLogin', () => {
+  let component: WorkerLogin;
+  let fixture: ComponentFixture<WorkerLogin>;
 
-  let validMailData: ILoginData = {
-    email: "a@gmail.com",
-    password: "1"
+  let validLoginData: ILoginData = {
+    login: "root",
+    password: "toor"
   };
-  let invalidMailData: ILoginData = {
-    email: "agmail.com",
-    password: "1"
+  let invalidLoginData: ILoginData = {
+    login: "",
+    password: "toor"
   };
 
   beforeAll(function () {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 999999;
   });
 
-  var registrationServiceMock = jasmine.createSpyObj('RegistrationService', ['loginUser']);
-  registrationServiceMock.loginUser.and.returnValue(new Promise<object>((resolve, reject) => { resolve({}); }));
+  var registrationServiceMock = jasmine.createSpyObj('RegistrationService', ['loginWorker']);
+  registrationServiceMock.loginWorker.and.returnValue(new Promise<object>((resolve, reject) => { resolve({}); }));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
         HomeComponent,
         ClientRegistration,
-        ClientLogin
+        ClientLogin,
+        WorkerLogin
       ],
       imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -54,7 +56,8 @@ describe('ClientLogin', () => {
         RouterTestingModule.withRoutes([
           { path: '', component: HomeComponent, pathMatch: 'full' },
           { path: 'client/register', component: ClientRegistration, pathMatch: 'full' },
-          { path: 'client/login', component: ClientLogin, pathMatch: 'full' }
+          { path: 'client/login', component: ClientLogin, pathMatch: 'full' },
+          { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
         ]),
         GridModule,
         BrowserAnimationsModule,
@@ -76,9 +79,9 @@ describe('ClientLogin', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ClientLogin);
+    fixture = TestBed.createComponent(WorkerLogin);
     component = fixture.componentInstance;
-    registrationServiceMock.loginUser.calls.reset();
+    registrationServiceMock.loginWorker.calls.reset();
     fixture.detectChanges();
   });
 
@@ -94,39 +97,39 @@ describe('ClientLogin', () => {
     });
 
     it('should mark valid', () => {
-      component.form.setValue(validMailData);
+      component.form.setValue(validLoginData);
       component.form.markAllAsTouched();
       expect(component.form.valid).toBeTruthy();
     });
 
     it('should mark invalid on email', () => {
-      component.form.setValue(invalidMailData);
+      component.form.setValue(invalidLoginData);
       component.form.markAllAsTouched();
       expect(component.form.valid).toBeFalsy();
     });
   });
 
-  it('should call loginUSer on valid form', () => {
-    component.form.setValue(validMailData);
+  it('should call loginWorker on valid form', () => {
+    component.form.setValue(validLoginData);
 
-    expect(registrationServiceMock.loginUser).toHaveBeenCalledTimes(0);
+    expect(registrationServiceMock.loginWorker).toHaveBeenCalledTimes(0);
 
     component.submitForm();
     fixture.detectChanges();
 
-    expect(registrationServiceMock.loginUser).toHaveBeenCalledTimes(1);
+    expect(registrationServiceMock.loginWorker).toHaveBeenCalledTimes(1);
 
   });
 
-  it('should not call loginUser on invalid form', () => {
-    component.form.setValue(invalidMailData);
+  it('should not call loginWorker on invalid form', () => {
+    component.form.setValue(invalidLoginData);
 
-    expect(registrationServiceMock.loginUser).toHaveBeenCalledTimes(0);
+    expect(registrationServiceMock.loginWorker).toHaveBeenCalledTimes(0);
 
     component.submitForm();
     fixture.detectChanges();
 
-    expect(registrationServiceMock.loginUser).toHaveBeenCalledTimes(0);
+    expect(registrationServiceMock.loginWorker).toHaveBeenCalledTimes(0);
   });
 
 });

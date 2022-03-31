@@ -16,14 +16,15 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ClientRegistration } from './registration/client-registration/client-registration.component';
 import { ClientLogin } from './registration/client-login/client-login.component';
-
+import { WorkerLogin } from './registration/worker-login/worker-login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     ClientRegistration,
-    ClientLogin
+    ClientLogin,
+    WorkerLogin
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -32,7 +33,8 @@ import { ClientLogin } from './registration/client-login/client-login.component'
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'client/register', component: ClientRegistration, pathMatch: 'full' },
-      { path: 'client/login', component: ClientLogin, pathMatch: 'full' }
+      { path: 'client/login', component: ClientLogin, pathMatch: 'full' },
+      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
     ]),
     GridModule,
     BrowserAnimationsModule,

@@ -5,16 +5,16 @@ import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-client-login',
-  templateUrl: './client-login.component.html',
-  styleUrls: ['./client-login.component.scss'],
+  selector: 'app-worker-login',
+  templateUrl: './worker-login.component.html',
+  styleUrls: ['./worker-login.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 
-export class ClientLogin implements OnInit {
+export class WorkerLogin implements OnInit {
 
   public loginData: ILoginData = {
-    email: "",
+    login: "",
     password: ""
   }
 
@@ -27,7 +27,7 @@ export class ClientLogin implements OnInit {
     this.TitleService.setTitle("Logowanie");
 
     this.form = new FormGroup({
-      email: new FormControl(this.loginData.email, [Validators.required, Validators.email, Validators.maxLength(250)]),
+      login: new FormControl(this.loginData.login, [Validators.required, Validators.minLength(1), Validators.maxLength(250)]),
       password: new FormControl(this.loginData.password, [
         Validators.required, Validators.minLength(1), Validators.maxLength(25)])
     });
@@ -42,7 +42,7 @@ export class ClientLogin implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      this.registrationService.loginUser()
+      this.registrationService.loginWorker()
         .then(() => {
           console.log("Pomyślnie zalogowano.");
         })
@@ -51,12 +51,8 @@ export class ClientLogin implements OnInit {
         });
     }
     else {
-      this.showError("Niepoprawny adres email lub hasło.");
+      this.showError("Niepoprawny login lub hasło.");
     }
-  }
-
-  redirectToRegister(): void {
-    this.router.navigate(['/client/register']);
   }
 
   clearError() {
@@ -69,6 +65,6 @@ export class ClientLogin implements OnInit {
 }
 
 export interface ILoginData {
-  email: string,
+  login: string,
   password: string
 }
