@@ -3,8 +3,8 @@ using System;
 
 namespace ECaterer.Web.DTO.ClientDTO
 {
-    public class ComplainDTO
+    public class ComplaintDTO
     {
-        public string complain_description { get; set; }
+        public string complaint_description { get; set; }
     }
 }

@@ -2,10 +2,8 @@
 using ECaterer.Core.Models;
 using ECaterer.Web.DTO.ClientDTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ECaterer.Web.Controllers
@@ -14,12 +12,10 @@ namespace ECaterer.Web.Controllers
     [Route("[controller]")]
     public class ClientController : Controller
     {
-        private readonly ILogger<ClientController> _logger;
         private readonly DataContext _context;
 
-        public ClientController(ILogger<ClientController> logger, DataContext context)
+        public ClientController(DataContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
@@ -42,31 +38,31 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpPut("/client/account")]
-        public async Task<IActionResult> EditClientData([FromBody] Client clientData)
+        public async Task<ActionResult> EditClientData([FromBody] Client clientData)
         {
             return BadRequest();
         }
 
-        [HttpGet("/orders")]
-        public async Task<ActionResult<Order[]>> GetOrders(int offset, int limit, string sort, DateTime startDate, DateTime endDate, int price, int price_lt, int price_ht)
+        [HttpGet("/orders")] //wartosci domyslne do ustalenia
+        public async Task<ActionResult<Order[]>> GetOrders(int offset = 0, int limit = 0, string sort = "startDate(asc)", DateTime? startDate = null, DateTime? endDate = null, int price = 0, int price_lt = 0, int price_ht = 0) 
         {
             return BadRequest();
         }
 
         [HttpPost("/orders")]
-        public async Task<IActionResult> PostOrder([FromBody] OrderDTO orderDTO)
+        public async Task<ActionResult> PostOrder([FromBody] OrderDTO orderDTO)
         {
             return BadRequest();
         }
 
         [HttpPost("/orders/{orderId}/complain")]
-        public async Task<IActionResult> PostComplain(int orderId, [FromBody] ComplainDTO complainDTO)
+        public async Task<ActionResult> PostComplaint(int orderId, [FromBody] ComplaintDTO complaintDTO)
         {
             return BadRequest();
         }
 
         [HttpGet("/orders/{orderId}/pay")]
-        public async Task<IActionResult> PayOrder(int orderId)
+        public async Task<ActionResult> PayOrder(int orderId)
         {
             return BadRequest();
         }
