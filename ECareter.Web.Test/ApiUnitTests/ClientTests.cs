@@ -53,6 +53,202 @@ namespace ECareter.Web.Test.ApiUnitTests
         }
 
         [Fact]
+        public void GetAllOrdersWithOffsetOne_ReturnsArrayOfAllOrdersWithoutFirstOne()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().TakeLast(2).ToArray();
+
+            var result = _controller.GetOrders(1).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetAllOrdersWithInvalidOffset_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+
+            var result = _controller.GetOrders(-5).Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetTwoFirstOrders_ReturnsArrayOfTwoFirstOrders()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Take(2).ToArray();
+
+            var result = _controller.GetOrders(0, 2).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetAllOrdersWithInvalidLimit_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+
+            var result = _controller.GetOrders(0, -5).Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetOrdersSortedByStartDateDesc_ReturnsArrayOfAllOrdersSortedByStartDateDesc()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().OrderByDescending(order => order.StartDate).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "startDate(desc)").Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersSortedByInvalidSortString_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+            
+            var result = _controller.GetOrders(0, 0, "somesortstring").Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetOrdersStartedAtExactDate_ReturnsArrayOfOrdersStartedAtExactDate()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.OrderId == 1).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", expected.First().StartDate).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersEndedAtExactDate_ReturnsArrayOfOrdersEndedAtExactDate()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.OrderId == 2).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, expected.First().EndDate).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersWithExactPrice_ReturnsArrayOfOrdersWithExactPrice()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 500).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 500).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersWithInvalidPrice_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+
+            var result = _controller.GetOrders(0, 0, "", null, null, -100).Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetOrdersWithPriceBelowGiven_ReturnsArrayOfOrdersWithPriceBelowGiven()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.Price < 600).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 0, 600).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersWithPriceBelowGivenInvalid_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 0, -100).Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetOrdersWithPriceAboveGiven_ReturnsArrayOfOrdersWithPriceAboveGiven()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.Price > 300).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 0, 0, 300).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersWithPriceAboveGivenInvalid_ShouldReturnBadRequest()
+        {
+            var _controller = new ClientController(_fixture.context);
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 0, 0, -100).Result;
+            var badRequestResult = result.Result as BadRequestResult;
+
+            badRequestResult.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetOrdersWithExactPriceAndAboveGiven_ReturnsEmptyArrayOfOrders()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 300 && order.Price > 500).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 300, 0, 500).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
+        public void GetOrdersWithExactPriceAndBelowGiven_ReturnsEmptyArrayOfOrders()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 600 && order.Price < 500).ToArray();
+
+            var result = _controller.GetOrders(0, 0, "", null, null, 600, 500).Result;
+            var okResult = result.Result as OkResult;
+
+            okResult.Should().NotBeNull();
+            result.Value.Should().Equal(expected);
+        }
+
+        [Fact]
         public void PostOrder_ShouldAddOrderToDatabaseAndReturnOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -150,7 +346,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             context.Dispose();
         }
 
-        private IEnumerable<Order> GetSampleOrders()
+        public IEnumerable<Order> GetSampleOrders()
         {
             var orders = new List<Order>();
             var address1 = new Address()
@@ -189,7 +385,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail1,
                 StartDate = DateTime.Now,
-                EndDate = DateTime.UtcNow,
+                EndDate = DateTime.Now.AddDays(30),
                 Price = 300.0m,
             };
             var order2 = new Order()
@@ -197,8 +393,8 @@ namespace ECareter.Web.Test.ApiUnitTests
                 OrderId = 2,
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail2,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.UtcNow,
+                StartDate = DateTime.Now.AddDays(20),
+                EndDate = DateTime.Now.AddDays(60),
                 Price = 600.0m,
             };
             var order3 = new Order()
@@ -206,8 +402,8 @@ namespace ECareter.Web.Test.ApiUnitTests
                 OrderId = 3,
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail1,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.UtcNow,
+                StartDate = DateTime.Now.AddDays(10),
+                EndDate = DateTime.Now.AddDays(50),
                 Price = 500.0m,
             };
             orders.Add(order1);
