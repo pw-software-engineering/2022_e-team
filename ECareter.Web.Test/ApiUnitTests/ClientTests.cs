@@ -22,18 +22,6 @@ namespace ECareter.Web.Test.ApiUnitTests
         }
 
         [Fact]
-        public void Login_Tests()
-        {
-
-        }
-
-        [Fact]
-        public void Register_Tests()
-        {
-
-        }
-
-        [Fact]
         public void GetClientData_ShouldReturnClientDataAndOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -56,7 +44,6 @@ namespace ECareter.Web.Test.ApiUnitTests
             var johnSmith = _fixture.context.Clients.Find(1);
             var tomLukas = _fixture.context.Clients.Find(2);
 
-            //login here
 
             var result = _controller.EditClientData(tomLukas);
             var okResult = result.Result as OkResult;
@@ -67,9 +54,9 @@ namespace ECareter.Web.Test.ApiUnitTests
                 _fixture.context.Clients.Add(johnSmith);
                 _fixture.context.SaveChanges();
             }
-            clientData.Should().Be(johnSmith);
+
             okResult.Should().NotBeNull();
-            
+            clientData.Should().Be(tomLukas);
         }
 
         [Fact]
