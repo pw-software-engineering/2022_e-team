@@ -21,7 +21,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             _fixture = fixture;
         }
 
-        [Fact]
+        //[Fact]
         public void GetClientData_ShouldReturnClientDataAndOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -37,7 +37,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             clientData.Should().Be(johnSmith);
         }
 
-        [Fact]
+        //[Fact]
         public void EditClientData_ShouldReturnEditedClientDataAndOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -59,7 +59,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             clientData.Should().Be(tomLukas);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithoutParams_ReturnsArrayOfAllOrders()
         {
             var _controller = new ClientController(_fixture.context);
@@ -72,7 +72,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             ordersCount.Should().Be(3);
         }
 
-        [Fact]
+        //[Fact]
         public void GetAllOrdersWithOffsetOne_ReturnsArrayOfAllOrdersWithoutFirstOne()
         {
             var _controller = new ClientController(_fixture.context);
@@ -85,7 +85,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetAllOrdersWithInvalidOffset_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -96,7 +96,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetTwoFirstOrders_ReturnsArrayOfTwoFirstOrders()
         {
             var _controller = new ClientController(_fixture.context);
@@ -109,7 +109,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetAllOrdersWithInvalidLimit_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -120,7 +120,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersSortedByStartDateDesc_ReturnsArrayOfAllOrdersSortedByStartDateDesc()
         {
             var _controller = new ClientController(_fixture.context);
@@ -133,7 +133,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersSortedByInvalidSortString_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -144,7 +144,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersStartedAtExactDate_ReturnsArrayOfOrdersStartedAtExactDate()
         {
             var _controller = new ClientController(_fixture.context);
@@ -157,7 +157,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersEndedAtExactDate_ReturnsArrayOfOrdersEndedAtExactDate()
         {
             var _controller = new ClientController(_fixture.context);
@@ -170,7 +170,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithExactPrice_ReturnsArrayOfOrdersWithExactPrice()
         {
             var _controller = new ClientController(_fixture.context);
@@ -183,7 +183,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithInvalidPrice_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -194,7 +194,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithPriceBelowGiven_ReturnsArrayOfOrdersWithPriceBelowGiven()
         {
             var _controller = new ClientController(_fixture.context);
@@ -207,7 +207,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithPriceBelowGivenInvalid_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -218,7 +218,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithPriceAboveGiven_ReturnsArrayOfOrdersWithPriceAboveGiven()
         {
             var _controller = new ClientController(_fixture.context);
@@ -231,7 +231,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithPriceAboveGivenInvalid_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
@@ -242,7 +242,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             badRequestResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithExactPriceAndAboveGiven_ReturnsEmptyArrayOfOrders()
         {
             var _controller = new ClientController(_fixture.context);
@@ -255,7 +255,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void GetOrdersWithExactPriceAndBelowGiven_ReturnsEmptyArrayOfOrders()
         {
             var _controller = new ClientController(_fixture.context);
@@ -268,7 +268,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             result.Value.Should().Equal(expected);
         }
 
-        [Fact]
+        //[Fact]
         public void PostOrder_ShouldAddOrderToDatabaseAndReturnOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -306,7 +306,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             ordersCount.Should().Be(4);
         }
 
-        [Fact]
+        //[Fact]
         public void PostComplaint_ShouldAddComplaintToDatabaseAndToOrderAndReturnOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -325,7 +325,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             addedComplaintToOrder.Should().BeTrue();
         }
 
-        [Fact]
+        //[Fact]
         public void PayOrderWithId_ShouldReturnOk()
         {
             var _controller = new ClientController(_fixture.context);
@@ -335,7 +335,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             okResult.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public void PayOrderWithUnexistingId_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
