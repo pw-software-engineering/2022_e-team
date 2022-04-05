@@ -30,13 +30,46 @@ namespace ECareter.Web.Test.ApiUnitTests
         [Fact]
         public void Register_Tests()
         {
-            
+
         }
 
         [Fact]
-        public void Account_Tests()
+        public void GetClientData_ShouldReturnClientDataAndOk()
         {
+            var _controller = new ClientController(_fixture.context);
+            var johnSmith = _fixture.context.Clients.FirstOrDefault();
 
+            //login here
+
+            var result = _controller.GetClientData().Result;
+            var okResult = result.Result as OkResult;
+            var clientData = result.Value;
+
+            okResult.Should().NotBeNull();
+            clientData.Should().Be(johnSmith);
+        }
+
+        [Fact]
+        public void EditClientData_ShouldReturnEditedClientDataAndOk()
+        {
+            var _controller = new ClientController(_fixture.context);
+            var johnSmith = _fixture.context.Clients.Find(1);
+            var tomLukas = _fixture.context.Clients.Find(2);
+
+            //login here
+
+            var result = _controller.EditClientData(tomLukas);
+            var okResult = result.Result as OkResult;
+            var clientData = _fixture.context.Clients.FirstOrDefault();
+            if (clientData.Name == "Tom")
+            {
+                _fixture.context.Clients.Remove(tomLukas);
+                _fixture.context.Clients.Add(johnSmith);
+                _fixture.context.SaveChanges();
+            }
+            clientData.Should().Be(johnSmith);
+            okResult.Should().NotBeNull();
+            
         }
 
         [Fact]
@@ -117,7 +150,7 @@ namespace ECareter.Web.Test.ApiUnitTests
         public void GetOrdersSortedByInvalidSortString_ShouldReturnBadRequest()
         {
             var _controller = new ClientController(_fixture.context);
-            
+
             var result = _controller.GetOrders(0, 0, "somesortstring").Result;
             var badRequestResult = result.Result as BadRequestResult;
 
@@ -254,7 +287,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var _controller = new ClientController(_fixture.context);
             var orderDTO = new OrderDTO()
             {
-                dietIDs = new string[2] {"1", "2"},
+                dietIDs = new string[2] { "1", "2" },
                 deliveryDetails = new DeliveryDetails()
                 {
                     DeliveryDetailsId = 1,
@@ -292,7 +325,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var _controller = new ClientController(_fixture.context);
             var complaintDTO = new ComplaintDTO()
             {
-                complaint_description = "Some description" 
+                complaint_description = "Some description"
             };
 
             var okResult = _controller.PostComplaint(1, complaintDTO).Result as OkResult;
@@ -337,7 +370,28 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .UseInMemoryDatabase(databaseName: "ECatererDatabase")
                 .Options;
             context = new DataContext(options);
-            context.Orders.AddRange(GetSampleOrders());
+            var orders = GetSampleOrders();
+            context.Orders.AddRange(orders);
+            context.Clients.AddRange(new List<Client>(){
+                new Client()
+                {
+                    ClientId = 1,
+                    Name = "John",
+                    LastName = "Smith",
+                    Email= "john.smith@gmail.com",
+                    Address = orders.ElementAt(1).DeliveryDetails.Address,
+                    PhoneNumber = "+48123456789"
+                },
+                new Client()
+                {
+                    ClientId = 2,
+                    Name = "Tom",
+                    LastName = "Lukas",
+                    Email = "tom.lukas@gmail.com",
+                    Address = orders.ElementAt(2).DeliveryDetails.Address,
+                    PhoneNumber = "+48987654321"
+                }
+            });
             context.SaveChanges();
         }
 
