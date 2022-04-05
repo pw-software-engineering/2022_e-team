@@ -45,6 +45,10 @@ namespace ECaterer.WebApi
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("CoreDbConnection")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -114,8 +118,7 @@ namespace ECaterer.WebApi
                   new string[] { }
                 }
               });
-            })
-                ;
+            });
           
         }
 

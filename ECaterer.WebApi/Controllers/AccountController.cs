@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ECaterer.Core.Models;
+using ECaterer.WebApi.Data;
+using ECaterer.Core;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -18,12 +21,14 @@ namespace ECaterer.WebApi.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly TokenService _tokenService;
+        private readonly DataContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _context = context;
         }
 
         [Route("Login")]
@@ -67,6 +72,18 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
+                var client = new Client
+                {
+                    Name = registerUser.Name,
+                    LastName = registerUser.LastName,
+                    Email = registerUser.Email,
+                    Address = registerUser.Address,
+                    PhoneNumber = registerUser.PhoneNumber
+                };
+
+                _context.Clients.Add(client);
+                _context.SaveChanges();
+
                 return new AuthenticatedUserModel
                 {
                     //UserName = user.UserName,
