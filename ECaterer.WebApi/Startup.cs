@@ -50,11 +50,6 @@ namespace ECaterer.WebApi
 
             services.AddControllers();
 
-            //services.AddControllersWithViews();
-            //services.AddRazorPages();
-
-            //services.AddIdentityServices(Configuration);
-
             //IDENTITY
             services.AddIdentityCore<IdentityUser>(opt =>
             {
@@ -91,7 +86,7 @@ namespace ECaterer.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "My API",
+                    Title = "WebApi",
                     Version = "v1"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -125,18 +120,13 @@ namespace ECaterer.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
+                app.UseDatabaseErrorPage();
+                app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
             }
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            //    app.UseHsts();
-            //}
+
             app.UseHttpsRedirection();
             app.UseCors("OpenCorsPolicy");
-           // app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -147,6 +137,7 @@ namespace ECaterer.WebApi
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
