@@ -57,31 +57,23 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Email))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Client.Email))
             {
                 return BadRequest("Email taken");
             }
 
             var user = new IdentityUser
             {
-                Email = registerUser.Email,
-                UserName = registerUser.Email
+                Email = registerUser.Client.Email,
+                UserName = registerUser.Client.Email
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (result.Succeeded)
             {
-                var client = new Client
-                {
-                    Name = registerUser.Name,
-                    LastName = registerUser.LastName,
-                    Email = registerUser.Email,
-                    Address = registerUser.Address,
-                    PhoneNumber = registerUser.PhoneNumber
-                };
 
-                _context.Clients.Add(client);
+                _context.Clients.Add(registerUser.Client);
                 _context.SaveChanges();
 
                 return new AuthenticatedUserModel
@@ -89,7 +81,6 @@ namespace ECaterer.WebApi.Controllers
                     //UserName = user.UserName,
                     Token = _tokenService.CreateToken(user)
                 };
-
             }
 
             return BadRequest("Problem registering user");
