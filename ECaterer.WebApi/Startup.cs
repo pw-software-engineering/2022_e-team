@@ -45,6 +45,10 @@ namespace ECaterer.WebApi
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("CoreDbConnection")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -53,7 +57,11 @@ namespace ECaterer.WebApi
             //IDENTITY
             services.AddIdentityCore<IdentityUser>(opt =>
             {
-                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireNonAlphanumeric = true;
             })
                 .AddEntityFrameworkStores<DataContext>()
                 .AddSignInManager<SignInManager<IdentityUser>>();
@@ -109,8 +117,7 @@ namespace ECaterer.WebApi
                   new string[] { }
                 }
               });
-            })
-                ;
+            });
           
         }
 

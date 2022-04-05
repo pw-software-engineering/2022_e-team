@@ -8,22 +8,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ECaterer.Core.Models;
+using ECaterer.WebApi.Data;
+using ECaterer.Core;
 
 namespace ECaterer.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class ClientController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly TokenService _tokenService;
+        private readonly DataContext _context;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService)
+        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _context = context;
         }
 
         [Route("Login")]
@@ -52,27 +57,30 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Email))
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Client.Email))
             {
                 return BadRequest("Email taken");
             }
 
             var user = new IdentityUser
             {
-                Email = registerUser.Email,
-                UserName = registerUser.Email
+                Email = registerUser.Client.Email,
+                UserName = registerUser.Client.Email
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (result.Succeeded)
             {
+
+                _context.Clients.Add(registerUser.Client);
+                _context.SaveChanges();
+
                 return new AuthenticatedUserModel
                 {
                     //UserName = user.UserName,
                     Token = _tokenService.CreateToken(user)
                 };
-
             }
 
             return BadRequest("Problem registering user");
