@@ -11,7 +11,6 @@ namespace ECaterer.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class TestController : ControllerBase
     {
         // GET: api/<TestController>

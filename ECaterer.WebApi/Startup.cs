@@ -63,6 +63,7 @@ namespace ECaterer.WebApi
             services.AddIdentityCore<IdentityUser>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;
+                
             })
                 .AddEntityFrameworkStores<DataContext>()
                 .AddSignInManager<SignInManager<IdentityUser>>();
