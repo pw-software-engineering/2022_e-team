@@ -29,9 +29,11 @@
               },
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles/styles.scss",
-              "src/styles/eCatererThemeV1.scss"
+              "src/styles/ecaterer_theme_1_1.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -82,9 +84,11 @@
                 "input": "node_modules/@progress/kendo-theme-default/dist/all.css"
               },
               "src/styles/styles.scss",
-              "src/styles/eCatererThemeV1.scss"
+              "src/styles/ecaterer_theme_1_1.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js"
+            ],
             "assets": [
               "src/assets"
             ]
