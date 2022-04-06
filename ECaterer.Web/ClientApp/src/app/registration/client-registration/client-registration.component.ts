@@ -4,7 +4,6 @@ import { TextBoxComponent } from "@progress/kendo-angular-inputs";
 import { Title } from '@angular/platform-browser';
 import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
-import { setTime } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 
 @Component({
   selector: 'app-client-registration',
@@ -66,7 +65,7 @@ export class ClientRegistration implements OnInit {
       buildingNumber: new FormControl(this.addressData.buildingNumber, [Validators.required, Validators.maxLength(50), Validators.minLength(1),
         Validators.pattern(this.alphaNumReg)]),
       apartmentNumber: new FormControl(this.addressData.apartmentNumber, [Validators.maxLength(50), Validators.pattern(this.alphaNumReg)]),
-      postCode: new FormControl(this.addressData.postCode, [Validators.required, Validators.maxLength(6), Validators.minLength(6)]),
+      postCode: new FormControl(this.addressData.postCode, [Validators.required, Validators.maxLength(5), Validators.minLength(5)]),
       city: new FormControl(this.addressData.city, [Validators.required, Validators.minLength(2), Validators.maxLength(50),
         Validators.pattern(this.letterRegWithSpaceInside)])
     });

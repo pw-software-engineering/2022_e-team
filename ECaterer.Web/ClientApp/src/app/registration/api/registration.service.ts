@@ -1,6 +1,7 @@
 
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +9,16 @@ import { Injectable } from '@angular/core';
 
 export class RegistrationService {
 
-  constructor() {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
   }
 
   public registerUser(): Promise<object> {
     return new Promise<object>((resolve, reject) => {
+      //this.http.post("https://localhost:44330/" + "api/Client/Register", { password: "abcd", client: { email: "s@gmail.com" } })
+      //  .subscribe(
+      //    (data) => console.log(data),
+      //    (err) => console.log(err)
+      //  )
       $.get("someinvalidurl")
         .then((data) => resolve(data))
         .catch((err: any) => {

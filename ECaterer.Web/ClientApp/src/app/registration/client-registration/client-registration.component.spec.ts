@@ -247,14 +247,14 @@ describe('ClientRegistration', () => {
       street: "Długa",
       buildingNumber: "1",
       apartmentNumber: "79",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Warszawa"
     },
     {
       street: "Powstania Warszawskiego",
       buildingNumber: "1A",
       apartmentNumber: "",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Nowy Sącz"
     }
   ];
@@ -265,7 +265,7 @@ describe('ClientRegistration', () => {
       street: "Długa 1",
       buildingNumber: "1",
       apartmentNumber: "",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Warszawa"
     },
     // invalid on buildingNumber
@@ -273,7 +273,7 @@ describe('ClientRegistration', () => {
       street: "Długa",
       buildingNumber: "",
       apartmentNumber: "",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Warszawa"
     },
     // invalid on appartmentNumber
@@ -281,7 +281,7 @@ describe('ClientRegistration', () => {
       street: "Długa",
       buildingNumber: "1",
       apartmentNumber: " ",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Warszawa"
     },
     // invalid on postCode
@@ -289,7 +289,7 @@ describe('ClientRegistration', () => {
       street: "Długa",
       buildingNumber: "1",
       apartmentNumber: "",
-      postCode: "01-09",
+      postCode: "0109",
       city: "Warszawa"
     },
     // invalid on city
@@ -297,7 +297,7 @@ describe('ClientRegistration', () => {
       street: "Długa",
       buildingNumber: "1",
       apartmentNumber: "",
-      postCode: "01-095",
+      postCode: "01095",
       city: "Warszawa "
     }
   ];
