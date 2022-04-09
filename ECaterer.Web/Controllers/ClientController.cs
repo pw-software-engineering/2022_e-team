@@ -20,15 +20,15 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpPost("/login")]
-        public async Task<ActionResult<ApiKeyAuthTMP>> Login([FromBody] AuthDataTMP authData)
+        public async Task<ActionResult<AuthDTO>> Login([FromBody] LoginDTO authData)
         {
-            return BadRequest();
+            return Ok(new AuthDTO() { TokenJWT = "abcd" });
         }
 
         [HttpPost("/register")]
-        public async Task<ActionResult<ApiKeyAuthTMP>> Register([FromBody] Client clientData)
+        public async Task<ActionResult<AuthDTO>> Register([FromBody] RegisterDTO clientData)
         {
-            return BadRequest();
+            return Ok(new AuthDTO() { TokenJWT = "abcd" });
         }
 
         [HttpGet("/client/account")]

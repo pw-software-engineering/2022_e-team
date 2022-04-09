@@ -1,6 +1,6 @@
 ﻿using ECaterer.Core.Models;
 
-namespace ECaterer.WebApi.Models
+namespace ECaterer.Contracts
 {
     public class RegisterUserModel
     {

@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECaterer.Web", "ECaterer.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECareter.Web.Test", "ECareter.Web.Test\ECareter.Web.Test.csproj", "{3EEABC53-5A3A-4F3A-8FAB-CA9B5485F85B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECaterer.WebApi", "ECaterer.WebApi\ECaterer.WebApi.csproj", "{5E5196F9-8F3D-4565-89E9-238EB58FA2E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECaterer.WebApi", "ECaterer.WebApi\ECaterer.WebApi.csproj", "{5E5196F9-8F3D-4565-89E9-238EB58FA2E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECaterer.Contracts", "ECaterer.Contracts\ECaterer.Contracts.csproj", "{58712DC8-A3C2-4C54-B2AA-A30B90474117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{5E5196F9-8F3D-4565-89E9-238EB58FA2E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E5196F9-8F3D-4565-89E9-238EB58FA2E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E5196F9-8F3D-4565-89E9-238EB58FA2E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58712DC8-A3C2-4C54-B2AA-A30B90474117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58712DC8-A3C2-4C54-B2AA-A30B90474117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58712DC8-A3C2-4C54-B2AA-A30B90474117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58712DC8-A3C2-4C54-B2AA-A30B90474117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

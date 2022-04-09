@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ECaterer.WebApi.Models;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
 using ECaterer.WebApi.Data;
 using ECaterer.Core;
+using ECaterer.Contracts;
 
 namespace ECaterer.WebApi.Controllers
 {
