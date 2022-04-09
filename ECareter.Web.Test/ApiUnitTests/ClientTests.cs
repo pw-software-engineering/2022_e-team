@@ -65,10 +65,12 @@ namespace ECareter.Web.Test.ApiUnitTests
             var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
 
             var result = await _controller.Register(new RegisterUserModel() { Client = adambrown, Password = "12345678" });
-            var okResult = result.Result as OkResult;
-            var token = result.Value;
+            var okResult = result.Result as OkObjectResult;
 
             okResult.Should().NotBeNull();
+
+            var token = okResult.Value as AuthenticatedUserModel;
+
             token.Should().NotBeNull();
             token.Token.Should().NotBeNullOrWhiteSpace();
         }

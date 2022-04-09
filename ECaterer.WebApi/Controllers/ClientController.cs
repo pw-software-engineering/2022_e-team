@@ -44,11 +44,11 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
-                return new AuthenticatedUserModel
+                return Ok(new AuthenticatedUserModel
                 {
-                    Token = _tokenService.CreateToken(user),
-                   // UserName = user.Email
-                };
+                    //UserName = user.UserName,
+                    Token = _tokenService.CreateToken(user)
+                });
             }
 
             return Unauthorized();
@@ -57,7 +57,7 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Client.Email))
+            if (_userManager.Users.Any(x => x.Email == registerUser.Client.Email))
             {
                 return BadRequest("Email taken");
             }
@@ -76,11 +76,11 @@ namespace ECaterer.WebApi.Controllers
                 _context.Clients.Add(registerUser.Client);
                 _context.SaveChanges();
 
-                return new AuthenticatedUserModel
+                return Ok(new AuthenticatedUserModel
                 {
                     //UserName = user.UserName,
                     Token = _tokenService.CreateToken(user)
-                };
+                });
             }
 
             return BadRequest("Problem registering user");
