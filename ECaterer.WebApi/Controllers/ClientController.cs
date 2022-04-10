@@ -44,11 +44,11 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
-                return new AuthenticatedUserModel
+                return Ok(new AuthenticatedUserModel
                 {
-                    Token = _tokenService.CreateToken(user),
-                   // UserName = user.Email
-                };
+                    //UserName = user.UserName,
+                    Token = _tokenService.CreateToken(user)
+                });
             }
 
             return Unauthorized();
@@ -57,7 +57,7 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Client.Email))
+            if (_userManager.Users.Any(x => x.Email == registerUser.Client.Email))
             {
                 return BadRequest("Email taken");
             }
@@ -72,15 +72,30 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
+                _context.Clients.Add(new Client()
+                {
+                    Name = registerUser.Client.Name,
+                    LastName = registerUser.Client.LastName,
+                    Email = registerUser.Client.Email,
+                    PhoneNumber = registerUser.Client.PhoneNumber,
 
-                _context.Clients.Add(registerUser.Client);
+                    Address = new Address()
+                    {
+                        Street = registerUser.Client.Address.Street,
+                        BuildingNumber = registerUser.Client.Address.BuildingNumber,
+                        ApartmentNumber = registerUser.Client.Address.ApartmentNumber,
+                        PostCode = registerUser.Client.Address.PostCode,
+                        City = registerUser.Client.Address.City
+                    }
+                }) ;
+
                 _context.SaveChanges();
 
-                return new AuthenticatedUserModel
+                return Ok(new AuthenticatedUserModel
                 {
                     //UserName = user.UserName,
                     Token = _tokenService.CreateToken(user)
-                };
+                });
             }
 
             return BadRequest("Problem registering user");
