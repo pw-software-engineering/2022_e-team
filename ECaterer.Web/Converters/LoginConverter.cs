@@ -1,4 +1,5 @@
-﻿using ECaterer.Web.DTO.ClientDTO;
+﻿using ECaterer.Contracts;
+using ECaterer.Web.DTO.ClientDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,12 @@ namespace ECaterer.Web.Converters
 {
     public static class LoginConverter
     {
-        public static LoginDTO Convert(LoginDTO input)
+        public static LoginUserModel Convert(LoginDTO input)
         {
-            return input;
+            return new LoginUserModel() { 
+                Email = input.Email,
+                Password = input.Password
+            };
         }
     }
 }

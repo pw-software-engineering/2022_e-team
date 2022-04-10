@@ -42,7 +42,7 @@ export class ClientLogin implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      this.registrationService.loginUser()
+      this.registrationService.loginUser(this.loginData)
         .then(() => {
           this.router.navigate(['/home']);
         })

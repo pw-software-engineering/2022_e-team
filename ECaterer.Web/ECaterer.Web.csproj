@@ -83,4 +83,8 @@
     </ItemGroup>
   </Target>
 
+  <PropertyGroup>
+    <TypeScriptExperimentalDecorators>true</TypeScriptExperimentalDecorators>
+  </PropertyGroup>
+  
 </Project>

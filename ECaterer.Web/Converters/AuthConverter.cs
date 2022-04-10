@@ -1,4 +1,5 @@
-﻿using ECaterer.Web.DTO.ClientDTO;
+﻿using ECaterer.Contracts;
+using ECaterer.Web.DTO.ClientDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,12 @@ namespace ECaterer.Web.Converters
 {
     public static class AuthConverter
     {
-        public static AuthDTO ConvertBack(AuthDTO input)
+        public static AuthDTO ConvertBack(AuthenticatedUserModel input)
         {
-            return input;
+            return new AuthDTO()
+            {
+                TokenJWT = input.Token
+            };
         }
     }
 }

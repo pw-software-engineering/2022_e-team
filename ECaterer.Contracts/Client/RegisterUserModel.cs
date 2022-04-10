@@ -1,10 +1,10 @@
-﻿using ECaterer.Core.Models;
+﻿using ECaterer.Contracts.Client;
 
 namespace ECaterer.Contracts
 {
     public class RegisterUserModel
     {
         public string Password { get; set; }
-        public Client Client { get; set; }
+        public ClientModel Client { get; set; }
     }
 }

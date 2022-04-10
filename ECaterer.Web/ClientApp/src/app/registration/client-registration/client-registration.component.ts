@@ -47,7 +47,6 @@ export class ClientRegistration implements OnInit {
   constructor(private TitleService: Title, private router: Router, private registrationService: RegistrationService) {
 
     this.TitleService.setTitle("Rejestracja");
-
     this.form = new FormGroup({
       name: new FormControl(this.registrationData.name, [Validators.required,
         Validators.maxLength(50), Validators.minLength(2), Validators.pattern(this.letterReg)]),
@@ -91,7 +90,7 @@ export class ClientRegistration implements OnInit {
     this.addressForm.markAllAsTouched();
     this.clearError();
     if (this.addressForm.valid) {
-      this.registrationService.registerUser()
+      this.registrationService.registerUser(this.registrationData, this.addressData)
         .then(() => {
           this.router.navigate(['/home']);
         })

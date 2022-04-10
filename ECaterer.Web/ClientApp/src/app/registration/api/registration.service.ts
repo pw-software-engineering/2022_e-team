@@ -1,9 +1,11 @@
 
 
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { loginDto, registerDto, authDto } from './registrationDtos';
 import { CookieOptions, CookieService } from 'ngx-cookie';
+import { ILoginData } from '../client-login/client-login.component';
+import { IAddressData, IRegistrationData } from '../client-registration/client-registration.component';
 
 @Injectable({
   providedIn: 'root',
@@ -11,49 +13,59 @@ import { CookieOptions, CookieService } from 'ngx-cookie';
 
 export class RegistrationService {
 
+  private commonHeaders = new HttpHeaders();
+
   private TOKEN_KEY = "SESSIONID";
   private clientUrl: string;
 
   // in seconds
-  private expireTime: number = 20;
-
-  private jwtOptions: CookieOptions = {
-    secure: true
-  };
+  private expireTime: number = 30 * 60;
 
   constructor(private http: HttpClient,
     @Inject('BASE_URL') baseUrl: string,
     private cookieService: CookieService) {
     this.clientUrl = baseUrl + "client/";
+    this.commonHeaders.set("Content-Type", "application/json");
   }
 
-  public registerUser(): Promise<void | authDto> {
+  public registerUser(registrationData: IRegistrationData, addressData: IAddressData): Promise<void | authDto> {
 
     var registerData: registerDto = {
-      password: "abcd"
+      password: registrationData.password,
+      client: {
+        firstName: registrationData.name,
+        lastName: registrationData.surname,
+        phone: registrationData.phone,
+        email: registrationData.email
+      },
+      address: {
+        street: addressData.street,
+        building: addressData.buildingNumber,
+        apartment: addressData.apartmentNumber,
+        city: addressData.city,
+        code: addressData.postCode
+      }
     };
 
-    return this.http.post<authDto>(this.clientUrl + "registeruser", registerData).toPromise()
+    return this.http.post<authDto>(this.clientUrl + "registeruser", registerData, { headers: this.commonHeaders }).toPromise()
       .then(
         (data: authDto) => {
-          this.refreshExpireJWT();
-          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.jwtOptions);
+          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
         }
     );
   }
 
-  public loginUser(): Promise<void | authDto> {
+  public loginUser(loginData: ILoginData): Promise<void | authDto> {
 
     var loginData: loginDto = {
-      email: "s@gmail.com",
-      password: "abcd"
+      email: loginData.email,
+      password: loginData.password
     };
 
-    return this.http.post<authDto>(this.clientUrl + "loginuser", loginData).toPromise()
+    return this.http.post<authDto>(this.clientUrl + "loginuser", loginData, { headers: this.commonHeaders }).toPromise()
       .then(
         (data) => {
-          this.refreshExpireJWT();
-          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.jwtOptions);
+          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
         }
       );
   }
@@ -83,11 +95,16 @@ export class RegistrationService {
     this.cookieService.remove(this.TOKEN_KEY);
 }
 
-  private refreshExpireJWT() {
+  private getNewJWTOptions() {
     var targetDate = new Date();
     targetDate.setTime(targetDate.getTime() + this.expireTime * 1000);
 
-    this.jwtOptions.expires = targetDate;
+     var jwtOptions: CookieOptions = {
+       secure: true,
+       expires: targetDate
+    };
+
+    return jwtOptions;
   }
 }
 

@@ -10,6 +10,7 @@ using ECaterer.Web.Infrastructure;
 using System.Net.Http;
 using System.Net.Http.Json;
 using ECaterer.Web.Converters;
+using ECaterer.Contracts;
 
 namespace ECaterer.Web.Controllers
 {
@@ -31,25 +32,23 @@ namespace ECaterer.Web.Controllers
         [HttpPost("loginuser")]
         public async Task<ActionResult<AuthDTO>> Login([FromBody] LoginDTO authData)
         {
-            //var apiClient = new ApiClient(_configuration);
-            var response = await _apiClient.PostAsJsonAsync<LoginDTO>("/client/login", LoginConverter.Convert(authData));
-            var content = await response.Content.ReadFromJsonAsync<AuthDTO>();
+            var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/api/Client/Login", LoginConverter.Convert(authData));
+            var content = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
             if (response.IsSuccessStatusCode)
             {
-                return Ok(new AuthDTO() { TokenJWT = AuthConverter.ConvertBack(content).TokenJWT });
+                return Ok(AuthConverter.ConvertBack(content));
             }
             return BadRequest();
         }
 
         [HttpPost("registeruser")]
-        public async Task<ActionResult<AuthDTO>> Register([FromBody] RegisterDTO clientData)
+        public async Task<ActionResult<AuthDTO>> Register ([FromBody] RegisterDTO clientData)
         {
-            //var apiClient = new ApiClient(_configuration);
-            var response = await _apiClient.PostAsJsonAsync<RegisterDTO>("/client/register", RegisterConverter.Convert(clientData));
-            var content = await response.Content.ReadFromJsonAsync<AuthDTO>();
+            var response = await _apiClient.PostAsJsonAsync<RegisterUserModel>("/api/Client/Register", RegisterConverter.Convert(clientData));
             if (response.IsSuccessStatusCode)
             {
-                return Ok(new AuthDTO() { TokenJWT = AuthConverter.ConvertBack(content).TokenJWT });
+                var content = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
+                return Ok(AuthConverter.ConvertBack(content));
             }
             return BadRequest();
         }
