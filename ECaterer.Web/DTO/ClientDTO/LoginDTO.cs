@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace ECaterer.Web.DTO.ClientDTO
 {
-    public class AuthDataTMP
+    public class LoginDTO
     {
-        //temporary class for test purpose
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
