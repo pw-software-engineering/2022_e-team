@@ -24,7 +24,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet]
-        public Task<ActionResult<GetMealDTO[]>> GetMeals(int offset, int limit, string sort, string name, string name_with, bool vegan, int colories, int colories_lt, int colories_ht)
+        public Task<ActionResult<GetMealDTO[]>> GetMeals(int offset = 0, int limit = 10, string sort = "title(asc)", string name = null, string name_with = null, bool vegan = false, int colories = 0, int colories_lt = 0, int colories_ht = 0)
         {
             throw new NotImplementedException();
         }
