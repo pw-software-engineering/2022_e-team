@@ -72,8 +72,23 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
+                _context.Clients.Add(new Client()
+                {
+                    Name = registerUser.Client.Name,
+                    LastName = registerUser.Client.LastName,
+                    Email = registerUser.Client.Email,
+                    PhoneNumber = registerUser.Client.PhoneNumber,
 
-                _context.Clients.Add(registerUser.Client);
+                    Address = new Address()
+                    {
+                        Street = registerUser.Client.Address.Street,
+                        BuildingNumber = registerUser.Client.Address.BuildingNumber,
+                        ApartmentNumber = registerUser.Client.Address.ApartmentNumber,
+                        PostCode = registerUser.Client.Address.PostCode,
+                        City = registerUser.Client.Address.City
+                    }
+                }) ;
+
                 _context.SaveChanges();
 
                 return new AuthenticatedUserModel
