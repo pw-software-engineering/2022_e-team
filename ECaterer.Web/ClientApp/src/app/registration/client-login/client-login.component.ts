@@ -44,7 +44,7 @@ export class ClientLogin implements OnInit {
     if (this.form.valid) {
       this.registrationService.loginUser()
         .then(() => {
-          console.log("Pomyślnie zalogowano.");
+          this.router.navigate(['/home']);
         })
         .catch((err) => {
           this.showError(err);

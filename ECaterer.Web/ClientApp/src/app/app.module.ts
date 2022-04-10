@@ -10,6 +10,7 @@ import { LabelModule } from "@progress/kendo-angular-label";
 import { InputsModule } from "@progress/kendo-angular-inputs";
 import { LayoutModule } from "@progress/kendo-angular-layout";
 import { ButtonsModule } from "@progress/kendo-angular-buttons";
+import { CookieModule } from "ngx-cookie";
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -17,6 +18,8 @@ import { HomeComponent } from './home/home.component';
 import { ClientRegistration } from './registration/client-registration/client-registration.component';
 import { ClientLogin } from './registration/client-login/client-login.component';
 import { WorkerLogin } from './registration/worker-login/worker-login.component';
+import { AuthGuard } from './authGuard/authGuard';
+import { LoginGuard } from './authGuard/loginGuard';
 
 @NgModule({
   declarations: [
@@ -31,9 +34,10 @@ import { WorkerLogin } from './registration/worker-login/worker-login.component'
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'client/register', component: ClientRegistration, pathMatch: 'full' },
-      { path: 'client/login', component: ClientLogin, pathMatch: 'full' },
+      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'home', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'client/register', component: ClientRegistration, pathMatch: 'full', canActivate: [LoginGuard] },
+      { path: 'client/login', component: ClientLogin, pathMatch: 'full', canActivate: [LoginGuard] },
       { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
     ]),
     GridModule,
@@ -44,7 +48,8 @@ import { WorkerLogin } from './registration/worker-login/worker-login.component'
     InputsModule,
     LayoutModule,
     LabelModule,
-    ButtonsModule
+    ButtonsModule,
+    CookieModule.forRoot()
   ],
   providers: [Title],
   bootstrap: [AppComponent]

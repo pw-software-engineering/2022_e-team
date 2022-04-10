@@ -1,4 +1,5 @@
 using ECaterer.Core;
+using ECaterer.Web.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +30,7 @@ namespace ECaterer
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddSingleton<ApiClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

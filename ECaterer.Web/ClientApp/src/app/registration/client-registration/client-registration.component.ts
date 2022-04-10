@@ -93,7 +93,7 @@ export class ClientRegistration implements OnInit {
     if (this.addressForm.valid) {
       this.registrationService.registerUser()
         .then(() => {
-          console.log("Pomyślnie zarejestrowano.");
+          this.router.navigate(['/home']);
         })
         .catch((err) => {
           this.showError(err);

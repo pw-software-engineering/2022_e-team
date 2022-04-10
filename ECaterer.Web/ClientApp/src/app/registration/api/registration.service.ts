@@ -2,6 +2,8 @@
 
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { loginDto, registerDto, authDto } from './registrationDtos';
+import { CookieOptions, CookieService } from 'ngx-cookie';
 
 @Injectable({
   providedIn: 'root',
@@ -9,44 +11,51 @@ import { HttpClient } from '@angular/common/http';
 
 export class RegistrationService {
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+  private TOKEN_KEY = "SESSIONID";
+  private clientUrl: string;
+
+  // in seconds
+  private expireTime: number = 20;
+
+  private jwtOptions: CookieOptions = {
+    secure: true
+  };
+
+  constructor(private http: HttpClient,
+    @Inject('BASE_URL') baseUrl: string,
+    private cookieService: CookieService) {
+    this.clientUrl = baseUrl + "client/";
   }
 
-  public registerUser(): Promise<object> {
-    return new Promise<object>((resolve, reject) => {
-      //this.http.post("https://localhost:44330/" + "api/Client/Register", { password: "abcd", client: { email: "s@gmail.com" } })
-      //  .subscribe(
-      //    (data) => console.log(data),
-      //    (err) => console.log(err)
-      //  )
-      $.get("someinvalidurl")
-        .then((data) => resolve(data))
-        .catch((err: any) => {
-          switch (err.status) {
-            case "501":
-              reject(err.responseText);
-              break;
-            default:
-              reject("Wystąpił błąd serwera. Spróbuj później.");
-          }
-        });
-    });
+  public registerUser(): Promise<void | authDto> {
+
+    var registerData: registerDto = {
+      password: "abcd"
+    };
+
+    return this.http.post<authDto>(this.clientUrl + "registeruser", registerData).toPromise()
+      .then(
+        (data: authDto) => {
+          this.refreshExpireJWT();
+          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.jwtOptions);
+        }
+    );
   }
 
-  public loginUser(): Promise<object> {
-    return new Promise<object>((resolve, reject) => {
-      $.get("someinvalidurl")
-        .then((data) => resolve(data))
-        .catch((err: any) => {
-          switch (err.status) {
-            case "501":
-              reject(err.responseText);
-              break;
-            default:
-              reject("Wystąpił błąd serwera. Spróbuj później.");
-          }
-        });
-    });
+  public loginUser(): Promise<void | authDto> {
+
+    var loginData: loginDto = {
+      email: "s@gmail.com",
+      password: "abcd"
+    };
+
+    return this.http.post<authDto>(this.clientUrl + "loginuser", loginData).toPromise()
+      .then(
+        (data) => {
+          this.refreshExpireJWT();
+          this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.jwtOptions);
+        }
+      );
   }
 
   public loginWorker(): Promise<object> {
@@ -58,13 +67,28 @@ export class RegistrationService {
             case "501":
               reject(err.responseText);
               break;
-            default:
+            default:      
               reject("Wystąpił błąd serwera. Spróbuj później.");
           }
         });
     });
   }
 
+  public getToken(): string | null {
+    var token = this.cookieService.get(this.TOKEN_KEY);
+    return token !== undefined ? token : null;
+  }
+
+  public logout() {
+    this.cookieService.remove(this.TOKEN_KEY);
+}
+
+  private refreshExpireJWT() {
+    var targetDate = new Date();
+    targetDate.setTime(targetDate.getTime() + this.expireTime * 1000);
+
+    this.jwtOptions.expires = targetDate;
+  }
 }
 
 
