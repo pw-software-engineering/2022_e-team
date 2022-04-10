@@ -6,7 +6,6 @@ using Xunit;
 using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using ECaterer.Web.DTO.ClientDTO;
 using ECaterer.WebApi.Controllers;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -31,10 +31,49 @@ namespace ECareter.Web.Test.ApiUnitTests
         }
 
         [Fact]
+        public async void LoginClient_ShouldReturnTokenAndOk()
+        {
+            var mockUserManager = _fixture.GetMockUserManager();
+            var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
+            var johnSmith = _fixture.context.Clients.FirstOrDefault();
+
+            mockUserManager
+               .Setup(r => r.FindByEmailAsync(
+                   It.Is<string>(email => email == johnSmith.Email)))
+               .ReturnsAsync(new IdentityUser()
+               {
+                   Email = johnSmith.Email,
+                   UserName = johnSmith.Email
+               });
+            mockSignInManager
+                .Setup(r => r.CheckPasswordSignInAsync(
+                    It.Is<IdentityUser>(user => user.Email == johnSmith.Email),
+                    It.Is<string>(password => password == "12345678"),
+                    false))
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
+
+            LoginUserModel loginUserModel = new LoginUserModel() 
+            { 
+                Email = johnSmith.Email,
+                Password = "12345678"
+            };
+
+            var result = await _controller.Login(loginUserModel);
+            var okResult = result.Result as OkObjectResult;
+            var token = okResult.Value as AuthenticatedUserModel;
+
+            okResult.Should().NotBeNull();
+            token.Should().NotBeNull();
+            token.Token.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Fact]
         public async void RegisterClient_ShouldReturnTokenAndOk()
         {
             var mockUserManager = _fixture.GetMockUserManager();
             var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
+
             var adambrown = new Client()
             {
                 ClientId = 3,
@@ -73,13 +112,25 @@ namespace ECareter.Web.Test.ApiUnitTests
 
             token.Should().NotBeNull();
             token.Token.Should().NotBeNullOrWhiteSpace();
+
+            var lastAddedUser = _fixture.context.Clients.Last();
+            var lastAddedUserEmail = lastAddedUser.Email;
+            if (lastAddedUserEmail.Equals(adambrown.Email))
+            {
+                _fixture.context.Clients.Remove(lastAddedUser);
+                _fixture.context.SaveChanges();
+            }
+
+            lastAddedUserEmail.Should().Be(adambrown.Email);
         }
 
-        ////[Fact]
-        //public void GetClientData_ShouldReturnClientDataAndOk()
+        //[Fact]
+        //public void getclientdata_shouldreturnclientdataandok()
         //{
-        //    var _controller = new ClientController(_fixture.context);
-        //    var johnSmith = _fixture.context.Clients.FirstOrDefault();
+        //    var mockUserManager = _fixture.GetMockUserManager();
+        //    var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
+        //    var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
+        //    mockSignInManager.Setup(s => s.)
 
         //    //login here
 
