@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ECaterer.Core\ECaterer.Core.csproj" />
+    <ProjectReference Include="..\ECaterer.Web\ECaterer.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
