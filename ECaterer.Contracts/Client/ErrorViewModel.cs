@@ -1,6 +1,6 @@
 using System;
 
-namespace ECaterer.WebApi.Models
+namespace ECaterer.Contracts
 {
     public class ErrorViewModel
     {

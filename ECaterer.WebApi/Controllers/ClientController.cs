@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ECaterer.WebApi.Models;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
 using ECaterer.WebApi.Data;
 using ECaterer.Core;
+using ECaterer.Contracts;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -72,8 +72,23 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
+                _context.Clients.Add(new Client()
+                {
+                    Name = registerUser.Client.Name,
+                    LastName = registerUser.Client.LastName,
+                    Email = registerUser.Client.Email,
+                    PhoneNumber = registerUser.Client.PhoneNumber,
 
-                _context.Clients.Add(registerUser.Client);
+                    Address = new Address()
+                    {
+                        Street = registerUser.Client.Address.Street,
+                        BuildingNumber = registerUser.Client.Address.BuildingNumber,
+                        ApartmentNumber = registerUser.Client.Address.ApartmentNumber,
+                        PostCode = registerUser.Client.Address.PostCode,
+                        City = registerUser.Client.Address.City
+                    }
+                }) ;
+
                 _context.SaveChanges();
 
                 return Ok(new AuthenticatedUserModel
