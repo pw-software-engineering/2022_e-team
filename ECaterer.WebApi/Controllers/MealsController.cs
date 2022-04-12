@@ -36,9 +36,20 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("{mealId}")]
-        public Task<ActionResult<Meal>> GetMealById(string mealId)
+        public async Task<ActionResult<Meal>> GetMealById(int mealId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var meal = _context.Meals.FirstOrDefault(meal => meal.MealId == mealId);
+                if (meal is null)
+                    return NotFound("Podany posiłek nie istnieje");
+
+                return Ok(meal);
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie pobrania posiłku");
+            }
         }
 
         [HttpPut("{mealId}")]
@@ -48,9 +59,23 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpDelete("{mealId}")]
-        public Task<ActionResult> DeleteMeal(string mealId)
+        public async Task<ActionResult> DeleteMeal(int mealId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var meal = _context.Meals.FirstOrDefault(meal => meal.MealId == mealId);
+                if (meal is null)
+                    return NotFound("Podany posiłek nie istnieje");
+
+                _context.Meals.Remove(meal);
+                await _context.SaveChangesAsync();
+
+                return Ok("Powodzenie usunięcia posiłku");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie usunięcia posiłku");
+            }
         }
     }
 }
