@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using ECaterer.Web.DTO.ClientDTO;
 using ECaterer.WebApi.Controllers;
 using ECaterer.WebApi.Services;
-using ECaterer.WebApi.Models;
 using Moq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -18,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ECaterer.Contracts;
+using ECaterer.Contracts.Client;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -74,15 +75,13 @@ namespace ECareter.Web.Test.ApiUnitTests
             var mockUserManager = _fixture.GetMockUserManager();
             var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
 
-            var adambrown = new Client()
+            var adambrown = new ClientModel()
             {
-                ClientId = 3,
                 Name = "Adam",
                 LastName = "Brown",
                 Email = "adam.brown@gmail.com",
-                Address = new Address() 
+                Address = new AddressModel() 
                 {
-                    AddressId = 3,
                     Street = "Street 3",
                     BuildingNumber = "3",
                     ApartmentNumber = "3",
