@@ -34,11 +34,21 @@ namespace ECaterer.Web.Controllers
         {
             var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/api/Client/Login", LoginConverter.Convert(authData));
             var content = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
+
             if (response.IsSuccessStatusCode)
             {
                 return Ok(AuthConverter.ConvertBack(content));
             }
-            return BadRequest();
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+
         }
 
         [HttpPost("registeruser")]

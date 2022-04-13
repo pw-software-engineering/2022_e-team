@@ -95,7 +95,7 @@ export class ClientRegistration implements OnInit {
           this.router.navigate(['/home']);
         })
         .catch((err) => {
-          this.showError(err);
+          this.showError("Wystąpił błąd serwera. Spróbuj później.");
         });
     }
     else {

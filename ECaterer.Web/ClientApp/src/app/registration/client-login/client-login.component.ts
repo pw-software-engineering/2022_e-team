@@ -47,7 +47,10 @@ export class ClientLogin implements OnInit {
           this.router.navigate(['/home']);
         })
         .catch((err) => {
-          this.showError(err);
+          if (err.status == 401)
+            this.showError("Nieprawidłowy mail lub hasło");
+          else
+            this.showError("Wystąpił błąd serwera. Spróbuj ponownie później.");
         });
     }
     else {
