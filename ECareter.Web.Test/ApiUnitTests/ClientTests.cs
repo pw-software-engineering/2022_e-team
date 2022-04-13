@@ -5,10 +5,20 @@ using FluentAssertions;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
-using ECaterer.Web.Controllers;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using ECaterer.Web.DTO.ClientDTO;
+using ECaterer.WebApi.Controllers;
+using ECaterer.WebApi.Services;
+using Moq;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using ECaterer.Contracts;
+using ECaterer.Contracts.Client;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -21,328 +31,92 @@ namespace ECareter.Web.Test.ApiUnitTests
             _fixture = fixture;
         }
 
-        //[Fact]
-        public void GetClientData_ShouldReturnClientDataAndOk()
+        [Fact]
+        public async void LoginClient_ShouldReturnTokenAndOk()
         {
-            var _controller = new ClientController(_fixture.context);
+            var mockUserManager = _fixture.GetMockUserManager();
+            var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
             var johnSmith = _fixture.context.Clients.FirstOrDefault();
 
-            //login here
+            mockUserManager
+               .Setup(r => r.FindByEmailAsync(
+                   It.Is<string>(email => email == johnSmith.Email)))
+               .ReturnsAsync(new IdentityUser()
+               {
+                   Email = johnSmith.Email,
+                   UserName = johnSmith.Email
+               });
+            mockSignInManager
+                .Setup(r => r.CheckPasswordSignInAsync(
+                    It.Is<IdentityUser>(user => user.Email == johnSmith.Email),
+                    It.Is<string>(password => password == "12345678"),
+                    false))
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
 
-            var result = _controller.GetClientData().Result;
-            var okResult = result.Result as OkResult;
-            var clientData = result.Value;
+            LoginUserModel loginUserModel = new LoginUserModel() 
+            { 
+                Email = johnSmith.Email,
+                Password = "12345678"
+            };
+
+            var result = await _controller.Login(loginUserModel);
+            var okResult = result.Result as OkObjectResult;
+            var token = okResult.Value as AuthenticatedUserModel;
 
             okResult.Should().NotBeNull();
-            clientData.Should().Be(johnSmith);
+            token.Should().NotBeNull();
+            token.Token.Should().NotBeNullOrWhiteSpace();
         }
 
-        //[Fact]
-        public void EditClientData_ShouldReturnEditedClientDataAndOk()
+        [Fact]
+        public async void RegisterClient_ShouldReturnTokenAndOk()
         {
-            var _controller = new ClientController(_fixture.context);
-            var johnSmith = _fixture.context.Clients.Find(1);
-            var tomLukas = _fixture.context.Clients.Find(2);
+            var mockUserManager = _fixture.GetMockUserManager();
+            var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
 
-
-            var result = _controller.EditClientData(tomLukas);
-            var okResult = result.Result as OkResult;
-            var clientData = _fixture.context.Clients.FirstOrDefault();
-            if (clientData.Name == "Tom")
+            var adambrown = new ClientModel()
             {
-                _fixture.context.Clients.Remove(tomLukas);
-                _fixture.context.Clients.Add(johnSmith);
-                _fixture.context.SaveChanges();
-            }
-
-            okResult.Should().NotBeNull();
-            clientData.Should().Be(tomLukas);
-        }
-
-        //[Fact]
-        public void GetOrdersWithoutParams_ReturnsArrayOfAllOrders()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders().Result;
-            var okResult = result.Result as OkResult;
-            var ordersCount = result.Value is not null ? result.Value.Length : 0;
-
-            okResult.Should().NotBeNull();
-            ordersCount.Should().Be(3);
-        }
-
-        //[Fact]
-        public void GetAllOrdersWithOffsetOne_ReturnsArrayOfAllOrdersWithoutFirstOne()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().TakeLast(2).ToArray();
-
-            var result = _controller.GetOrders(1).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetAllOrdersWithInvalidOffset_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(-5).Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetTwoFirstOrders_ReturnsArrayOfTwoFirstOrders()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Take(2).ToArray();
-
-            var result = _controller.GetOrders(0, 2).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetAllOrdersWithInvalidLimit_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(0, -5).Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetOrdersSortedByStartDateDesc_ReturnsArrayOfAllOrdersSortedByStartDateDesc()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().OrderByDescending(order => order.StartDate).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "startDate(desc)").Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersSortedByInvalidSortString_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(0, 0, "somesortstring").Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetOrdersStartedAtExactDate_ReturnsArrayOfOrdersStartedAtExactDate()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.OrderId == 1).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", expected.First().StartDate).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersEndedAtExactDate_ReturnsArrayOfOrdersEndedAtExactDate()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.OrderId == 2).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, expected.First().EndDate).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersWithExactPrice_ReturnsArrayOfOrdersWithExactPrice()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 500).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 500).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersWithInvalidPrice_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(0, 0, "", null, null, -100).Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetOrdersWithPriceBelowGiven_ReturnsArrayOfOrdersWithPriceBelowGiven()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.Price < 600).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 0, 600).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersWithPriceBelowGivenInvalid_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 0, -100).Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetOrdersWithPriceAboveGiven_ReturnsArrayOfOrdersWithPriceAboveGiven()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.Price > 300).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 0, 0, 300).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersWithPriceAboveGivenInvalid_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 0, 0, -100).Result;
-            var badRequestResult = result.Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void GetOrdersWithExactPriceAndAboveGiven_ReturnsEmptyArrayOfOrders()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 300 && order.Price > 500).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 300, 0, 500).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void GetOrdersWithExactPriceAndBelowGiven_ReturnsEmptyArrayOfOrders()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var expected = _fixture.GetSampleOrders().Where(order => order.Price == 600 && order.Price < 500).ToArray();
-
-            var result = _controller.GetOrders(0, 0, "", null, null, 600, 500).Result;
-            var okResult = result.Result as OkResult;
-
-            okResult.Should().NotBeNull();
-            result.Value.Should().Equal(expected);
-        }
-
-        //[Fact]
-        public void PostOrder_ShouldAddOrderToDatabaseAndReturnOk()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var orderDTO = new OrderDTO()
-            {
-                dietIDs = new string[2] { "1", "2" },
-                deliveryDetails = new DeliveryDetails()
+                Name = "Adam",
+                LastName = "Brown",
+                Email = "adam.brown@gmail.com",
+                Address = new AddressModel() 
                 {
-                    DeliveryDetailsId = 1,
-                    Address = new Address()
-                    {
-                        AddressId = 1,
-                        Street = "Koszykowa",
-                        BuildingNumber = "75",
-                        PostCode = "00-623",
-                        City = "Warszawa"
-                    },
-                    PhoneNumber = "+48123456789"
+                    Street = "Street 3",
+                    BuildingNumber = "3",
+                    ApartmentNumber = "3",
+                    PostCode = "00-530",
+                    City = "Krakow3"
                 },
-                startDate = DateTime.Now,
-                endDate = DateTime.UtcNow
+                PhoneNumber = "+48135792468"
             };
 
-            var okResult = _controller.PostOrder(orderDTO).Result as OkResult;
-            var ordersCount = _fixture.context.Orders.Count();
-            var last = _fixture.context.Orders.Last();
-            if (last.OrderId != 3)
+            mockUserManager
+                .Setup(r => r.CreateAsync(
+                    It.Is<IdentityUser>(user => user.Email == adambrown.Email),
+                    It.Is<string>(password => password == "12345678")))
+                .ReturnsAsync(IdentityResult.Success);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
+
+            var result = await _controller.Register(new RegisterUserModel() { Client = adambrown, Password = "12345678" });
+            var okResult = result.Result as OkObjectResult;
+
+            okResult.Should().NotBeNull();
+
+            var token = okResult.Value as AuthenticatedUserModel;
+
+            token.Should().NotBeNull();
+            token.Token.Should().NotBeNullOrWhiteSpace();
+
+            var lastAddedUser = _fixture.context.Clients.Last();
+            var lastAddedUserEmail = lastAddedUser.Email;
+            if (lastAddedUserEmail.Equals(adambrown.Email))
             {
-                _fixture.context.Orders.Remove(last);
+                _fixture.context.Clients.Remove(lastAddedUser);
                 _fixture.context.SaveChanges();
             }
 
-
-            okResult.Should().NotBeNull();
-            ordersCount.Should().Be(4);
-        }
-
-        //[Fact]
-        public void PostComplaint_ShouldAddComplaintToDatabaseAndToOrderAndReturnOk()
-        {
-            var _controller = new ClientController(_fixture.context);
-            var complaintDTO = new ComplaintDTO()
-            {
-                complaint_description = "Some description"
-            };
-
-            var okResult = _controller.PostComplaint(1, complaintDTO).Result as OkResult;
-            var complaintsCount = _fixture.context.Complaints.Count();
-            var complaint = _fixture.context.Orders.Find(1).Complaint;
-            var addedComplaintToOrder = (complaint is not null && complaint.Description.Equals(complaintDTO.complaint_description));
-
-            okResult.Should().NotBeNull();
-            complaintsCount.Should().Be(1);
-            addedComplaintToOrder.Should().BeTrue();
-        }
-
-        //[Fact]
-        public void PayOrderWithId_ShouldReturnOk()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var okResult = _controller.PayOrder(1).Result as OkResult;
-
-            okResult.Should().NotBeNull();
-        }
-
-        //[Fact]
-        public void PayOrderWithUnexistingId_ShouldReturnBadRequest()
-        {
-            var _controller = new ClientController(_fixture.context);
-
-            var badRequestResult = _controller.PayOrder(4).Result as BadRequestResult;
-
-            badRequestResult.Should().NotBeNull();
+            lastAddedUserEmail.Should().Be(adambrown.Email);
         }
     }
 
@@ -380,11 +154,6 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }
             });
             context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            context.Dispose();
         }
 
         public IEnumerable<Order> GetSampleOrders()
@@ -452,6 +221,37 @@ namespace ECareter.Web.Test.ApiUnitTests
             orders.Add(order3);
 
             return orders;
+        }
+
+        public Mock<UserManager<IdentityUser>> GetMockUserManager()
+        {
+            return new Mock<UserManager<IdentityUser>>(
+                new Mock<IUserStore<IdentityUser>>().Object,
+                new Mock<IOptions<IdentityOptions>>().Object,
+                new Mock<IPasswordHasher<IdentityUser>>().Object,
+                new IUserValidator<IdentityUser>[0],
+                new IPasswordValidator<IdentityUser>[0],
+                new Mock<ILookupNormalizer>().Object,
+                new Mock<IdentityErrorDescriber>().Object,
+                new Mock<IServiceProvider>().Object,
+                new Mock<ILogger<UserManager<IdentityUser>>>().Object);
+        }
+
+        public Mock<SignInManager<IdentityUser>> GetMockSignInManager(Mock<UserManager<IdentityUser>> mockUserManager)
+        {
+            return new Mock<SignInManager<IdentityUser>>(
+                mockUserManager.Object,
+                new Mock<IHttpContextAccessor>().Object,
+                 new Mock<IUserClaimsPrincipalFactory<IdentityUser>>().Object,
+                 new Mock<IOptions<IdentityOptions>>().Object,
+                 new Mock<ILogger<SignInManager<IdentityUser>>>().Object,
+                 new Mock<IAuthenticationSchemeProvider>().Object,
+                 new Mock<IUserConfirmation<IdentityUser>>().Object);
+        }
+
+        public void Dispose()
+        {
+            context.Dispose();
         }
     }
 }

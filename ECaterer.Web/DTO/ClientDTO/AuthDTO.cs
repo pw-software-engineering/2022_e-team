@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace ECaterer.Web.DTO.ClientDTO
 {
-    public class ApiKeyAuthTMP
+    public class AuthDTO
     {
-        //temporary class for test purpose
+        public string TokenJWT { get; set; }
     }
 }
