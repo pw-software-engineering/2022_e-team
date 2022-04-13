@@ -8,5 +8,9 @@ namespace ECaterer.Web.DTO.ClientDTO
     public class RegisterDTO
     {
         public string Password { get; set; }
+
+        public ClientDTO Client { get; set; }
+
+        public AddressDTO Address { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace ECaterer.WebApi.Services
             {
                 // Takes all of our migrations files and apply them against the database in case they are not implemented
                 serviceScope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
-                serviceScope.ServiceProvider.GetService<DataContext>().Database.Migrate();
+                //serviceScope.ServiceProvider.GetService<DataContext>().Database.Migrate();
             }
         }
     }
