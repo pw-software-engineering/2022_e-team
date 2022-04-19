@@ -1,5 +1,4 @@
-﻿
-using ECaterer.Contracts.Client;
+﻿using ECaterer.Contracts.Client;
 
 namespace ECaterer.Contracts
 {

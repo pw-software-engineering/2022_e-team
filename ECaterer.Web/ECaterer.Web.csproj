@@ -23,21 +23,16 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="ClientApp\src\app\NewFolder\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="ClientApp\src\app\NewFolder\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ClientApp\src\app\NewFolder\**" />
-    <EmbeddedResource Remove="ClientApp\src\app\NewFolder\**" />
-    <TypeScriptCompile Remove="ClientApp\src\app\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="ClientApp\src\app\app.component.spec.ts" />
+    <None Remove="ClientApp\src\app\authGuard\authGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\loginGuard.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
+    <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +47,12 @@
   <ItemGroup>
     <ProjectReference Include="..\ECaterer.Contracts\ECaterer.Contracts.csproj" />
     <ProjectReference Include="..\ECaterer.Core\ECaterer.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\loginGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -82,4 +83,8 @@
     </ItemGroup>
   </Target>
 
+  <PropertyGroup>
+    <TypeScriptExperimentalDecorators>true</TypeScriptExperimentalDecorators>
+  </PropertyGroup>
+  
 </Project>

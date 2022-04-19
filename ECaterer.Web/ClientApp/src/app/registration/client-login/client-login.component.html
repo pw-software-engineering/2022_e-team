@@ -7,14 +7,18 @@
       <fieldset class="k-form-fieldset">
         <kendo-formfield>
           <kendo-label [for]="email" text="Email"></kendo-label>
-          <kendo-textbox formControlName="email"
+          <kendo-textbox
+                          [(ngModel)]="loginData.email"
+                         formControlName="email"
                          #email
                          required
                          placeholder="Wpisz prawidłowy adres email"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="password" text="Hasło"></kendo-label>
-          <kendo-textbox formControlName="password"
+          <kendo-textbox
+                               [(ngModel)]="loginData.password"
+                               formControlName="password"
                                #password
                                required
                                placeholder="Wpisz hasło"

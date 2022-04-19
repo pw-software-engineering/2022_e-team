@@ -7,28 +7,36 @@
       <fieldset class="k-form-fieldset">
         <kendo-formfield>
           <kendo-label [for]="Name" text="Imię"></kendo-label>
-          <kendo-textbox formControlName="name"
+          <kendo-textbox
+                         [(ngModel)]="registrationData.name"
+                         formControlName="name"
                          #name
                          required
                          placeholder="Wpisz swoje imię"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="surname" text="Nazwisko"></kendo-label>
-          <kendo-textbox formControlName="surname"
+          <kendo-textbox
+                         [(ngModel)]="registrationData.surname"
+                         formControlName="surname"
                          #surname
                          required
                          placeholder="Wpisz swoje nazwisko"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="email" text="Email"></kendo-label>
-          <kendo-textbox formControlName="email"
+          <kendo-textbox
+                         [(ngModel)]="registrationData.email"
+                         formControlName="email"
                          #email
                          required
                          placeholder="Wpisz prawidłowy adres email"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="password" text="Hasło"></kendo-label>
-          <kendo-textbox formControlName="password"
+          <kendo-textbox
+                         [(ngModel)]="registrationData.password"
+                         formControlName="password"
                          #password
                          required
                          placeholder="Wpisz hasło"
@@ -38,7 +46,9 @@
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="phone" text="Numer telefonu"></kendo-label>
-          <kendo-maskedtextbox formControlName="phone"
+          <kendo-maskedtextbox
+                               [(ngModel)]="registrationData.phone"
+                               formControlName="phone"
                                #phone
                                required
                                [mask]="phoneNumberMask"
@@ -55,27 +65,35 @@
       <fieldset class="k-form-fieldset">
         <kendo-formfield>
           <kendo-label [for]="Street" text="Ulica"></kendo-label>
-          <kendo-textbox formControlName="street"
+          <kendo-textbox
+                         [(ngModel)]="addressData.street"
+                         formControlName="street"
                          #street
                          required
                          placeholder="Wpisz nazwę ulicy"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="buildingNumber" text="Nr budynku"></kendo-label>
-          <kendo-textbox formControlName="buildingNumber"
+          <kendo-textbox
+                         [(ngModel)]="addressData.buildingNumber"
+                         formControlName="buildingNumber"
                          #buildingNumber
                          required
                          placeholder="Wpisz nr budynku"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="apartmentNumber" text="Nr mieszkania"></kendo-label>
-          <kendo-textbox formControlName="apartmentNumber"
+          <kendo-textbox
+                         [(ngModel)]="addressData.apartmentNumber"
+                         formControlName="apartmentNumber"
                          #apartmentNumber
                          placeholder="Wpisz nr mieszkania"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="postCode" text="Kod pocztowy"></kendo-label>
-          <kendo-maskedtextbox formControlName="postCode"
+          <kendo-maskedtextbox
+                         [(ngModel)]="addressData.postCode"
+                         formControlName="postCode"
                          #postCode
                          required
                          [mask]="postCodeMask"
@@ -84,10 +102,12 @@
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="city" text="Miasto"></kendo-label>
-          <kendo-textbox formControlName="city"
-                               #city
-                               required
-                               placeholder="Wpisz miasto"></kendo-textbox>
+          <kendo-textbox
+                        [(ngModel)]="addressData.city"
+                        formControlName="city"
+                        #city
+                        required
+                        placeholder="Wpisz miasto"></kendo-textbox>
         </kendo-formfield>
         <button class="wideBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
         <button class="shortBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
