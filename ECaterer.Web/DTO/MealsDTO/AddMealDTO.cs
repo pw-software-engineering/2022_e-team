@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace ECaterer.Web.DTO.MealsDTO
 {
-    public class PostMealDTO
+    public class AddMealDTO
     {
+        public int MealId { get; set; }
         public string Name { get; set; }
         public string[] AllergenList { get; set; }
         public string[] IngredientList { get; set; }

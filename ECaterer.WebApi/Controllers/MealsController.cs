@@ -1,6 +1,8 @@
 ﻿using ECaterer.Core;
 using ECaterer.Core.Models;
 using ECaterer.Web.DTO.MealsDTO;
+using ECaterer.WebApi.Common.Exceptions;
+using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,38 +15,41 @@ namespace ECaterer.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class MealsController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IMealRepository _meals;
 
-        public MealsController(DataContext context)
+        public MealsController(IMealRepository meals)
         {
-            _context = context;
+            _meals = meals;
         }
 
         [HttpGet]
+        [Authorize(Roles = "producer, client")]
         public Task<ActionResult<GetMealDTO[]>> GetMeals(int offset = 0, int limit = 10, string sort = "title(asc)", string name = null, string name_with = null, bool vegan = false, int colories = 0, int colories_lt = 0, int colories_ht = 0)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        public Task<ActionResult> PostMeal([FromBody] PostMealDTO mealDTO)
+        [Authorize(Roles = "producer")]
+        public Task<ActionResult> PostMeal([FromBody] AddMealDTO mealDTO)
         {
             throw new NotImplementedException();
         }
 
         [HttpGet("{mealId}")]
+        [Authorize(Roles = "producer, client")]
         public async Task<ActionResult<Meal>> GetMealById(int mealId)
         {
             try
             {
-                var meal = _context.Meals.FirstOrDefault(meal => meal.MealId == mealId);
-                if (meal is null)
-                    return NotFound("Podany posiłek nie istnieje");
-
+                var meal = await _meals.GetMealById(mealId);
                 return Ok(meal);
+            }
+            catch (UnexistingMealException)
+            {
+                return NotFound("Podany posiłek nie istnieje");
             }
             catch
             {
@@ -53,24 +58,24 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPut("{mealId}")]
-        public Task<ActionResult<Meal>> EditMeal(string mealId, [FromBody] Meal meal)
+        [Authorize(Roles = "producer")]
+        public Task<ActionResult<Meal>> EditMeal(string mealId, [FromBody] AddMealDTO meal)
         {
             throw new NotImplementedException();
         }
 
         [HttpDelete("{mealId}")]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult> DeleteMeal(int mealId)
         {
             try
             {
-                var meal = _context.Meals.FirstOrDefault(meal => meal.MealId == mealId);
-                if (meal is null)
-                    return NotFound("Podany posiłek nie istnieje");
-
-                _context.Meals.Remove(meal);
-                await _context.SaveChangesAsync();
-
+                _meals.DeleteMeal(mealId);
                 return Ok("Powodzenie usunięcia posiłku");
+            }
+            catch (UnexistingMealException)
+            {
+                return NotFound("Podany posiłek nie istnieje");
             }
             catch
             {

@@ -11,6 +11,7 @@ using ECaterer.Web.DTO.MealsDTO;
 using Moq;
 using ECaterer.WebApi.Controllers;
 using Moq.EntityFrameworkCore;
+using ECaterer.WebApi.Services;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -23,7 +24,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1, //"meal_1", this property should be string instead of int
+                    MealId = 1,
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -35,14 +36,12 @@ namespace ECareter.Web.Test.ApiUnitTests
             var contextMock = new Mock<DataContext>(options);
             contextMock.Setup(c => c.Meals).ReturnsDbSet(meals);
 
-            var controller = new MealsController(contextMock.Object);
+            var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMealById(1);
             var okResult = result.Result as OkObjectResult;
-
-            okResult.Should().NotBeNull();
-
             var returnedMeal = okResult.Value as Meal;
 
+            okResult.Should().NotBeNull();
             returnedMeal.Should().NotBeNull();
             returnedMeal.Name.Should().Be("Apple");
         }
@@ -54,7 +53,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1, //"meal_1", this property should be string instead of int
+                    MealId = 1,
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -67,7 +66,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             contextMock.Setup(c => c.Meals).ReturnsDbSet(meals);
             contextMock.Setup(c => c.Meals.Remove(It.IsAny<Meal>())).Callback<Meal>((meal) => meals.Remove(meal)); ;
 
-            var controller = new MealsController(contextMock.Object);
+            var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.DeleteMeal(1);
             contextMock.Setup(c => c.Meals).ReturnsDbSet(meals);
 
