@@ -3,6 +3,7 @@ using ECaterer.Core.Models;
 using ECaterer.Web.DTO.MealsDTO;
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Common.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace ECaterer.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MealsController : ControllerBase
     {
         private readonly IMealRepository _meals;
@@ -25,27 +27,43 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "producer, client")]
-        public Task<ActionResult<GetMealDTO[]>> GetMeals(int offset = 0, int limit = 10, string sort = "title(asc)", string name = null, string name_with = null, bool vegan = false, int colories = 0, int colories_lt = 0, int colories_ht = 0)
+        //[Authorize(Roles = "producer, client")]
+        public async Task<ActionResult<GetMealDTO[]>> GetMeals([FromQuery] GetMealsQuery query)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var meals = await _meals.GetMeals(query.Offset, query.Limit, query.Sort, query.Name, query.Name_with, query.Vegan, query.Calories, query.Calories_lt, query.Calories_ht);
+                return Ok(meals);
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie pobrania danych posiłków");
+            }
         }
 
         [HttpPost]
-        [Authorize(Roles = "producer")]
-        public Task<ActionResult> PostMeal([FromBody] AddMealDTO mealDTO)
+        //[Authorize(Roles = "producer")]
+        public async Task<ActionResult> AddMeal([FromBody] MealDTO mealDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _meals.AddMeal(mealDTO);
+                return Ok("Powodzenie dodania posiłku");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie dodania posiłku");
+            }
         }
 
         [HttpGet("{mealId}")]
-        [Authorize(Roles = "producer, client")]
-        public async Task<ActionResult<Meal>> GetMealById(int mealId)
+        //[Authorize(Roles = "producer, client")]
+        public async Task<ActionResult<MealDTO>> GetMealById(int mealId)
         {
             try
             {
                 var meal = await _meals.GetMealById(mealId);
-                return Ok(meal);
+                return Ok(new MealDTO(meal));
             }
             catch (UnexistingMealException)
             {
@@ -58,19 +76,31 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPut("{mealId}")]
-        [Authorize(Roles = "producer")]
-        public Task<ActionResult<Meal>> EditMeal(string mealId, [FromBody] AddMealDTO meal)
+        //[Authorize(Roles = "producer")]
+        public async Task<ActionResult> EditMeal(int mealId, [FromBody] MealDTO mealDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _meals.EditMeal(mealId, mealDTO);
+                return Ok("Powodzenie edycji posiłku");
+            }
+            catch (UnexistingMealException)
+            {
+                return NotFound("Podany posiłek nie istnieje");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie edycji posiłku");
+            }
         }
 
         [HttpDelete("{mealId}")]
-        [Authorize(Roles = "producer")]
+        //[Authorize(Roles = "producer")]
         public async Task<ActionResult> DeleteMeal(int mealId)
         {
             try
             {
-                _meals.DeleteMeal(mealId);
+                await _meals.DeleteMeal(mealId);
                 return Ok("Powodzenie usunięcia posiłku");
             }
             catch (UnexistingMealException)
