@@ -16,5 +16,8 @@ namespace ECaterer.Core.Models
         [StringLength(250)]
         [Required]
         public virtual string Name { get; set; }
+        [ForeignKey("Meal")]
+        public int MealId { get; set; }
+        public Meal Meal { get; set; }
     }
 }

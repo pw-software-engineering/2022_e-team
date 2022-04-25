@@ -69,6 +69,12 @@ namespace ECareter.Web.Test.ApiUnitTests
             var options = new DbContextOptions<DataContext>();
             var contextMock = new Mock<DataContext>(options);
             contextMock
+                .Setup(c => c.Ingredients)
+                .ReturnsDbSet(new List<Ingredient>());
+            contextMock
+                .Setup(c => c.Allergents)
+                .ReturnsDbSet(new List<Allergent>());
+            contextMock
                 .Setup(c => c.Meals)
                 .ReturnsDbSet(meals);
             contextMock
@@ -173,12 +179,17 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Setup(c => c.Meals.Update(It.Is<Meal>(m => m.Name == "Pancake")))
                 .Callback<Meal>((meal) => meals[0] = meal);
             contextMock
-                .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 1)))
-                .Callback(() => allergents.Add(new Allergent() { Name = "Egg" }));
+                .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 2)))
+                .Callback(() => allergents.AddRange(new List<Allergent>()
+                {
+                    new Allergent() { Name = "Milk" },
+                    new Allergent() { Name = "Egg" }
+                }));
             contextMock
-                .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 2)))
+                .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 3)))
                 .Callback(() => ingredients.AddRange(new List<Ingredient>()
                 {
+                    new Ingredient() { Name = "Milk" },
                     new Ingredient() { Name = "Egg" },
                     new Ingredient() { Name = "Flour" }
                 }));
@@ -190,8 +201,8 @@ namespace ECareter.Web.Test.ApiUnitTests
 
             okResult.Should().NotBeNull();
             editedMeal.Name.Should().Be("Pancake");
-            ingredients.Count().Should().Be(4);
-            allergents.Count().Should().Be(2);
+            ingredients.Count().Should().Be(5);
+            allergents.Count().Should().Be(3);
         }
 
         [Fact]
@@ -251,8 +262,8 @@ namespace ECareter.Web.Test.ApiUnitTests
                     MealId = 1,
                     Name = "Cereals",
                     Calories = 100,
-                    AllergentList = new List<Allergent>(),
-                    IngredientList = new List<Ingredient>(),
+                    AllergentList = allergents,
+                    IngredientList = ingredients,
                     Vegan = true
                 }
             };
@@ -261,7 +272,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 Name = "Pancake",
                 Calories = 130,
                 AllergentList = new string[] { "Milk", "Egg" },
-                IngredientList = null,
+                IngredientList = new string[] { "Milk", "Egg", "Flour" },
                 Vegan = false
             };
 
@@ -280,12 +291,17 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Setup(c => c.Meals.Add(It.Is<Meal>(m => m.Name == "Pancake")))
                 .Callback<Meal>((meal) => meals.Add(meal));
             contextMock
-                .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 1)))
-                .Callback(() => allergents.Add(new Allergent() { Name = "Egg" }));
+                .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 2)))
+                .Callback(() => allergents.AddRange(new List<Allergent>()
+                {
+                    new Allergent() { Name = "Milk" },
+                    new Allergent() { Name = "Egg" }
+                }));
             contextMock
-                .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 2)))
+                .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 3)))
                 .Callback(() => ingredients.AddRange(new List<Ingredient>()
                 {
+                    new Ingredient() { Name = "Milk" },
                     new Ingredient() { Name = "Egg" },
                     new Ingredient() { Name = "Flour" }
                 }));
@@ -298,8 +314,8 @@ namespace ECareter.Web.Test.ApiUnitTests
             okResult.Should().NotBeNull();
             addedMeal.Should().NotBeNull();
             addedMeal.Name.Should().Be("Pancake");
-            ingredients.Count().Should().Be(4);
-            allergents.Count().Should().Be(2);
+            ingredients.Count().Should().Be(5);
+            allergents.Count().Should().Be(3);
         }
         
         [Fact]
@@ -346,7 +362,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -400,7 +416,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -455,7 +471,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -510,7 +526,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -564,7 +580,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -618,7 +634,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -673,7 +689,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<Meal>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
