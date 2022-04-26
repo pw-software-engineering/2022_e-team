@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class Complaint
     {
         [Key, Required]
-        public virtual int ComplaintId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string ComplaintId { get; set; }
         [Required]
         public virtual string Description { get; set; }
         [Required]

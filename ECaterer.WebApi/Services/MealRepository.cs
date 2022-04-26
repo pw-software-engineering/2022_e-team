@@ -47,7 +47,7 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> DeleteMeal(int mealId)
+        public async Task<Meal> DeleteMeal(string mealId)
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
@@ -65,7 +65,7 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> EditMeal(int mealId, MealDTO mealDTO)
+        public async Task<Meal> EditMeal(string mealId, MealDTO mealDTO)
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
@@ -98,7 +98,7 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> GetMealById(int mealId)
+        public async Task<Meal> GetMealById(string mealId)
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);

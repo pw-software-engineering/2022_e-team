@@ -68,7 +68,7 @@ namespace ECaterer.WebApi.Controllers
                 UserName = registerUser.Client.Email
             };
 
-            var result = await _userManager.CreateAsync(user, registerUser.Password);
+            var result = await _userManager.CreateAsync(user, registerUser.Client.Password);
 
             if (result.Succeeded)
             {

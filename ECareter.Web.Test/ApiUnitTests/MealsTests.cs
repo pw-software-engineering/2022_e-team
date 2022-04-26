@@ -25,7 +25,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -41,7 +41,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .ReturnsDbSet(meals);
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.GetMealById(1);
+            var result = await controller.GetMealById("meal_1");
             var okResult = result.Result as OkObjectResult;
             var returnedMeal = okResult.Value as MealDTO;
 
@@ -57,7 +57,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -85,7 +85,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Callback<Meal>((meal) => meals.Remove(meal));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.DeleteMeal(1);
+            var result = await controller.DeleteMeal("meal_1");
 
             var okResult = result as OkObjectResult;
             var mealsCountAfterDelete = contextMock.Object.Meals.Count();
@@ -101,7 +101,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -123,7 +123,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Callback<Meal>((meal) => meals.Remove(meal));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.DeleteMeal(1);
+            var result = await controller.DeleteMeal("meal_1");
 
             var badRequestResult = result as BadRequestObjectResult;
 
@@ -146,7 +146,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = allergents,
@@ -195,7 +195,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.EditMeal(1, editMealDto);
+            var result = await controller.EditMeal("meal_1", editMealDto);
             var okResult = result as OkObjectResult;
             var editedMeal = meals.FirstOrDefault();
 
@@ -212,7 +212,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -237,7 +237,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .ReturnsDbSet(meals);
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.EditMeal(2, editMealDto);
+            var result = await controller.EditMeal("meal_2", editMealDto);
             var notFoundResult = result as NotFoundObjectResult;
 
             notFoundResult.Should().NotBeNull();
@@ -259,7 +259,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = allergents,
@@ -325,7 +325,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -334,7 +334,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -343,7 +343,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -376,7 +376,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -385,7 +385,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -394,7 +394,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -431,7 +431,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -440,7 +440,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -449,7 +449,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -486,7 +486,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -495,7 +495,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -504,7 +504,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -540,7 +540,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -549,7 +549,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -558,7 +558,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -594,7 +594,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -603,7 +603,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -612,7 +612,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -649,7 +649,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -658,7 +658,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -667,7 +667,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),

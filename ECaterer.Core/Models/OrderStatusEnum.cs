@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class OrderStatusEnum
     {
         [Key, Required]
-        public virtual int OrderStatusId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string OrderStatusId { get; set; }
         [Required]
         [StringLength(50)]
         public virtual string OrderStatusValue { get; set; }

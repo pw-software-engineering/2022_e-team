@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class Address
     {
         [Key, Required]
-        public virtual int AddressId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string AddressId { get; set; }
         [Required]
         [StringLength(250)]
         public virtual string Street { get; set; }
