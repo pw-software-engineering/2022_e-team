@@ -55,6 +55,10 @@ namespace ECaterer.WebApi.Services
             var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
+            var ingredientsToRemove = _context.Ingredients.Where(i => i.MealId == meal.MealId);
+            var allergentsToRemove = _context.Allergents.Where(a => a.MealId == meal.MealId);
+            _context.Ingredients.RemoveRange(ingredientsToRemove);
+            _context.Allergents.RemoveRange(allergentsToRemove);
             _context.Meals.Remove(meal);
             await _context.SaveChangesAsync();
 
@@ -63,7 +67,8 @@ namespace ECaterer.WebApi.Services
 
         public async Task<Meal> EditMeal(int mealId, MealDTO mealDTO)
         {
-            var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
+            var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
+            var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
                 throw new UnexistingMealException(mealId);
 
@@ -95,7 +100,8 @@ namespace ECaterer.WebApi.Services
 
         public async Task<Meal> GetMealById(int mealId)
         {
-            var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
+            var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
+            var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
                 throw new UnexistingMealException(mealId);
             return meal;
