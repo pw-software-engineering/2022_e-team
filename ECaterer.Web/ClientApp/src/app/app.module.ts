@@ -20,6 +20,7 @@ import { ClientLogin } from './registration/client-login/client-login.component'
 import { WorkerLogin } from './registration/worker-login/worker-login.component';
 import { AuthGuard } from './authGuard/authGuard';
 import { LoginGuard } from './authGuard/loginGuard';
+import { MealsComponent } from './meals/meals.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { LoginGuard } from './authGuard/loginGuard';
     HomeComponent,
     ClientRegistration,
     ClientLogin,
-    WorkerLogin
+    WorkerLogin,
+    MealsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -38,7 +40,8 @@ import { LoginGuard } from './authGuard/loginGuard';
       { path: 'home', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'client/register', component: ClientRegistration, pathMatch: 'full', canActivate: [LoginGuard] },
       { path: 'client/login', component: ClientLogin, pathMatch: 'full', canActivate: [LoginGuard] },
-      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
+      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' },
+      { path: 'meals', component: MealsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     ]),
     GridModule,
     BrowserAnimationsModule,
