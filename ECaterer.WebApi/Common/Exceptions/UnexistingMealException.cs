@@ -7,7 +7,7 @@ namespace ECaterer.WebApi.Common.Exceptions
 {
     public class UnexistingMealException : Exception
     {
-        public UnexistingMealException(int mealId) : base($"Meal with specified ID doesn't exist: {mealId}")
+        public UnexistingMealException(string mealId) : base($"Meal with specified ID doesn't exist: {mealId}")
         {
         }
     }

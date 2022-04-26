@@ -14,7 +14,6 @@ namespace ECaterer.Web.Converters
         {
             return new RegisterUserModel()
             {
-                Password = input.Password,
                 Client = new ClientModel()
                 {
                     Name = input.Client.FirstName,
@@ -28,7 +27,8 @@ namespace ECaterer.Web.Converters
                         City = input.Address.City,
                         PostCode = input.Address.Code,
                         Street = input.Address.Street
-                    }
+                    },
+                    Password = input.Password
                 }
             };
         }

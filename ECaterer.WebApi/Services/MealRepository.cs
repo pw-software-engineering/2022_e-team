@@ -1,6 +1,6 @@
-﻿using ECaterer.Core;
+﻿using ECaterer.Contracts.Meals;
+using ECaterer.Core;
 using ECaterer.Core.Models;
-using ECaterer.Web.DTO.MealsDTO;
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,22 +21,22 @@ namespace ECaterer.WebApi.Services
             _context = context;
         }
 
-        public async Task<Meal> AddMeal(MealDTO mealDTO)
+        public async Task<Meal> AddMeal(MealModel mealModel)
         {
-            var ingredients = mealDTO.IngredientList
+            var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i })
                 .ToList();
-            var allergents = mealDTO.AllergentList
+            var allergents = mealModel.AllergentList
                 .Select(a => new Allergent() { Name = a })
                 .ToList();
 
             var meal = new Meal()
             {
-                Name = mealDTO.Name,
-                Calories = mealDTO.Calories,
+                Name = mealModel.Name,
+                Calories = mealModel.Calories,
                 IngredientList = ingredients,
                 AllergentList = allergents,
-                Vegan = mealDTO.Vegan
+                Vegan = mealModel.Vegan
             };
 
             _context.Meals.Add(meal);
@@ -47,7 +47,7 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> DeleteMeal(int mealId)
+        public async Task<Meal> DeleteMeal(string mealId)
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
@@ -65,27 +65,27 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> EditMeal(int mealId, MealDTO mealDTO)
+        public async Task<Meal> EditMeal(string mealId, MealModel mealModel)
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
                 throw new UnexistingMealException(mealId);
 
-            var ingredients = mealDTO.IngredientList
+            var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i})
                 .ToList();
-            var allergents = mealDTO.AllergentList
+            var allergents = mealModel.AllergentList
                 .Select(a => new Allergent() { Name = a })
                 .ToList();
             var oldIngredients = meal.IngredientList;
             var oldAllergents = meal.AllergentList;
 
-            meal.Name = mealDTO.Name;
+            meal.Name = mealModel.Name;
             meal.IngredientList = ingredients;
             meal.AllergentList = allergents;
-            meal.Name = mealDTO.Name;
-            meal.Vegan = mealDTO.Vegan;
+            meal.Name = mealModel.Name;
+            meal.Vegan = mealModel.Vegan;
 
             _context.Meals.Update(meal);
 
@@ -98,7 +98,7 @@ namespace ECaterer.WebApi.Services
             return meal;
         }
 
-        public async Task<Meal> GetMealById(int mealId)
+        public async Task<Meal> GetMealById(string mealId)
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);

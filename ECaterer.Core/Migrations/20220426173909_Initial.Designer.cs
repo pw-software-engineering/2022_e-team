@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECaterer.Core.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220323114608_StringLengths")]
-    partial class StringLengths
+    [Migration("20220426173909_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,9 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Address", b =>
                 {
-                    b.Property<int>("AddressId")
+                    b.Property<string>("AddressId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ApartmentNumber")
                         .HasMaxLength(50)
@@ -59,13 +58,12 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Allergent", b =>
                 {
-                    b.Property<int>("AllergentId")
+                    b.Property<string>("AllergentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
+                    b.Property<string>("MealId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -81,13 +79,12 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Client", b =>
                 {
-                    b.Property<int>("ClientId")
+                    b.Property<string>("ClientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("AddressId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -118,10 +115,9 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Complaint", b =>
                 {
-                    b.Property<int>("ComplaintId")
+                    b.Property<string>("ComplaintId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -130,8 +126,8 @@ namespace ECaterer.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StatusComplaintStatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("StatusComplaintStatusId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ComplaintId");
 
@@ -142,10 +138,9 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.ComplaintStatusEnum", b =>
                 {
-                    b.Property<int>("ComplaintStatusId")
+                    b.Property<string>("ComplaintStatusId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ComplaintStatusValue")
                         .IsRequired()
@@ -159,13 +154,12 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.DeliveryDetails", b =>
                 {
-                    b.Property<int>("DeliveryDetailsId")
+                    b.Property<string>("DeliveryDetailsId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("AddressId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CommentForDeliverer")
                         .HasMaxLength(250)
@@ -185,10 +179,9 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Diet", b =>
                 {
-                    b.Property<int>("DietId")
+                    b.Property<string>("DietId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Calories")
                         .HasColumnType("int");
@@ -197,8 +190,8 @@ namespace ECaterer.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -217,13 +210,12 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Ingredient", b =>
                 {
-                    b.Property<int>("IngredientId")
+                    b.Property<string>("IngredientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("MealId")
-                        .HasColumnType("int");
+                    b.Property<string>("MealId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -239,16 +231,15 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Meal", b =>
                 {
-                    b.Property<int>("MealId")
+                    b.Property<string>("MealId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Calories")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DietId")
-                        .HasColumnType("int");
+                    b.Property<string>("DietId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -267,16 +258,15 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<string>("OrderId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ComplaintId")
-                        .HasColumnType("int");
+                    b.Property<string>("ComplaintId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("DeliveryDetailsId")
-                        .HasColumnType("int");
+                    b.Property<string>("DeliveryDetailsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -287,8 +277,8 @@ namespace ECaterer.Core.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("StatusOrderStatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("StatusOrderStatusId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("OrderId");
 
@@ -303,10 +293,9 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.OrderStatusEnum", b =>
                 {
-                    b.Property<int>("OrderStatusId")
+                    b.Property<string>("OrderStatusId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("OrderStatusValue")
                         .IsRequired()
@@ -320,9 +309,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Allergent", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.Meal", null)
+                    b.HasOne("ECaterer.Core.Models.Meal", "Meal")
                         .WithMany("AllergentList")
                         .HasForeignKey("MealId");
+
+                    b.Navigation("Meal");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Client", b =>
@@ -361,9 +352,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Ingredient", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.Meal", null)
+                    b.HasOne("ECaterer.Core.Models.Meal", "Meal")
                         .WithMany("IngredientList")
                         .HasForeignKey("MealId");
+
+                    b.Navigation("Meal");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Meal", b =>

@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class DeliveryDetails
     {
         [Key, Required]
-        public virtual int DeliveryDetailsId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string DeliveryDetailsId { get; set; }
         [Required]
         public virtual Address Address { get; set; }
         [Required]
