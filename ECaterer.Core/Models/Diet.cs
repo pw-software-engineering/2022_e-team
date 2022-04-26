@@ -24,5 +24,7 @@ namespace ECaterer.Core.Models
         public virtual ICollection<Meal> Meals { get; set; }
         [Required]
         public virtual bool Vegan { get; set; }
+        [Required]
+        public virtual int Price { get; set; }
     }
 }
