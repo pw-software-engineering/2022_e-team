@@ -1,6 +1,7 @@
 ﻿using ECaterer.Contracts.Orders;
 using ECaterer.Core;
 using ECaterer.WebApi.Common.Exceptions;
+using ECaterer.WebApi.Common.Interfaces;
 using ECaterer.WebApi.Common.Queries;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,8 @@ namespace ECaterer.WebApi.Controllers
     [ApiController]
     public class DietController : Controller
     {
-        DietControllerService _service;
-        public DietController(DietControllerService service)
+        IDietController _service;
+        public DietController(IDietController service)
         {
             _service = service;
         }
