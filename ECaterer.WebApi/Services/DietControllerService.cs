@@ -1,8 +1,10 @@
-﻿using ECaterer.Core;
+﻿using ECaterer.Contracts.Converters.Orders;
+using ECaterer.Contracts.Orders;
+using ECaterer.Core;
 using ECaterer.Core.Models;
-using ECaterer.Web.DTO.DealDTO;
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Controllers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,17 +21,14 @@ namespace ECaterer.WebApi.Services
             _context = context;
         }
 
-
-        public async Task<Diet> GetDietByID(int id)
+        public async Task<DietModel> GetDietByID(int id)
         {
-            var diet = await _context.Diets.FirstOrDefaultAsync(diet => diet.DietId == id);
-            if (diet is null)
-                throw new UnexistingDietException(id);
-            
-            return diet;
+            var diet = await GetDietFromDB(id);
+           
+            return DietConverter.ConvertToContract(diet);
         }
 
-        public async Task<IEnumerable<Diet>> GetDiets(int? offset, int? limit, string sort, string name, string name_with,
+        public async Task<IEnumerable<DietModel>> GetDiets(int? offset, int? limit, string sort, string name, string name_with,
                                                 bool? vegan, int? calories, int? colories_lt, int? colories_ht,
                                                 int? price, int? price_lt, int? price_ht)
         {
@@ -82,8 +81,75 @@ namespace ECaterer.WebApi.Services
             if (limit is not null)
                 diets = diets.Take((int)limit).ToList();
 
-            return diets;
+            return diets.Select(d => DietConverter.ConvertToContract(d)).ToArray();
         }
+
+
+        public async Task<Diet> AddDiet(CreateDietMealsModel dietInfo)
+        {
+            var meals = _context.Meals.Where(m => dietInfo.MealsId.Contains(m.MealId.ToString())).ToArray();
+
+            var diet = new Diet
+            {
+                Title = dietInfo.Name,
+                Calories = DietCalories(meals),
+                Vegan = DietVegan(meals),
+                Price = dietInfo.Price,
+                Meals = meals
+            };
+
+            _context.Diets.Add(diet);
+            await _context.SaveChangesAsync();
+
+            return diet;
+        }
+
+        public async Task<Diet> EditDiet(int dietId, CreateDietMealsModel dietInfo)
+        {
+            var diet = await GetDietFromDB(dietId);
+
+            diet.Title = dietInfo.Name;
+            diet.Price = dietInfo.Price;
+
+            var meals = _context.Meals.Where(m => dietInfo.MealsId.Contains(m.MealId.ToString())).ToArray();
+            diet.Vegan = DietVegan(meals);
+            diet.Calories = DietCalories(meals);
+            diet.Meals = meals;
+
+            _context.Diets.Update(diet);
+            await _context.SaveChangesAsync();
+
+            return diet;
+        }
+
+        public async Task<Diet> DeleteDiet(int dietId)
+        {
+            var diet = await GetDietFromDB (dietId);
+            _context.Diets.Remove(diet);
+            await _context.SaveChangesAsync();
+
+            return diet;
+        }
+
+        private async Task<Diet> GetDietFromDB(int dietId)
+        {
+            var diet = await _context.Diets.FirstOrDefaultAsync(d => d.DietId == dietId);
+            if (diet is null)
+                throw new UnexistingDietException(dietId);
+            return diet;
+        }
+
+
+        private bool DietVegan(Meal[] meals)
+        {
+            return !meals.Select(m => m.Vegan).Contains(false);
+        }
+
+        private int DietCalories(Meal[] meals)
+        {
+            return meals.Select(m => m.Calories).Sum();
+        }
+
 
     }
 }

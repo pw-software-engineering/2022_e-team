@@ -1,5 +1,6 @@
-﻿using ECaterer.Core;
-using ECaterer.Web.DTO.DealDTO;
+﻿using ECaterer.Contracts.Orders;
+using ECaterer.Core;
+using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Queries;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace ECaterer.WebApi.Controllers
 
         // GET: api/<DientController>
         [HttpGet]
-        public async Task<ActionResult<DietDTO[]>> GetDiets([FromQuery] DietQuery query)
+        public async Task<ActionResult<DietModel[]>> GetDiets([FromQuery] DietQuery query)
         {
             try
             {
@@ -37,18 +38,18 @@ namespace ECaterer.WebApi.Controllers
             }
             catch
             {
-
+                throw new Exception("Niepowodzenie pobrania diet");
             }
         }
 
         // GET api/<DientController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DietDTO>> Get(int id)
+        public async Task<ActionResult<DietModel>> Get(int id)
         {
             try
             {
                 var diet = await _service.GetDietByID(id);
-                return Ok(new DietDTO(diet));
+                return Ok(diet);
             }
             catch
             {
@@ -56,25 +57,66 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
-        // POST api/<DientController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        //[Authorize(Roles = "producer")]
+        public async Task<ActionResult> Post([FromBody] CreateDietMealsModel dietInfo)
         {
+            try
+            {
+                await _service.AddDiet(dietInfo);
+                return Ok("Powodzenie dodania diety");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie dodania diety");
+            }
         }
 
-        // PUT api/<DientController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{dietId}")]
+        //[Authorize(Roles = "producer")]
+        public async Task<ActionResult> EditMeal(int dietId, [FromBody] CreateDietMealsModel dietInfo)
         {
+            try
+            {
+                await _service.EditDiet(dietId, dietInfo);
+                return Ok("Powodzenie edycji diety");
+            }
+            catch (UnexistingDietException)
+            {
+                return NotFound("Podana dieta nie istnieje");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie edycji diety");
+            }
         }
 
         // DELETE api/<DientController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            try
+            {
+                await _service.DeleteDiet(id);
+                return Ok("Powodzenie usunięcia diety");
+            }
+            catch (UnexistingDietException)
+            {
+                return NotFound("Podana dieta nie istnieje");
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie usunięcia diety");
+            }
         }
     }
 
+    public class CreateDietMealsModel
+    {
+        public string Name { get; set; }
+        public string[] MealsId { get; set; }
+        public int Price { get; set; }
+    }
 
 
 
