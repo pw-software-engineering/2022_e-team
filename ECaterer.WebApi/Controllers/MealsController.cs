@@ -27,7 +27,9 @@ namespace ECaterer.WebApi.Controllers
             _meals = meals;
             var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Meal, MealModel>();
+                cfg.CreateMap<Meal, MealModel>()
+                    .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToList()))
+                    .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToList()));
                 cfg.CreateMap<Meal, GetMealsResponseModel>();
             });
             _mapper = new Mapper(mappingConfig);

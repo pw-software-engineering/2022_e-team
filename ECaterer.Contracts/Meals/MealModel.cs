@@ -12,6 +12,5 @@ namespace ECaterer.Contracts.Meals
         public string[] IngredientList { get; set; }
         public int Calories { get; set; }
         public bool Vegan { get; set; }
-        public MealModel() { }
     }
 }
