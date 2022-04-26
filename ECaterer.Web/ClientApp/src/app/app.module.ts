@@ -10,7 +10,9 @@ import { LabelModule } from "@progress/kendo-angular-label";
 import { InputsModule } from "@progress/kendo-angular-inputs";
 import { LayoutModule } from "@progress/kendo-angular-layout";
 import { ButtonsModule } from "@progress/kendo-angular-buttons";
+import { IndicatorsModule } from "@progress/kendo-angular-indicators";
 import { CookieModule } from "ngx-cookie";
+import { NavigationModule } from "@progress/kendo-angular-navigation";
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -20,6 +22,7 @@ import { ClientLogin } from './registration/client-login/client-login.component'
 import { WorkerLogin } from './registration/worker-login/worker-login.component';
 import { AuthGuard } from './authGuard/authGuard';
 import { LoginGuard } from './authGuard/loginGuard';
+import { Diets } from './diets/diets.component';
 
 @NgModule({
   declarations: [
@@ -27,18 +30,20 @@ import { LoginGuard } from './authGuard/loginGuard';
     HomeComponent,
     ClientRegistration,
     ClientLogin,
-    WorkerLogin
+    WorkerLogin,
+	Diets
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: '', redirectTo: 'diets', pathMatch: 'full'/* component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard]*/ },
       { path: 'home', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'client/register', component: ClientRegistration, pathMatch: 'full', canActivate: [LoginGuard] },
       { path: 'client/login', component: ClientLogin, pathMatch: 'full', canActivate: [LoginGuard] },
-      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
+      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' },
+      { path: 'diets', component: Diets, pathMatch: 'full', canActivate: [AuthGuard] }
     ]),
     GridModule,
     BrowserAnimationsModule,
@@ -49,7 +54,9 @@ import { LoginGuard } from './authGuard/loginGuard';
     LayoutModule,
     LabelModule,
     ButtonsModule,
-    CookieModule.forRoot()
+    CookieModule.forRoot(),
+    NavigationModule,
+    IndicatorsModule
   ],
   providers: [Title],
   bootstrap: [AppComponent]

@@ -44,7 +44,7 @@ export class ClientLogin implements OnInit {
     if (this.form.valid) {
       this.registrationService.loginUser(this.loginData)
         .then(() => {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/diets']);
         })
         .catch((err) => {
           if (err.status == 401)

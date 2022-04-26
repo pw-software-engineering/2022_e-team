@@ -31,6 +31,7 @@
     <None Remove="ClientApp\src\app\app.component.spec.ts" />
     <None Remove="ClientApp\src\app\authGuard\authGuard.ts" />
     <None Remove="ClientApp\src\app\authGuard\loginGuard.ts" />
+    <None Remove="ClientApp\src\app\diets\api\dietDTO.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
