@@ -1,6 +1,5 @@
-﻿using ECaterer.Core.Models;
-using ECaterer.Web.DTO.MealsDTO;
-using ECaterer.WebApi.Common.Queries;
+﻿using ECaterer.Contracts.Meals;
+using ECaterer.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +11,8 @@ namespace ECaterer.WebApi.Common.Interfaces
     {
         Task<IEnumerable<Meal>> GetMeals(int? offset, int? limit, string sort, string name, string name_with, bool? vegan, int? calories, int? colories_lt, int? colories_ht);
         Task<Meal> GetMealById(string mealId);
-        Task<Meal> AddMeal(MealDTO mealDTO);
-        Task<Meal> EditMeal(string mealId, MealDTO mealDTO);
+        Task<Meal> AddMeal(MealModel mealModel);
+        Task<Meal> EditMeal(string mealId, MealModel mealModel);
         Task<Meal> DeleteMeal(string mealId);
     }
 }
