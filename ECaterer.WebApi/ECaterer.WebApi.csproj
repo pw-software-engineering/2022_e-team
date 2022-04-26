@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ECaterer.Contracts\ECaterer.Contracts.csproj" />
     <ProjectReference Include="..\ECaterer.Core\ECaterer.Core.csproj" />
+    <ProjectReference Include="..\ECaterer.Web\ECaterer.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
