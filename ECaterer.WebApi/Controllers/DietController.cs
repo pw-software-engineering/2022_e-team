@@ -11,20 +11,17 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Controllers
 {
-    public class DientController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DietController : Controller
     {
         DietControllerService _service;
-        public DientController(DietControllerService service)
+        public DietController(DietControllerService service)
         {
             _service = service;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
 
-        // GET: api/<DientController>
         [HttpGet]
         public async Task<ActionResult<DietModel[]>> GetDiets([FromQuery] DietQuery query)
         {
@@ -44,7 +41,7 @@ namespace ECaterer.WebApi.Controllers
 
         // GET api/<DientController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DietModel>> Get(int id)
+        public async Task<ActionResult<DietModel>> GetDietByID(int id)
         {
             try
             {
@@ -59,7 +56,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> Post([FromBody] CreateDietMealsModel dietInfo)
+        public async Task<ActionResult> AddDiet([FromBody] CreateDietMealsModel dietInfo)
         {
             try
             {
@@ -74,7 +71,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPut("{dietId}")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> EditMeal(int dietId, [FromBody] CreateDietMealsModel dietInfo)
+        public async Task<ActionResult> EditDiet(int dietId, [FromBody] CreateDietMealsModel dietInfo)
         {
             try
             {
@@ -91,9 +88,8 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
-        // DELETE api/<DientController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteDiet(int id)
         {
             try
             {
@@ -111,12 +107,7 @@ namespace ECaterer.WebApi.Controllers
         }
     }
 
-    public class CreateDietMealsModel
-    {
-        public string Name { get; set; }
-        public string[] MealsId { get; set; }
-        public int Price { get; set; }
-    }
+   
 
 
 
