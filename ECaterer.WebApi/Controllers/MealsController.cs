@@ -74,11 +74,9 @@ namespace ECaterer.WebApi.Controllers
             try
             {
                 var meal = await _meals.GetMealById(mealId);
+                if (meal is null)
+                    return NotFound("Podany posiłek nie istnieje");
                 return Ok(_mapper.Map<MealModel>(meal));
-            }
-            catch (UnexistingMealException)
-            {
-                return NotFound("Podany posiłek nie istnieje");
             }
             catch
             {
@@ -92,12 +90,10 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                await _meals.EditMeal(mealId, mealModel);
+                var meal = await _meals.EditMeal(mealId, mealModel);
+                if (meal is null)
+                    return NotFound("Podany posiłek nie istnieje");
                 return Ok("Powodzenie edycji posiłku");
-            }
-            catch (UnexistingMealException)
-            {
-                return NotFound("Podany posiłek nie istnieje");
             }
             catch
             {
@@ -111,12 +107,10 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                await _meals.DeleteMeal(mealId);
+                var meal = await _meals.DeleteMeal(mealId);
+                if (meal is null)
+                    return NotFound("Podany posiłek nie istnieje");
                 return Ok("Powodzenie usunięcia posiłku");
-            }
-            catch (UnexistingMealException)
-            {
-                return NotFound("Podany posiłek nie istnieje");
             }
             catch
             {

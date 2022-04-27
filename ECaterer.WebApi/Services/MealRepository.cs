@@ -51,7 +51,7 @@ namespace ECaterer.WebApi.Services
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
             var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
@@ -70,7 +70,7 @@ namespace ECaterer.WebApi.Services
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
 
             var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i})
@@ -104,48 +104,48 @@ namespace ECaterer.WebApi.Services
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
             return meal;
         }
 
         public async Task<IEnumerable<Meal>> GetMeals(int? offset, int? limit, string sort, string name, string name_with, bool? vegan, int? calories, int? colories_lt, int? colories_ht)
         {
-            var meals = await _context.Meals.ToListAsync();
+            IQueryable<Meal> meals =  _context.Meals;
             if (sort is not null)
                 switch(sort)
                 {
                     case "title(asc)":
-                        meals = meals.OrderBy(m => m.Name).ToList();
+                        meals = meals.OrderBy(m => m.Name);
                         break;
                     case "title(desc)":
-                        meals = meals.OrderByDescending(m => m.Name).ToList();
+                        meals = meals.OrderByDescending(m => m.Name);
                         break;
                     case "calories(asc)":
-                        meals = meals.OrderBy(m => m.Calories).ToList();
+                        meals = meals.OrderBy(m => m.Calories);
                         break;
                     case "calories(desc)":
-                        meals = meals.OrderByDescending(m => m.Calories).ToList();
+                        meals = meals.OrderByDescending(m => m.Calories);
                         break;
                     default:
                         throw new Exception("Unexpected sort type");
                 }
             if (name is not null)
-                meals = meals.Where(m => m.Name.Equals(name)).ToList();
+                meals = meals.Where(m => m.Name.Equals(name));
             if (name_with is not null)
-                meals = meals.Where(m => m.Name.Contains(name_with)).ToList();
+                meals = meals.Where(m => m.Name.Contains(name_with));
             if (vegan is not null)
-                meals = meals.Where(m => m.Vegan == vegan).ToList();
+                meals = meals.Where(m => m.Vegan == vegan);
             if (calories is not null)
-                meals = meals.Where(m => m.Calories == calories).ToList();
+                meals = meals.Where(m => m.Calories == calories);
             if (colories_lt is not null)
-                meals = meals.Where(m => m.Calories <= colories_lt).ToList();
+                meals = meals.Where(m => m.Calories <= colories_lt);
             if (colories_ht is not null)
-                meals = meals.Where(m => m.Calories >= colories_ht).ToList();
+                meals = meals.Where(m => m.Calories >= colories_ht);
             if (offset is not null)
-                meals = meals.Skip((int)offset).ToList();
+                meals = meals.Skip((int)offset);
             if (limit is not null)
-                meals = meals.Take((int)limit).ToList();
-            return meals;
+                meals = meals.Take((int)limit);
+            return await meals.ToListAsync();
         }
 
         public void Dispose()
