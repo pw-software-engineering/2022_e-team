@@ -19,17 +19,7 @@ export class Diets implements OnInit {
   public diets: any;
 
   ngOnInit(): void {
-    //this.diets = this.dietsService.getDiets();
-
-    this.diets = [
-      {
-        id: '1',
-        name: 'Name 1',
-        price: 252,
-        calories: 442,
-        vegan: true
-      }
-    ];
+    this.diets = this.dietsService.getDiets();
   }
 
   public goToDiets() {
