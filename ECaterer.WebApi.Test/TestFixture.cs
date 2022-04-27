@@ -99,7 +99,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             // Add configuration for client
             Client = Server.CreateClient();
-            Client.BaseAddress = new Uri("http://localhost:20809");
+            Client.BaseAddress = new Uri("http://localhost:20809/");
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
