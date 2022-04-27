@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
+using System.Web;
 
 namespace ECaterer.Web.Controllers
 {
@@ -35,7 +36,16 @@ namespace ECaterer.Web.Controllers
             [FromQuery] int price_lt = 0,
             [FromQuery] int price_ht = 0)
         {
-            var response = await _apiClient.GetAsync("api/diets");
+            var query = HttpUtility.ParseQueryString(String.Empty);
+            query["offset"] = offset.ToString();
+            query["limit"] = limit.ToString();
+            query["sort"] = sort;
+            query["startDate"] = startDate.ToString();
+            query["endDate"] = endDate.ToString();
+            query["price"] = price.ToString();
+            query["price_lt"] = price_lt.ToString();
+            query["price_ht"] = price_ht.ToString();
+            var response = await _apiClient.GetAsync("api/diets" + query.ToString());
 
             if (response.IsSuccessStatusCode)
             {

@@ -19,6 +19,6 @@ export class DietsService {
   }
 
   public getDiets(): Promise<void | DietDTO[]> {
-    return this.http.get<DietDTO[]>(this.clientUrl, { headers: this.commonHeaders }).toPromise();
+    return this.http.get<DietDTO[]>(this.clientUrl, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 }
