@@ -11,6 +11,7 @@ using ECaterer.Core.Models;
 using ECaterer.WebApi.Data;
 using ECaterer.Core;
 using ECaterer.Contracts;
+using System.Net;
 using ECaterer.Contracts.Client;
 
 namespace ECaterer.WebApi.Controllers
@@ -34,7 +35,7 @@ namespace ECaterer.WebApi.Controllers
 
         [Route("login")]
         [HttpPost]
-        public async Task<ActionResult<AuthenticatedUserModel>> Login([FromBody] LoginUserModel loginUser)
+        public async Task<ActionResult> Login([FromBody] LoginUserModel loginUser)
         {
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
@@ -42,14 +43,22 @@ namespace ECaterer.WebApi.Controllers
                 return Unauthorized();
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
-
+            
             if (result.Succeeded)
             {
-                return Ok(new AuthenticatedUserModel
+                var authModel = new AuthenticatedUserModel
                 {
-                    //UserName = user.UserName,
                     Token = _tokenService.CreateToken(user)
-                });
+                };
+
+                Response.Headers.Add("api-key", authModel.Token);
+
+                return Ok();
+
+                //    new AuthenticatedUserModel
+                //{
+                //    Token = _tokenService.CreateToken(user)
+                //});
             }
 
             return Unauthorized();
@@ -91,12 +100,10 @@ namespace ECaterer.WebApi.Controllers
                 }) ;
 
                 _context.SaveChanges();
+                var Token = _tokenService.CreateToken(user);
 
-                return Ok(new AuthenticatedUserModel
-                {
-                    //UserName = user.UserName,
-                    Token = _tokenService.CreateToken(user)
-                });
+                Response.Headers.Add("api-key", Token);
+                return Ok();
             }
 
             return BadRequest("Problem registering user");
