@@ -30,7 +30,8 @@ namespace ECaterer.WebApi.Controllers
                 cfg.CreateMap<Meal, MealModel>()
                     .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToList()))
                     .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToList()));
-                cfg.CreateMap<Meal, GetMealsResponseModel>();
+                cfg.CreateMap<Meal, GetMealsResponseModel>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.MealId)); ;
             });
             _mapper = new Mapper(mappingConfig);
         }
