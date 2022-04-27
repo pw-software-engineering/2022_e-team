@@ -20,7 +20,6 @@ namespace ECaterer.WebApi.Integration.Test
     {
         private HttpClient Client;
         private static string dietId;
-        private static string authToken = "as";
 
         public DietsTests(TestFixture<Startup> fixture)
         {
@@ -31,7 +30,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task BATestAddDiet()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/diets");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new DietModel()
             {
                 Name = "Sport",
@@ -71,7 +70,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task BCTestEditDietChangePrice()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new DietModel()
             {
                 Name = "Sport",
@@ -104,7 +103,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task BETestDeleteDiet()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/{dietId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var responseMessage = await Client.SendAsync(requestMessage);
 
