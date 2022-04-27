@@ -6,12 +6,20 @@ services:
     environment:
       SA_PASSWORD: "Test_Password123"
       ACCEPT_EULA: "Y"
+    ports:
+    - "1440:1433"
 
   ecaterer.webapi:
     build:
       context: .
       dockerfile: ECaterer.WebApi/Dockerfile
-    ports:
-    - "8000:443"
+    environment:
+    - ConnectionStrings__DefaultConnection=Server=db;Database=aspnet-ECaterer.WebApi-Authentication;User=sa;Password=Test_Password123;
+    - ConnectionStrings__CoreDbConnection=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;
+    - ASPNETCORE_URLS=https://+:443;http://+:80
+    - ASPNETCORE_HTTPS_PORT=44302
     depends_on:
     - db
+    ports:
+    - "8080:80"
+    - "8081:443"
