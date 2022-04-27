@@ -28,9 +28,11 @@ namespace ECaterer.Web.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPost("GetMeals")]
+        [HttpGet("GetMeals")]
         public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals()
         {
+            string token = Request.Cookies["SESSIONID"];
+            _apiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token);
             var response = await _apiClient.GetAsync("/api/Meals");
             var content = await response.Content.ReadFromJsonAsync<IEnumerable<MealDTO>>();
 

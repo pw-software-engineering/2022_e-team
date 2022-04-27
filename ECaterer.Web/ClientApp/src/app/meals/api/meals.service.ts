@@ -20,9 +20,9 @@ export class MealsService {
   constructor(private http: HttpClient,
     @Inject('BASE_URL') baseUrl: string,
     private cookieService: CookieService) {
-    this.mealsUrl = baseUrl + 'meals';
+    this.mealsUrl = baseUrl + 'Meals/';
     this.commonHeaders.set("Content-Type", "application/json");
-    this.commonHeaders.set("Authorization", "bearer " + cookieService.get(this.TOKEN_KEY));
+   // this.commonHeaders.set("Authorization", "bearer " + cookieService.get(this.TOKEN_KEY));
   }
 
   public getMeals(): Promise< void | Array<mealDto>> {
