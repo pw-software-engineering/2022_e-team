@@ -7,12 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using ECaterer.Web.DTO.MealsDTO;
 using Moq;
 using ECaterer.WebApi.Controllers;
 using Moq.EntityFrameworkCore;
 using ECaterer.WebApi.Services;
-using ECaterer.WebApi.Common.Queries;
+using ECaterer.Contracts.Meals;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -25,7 +24,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -41,9 +40,9 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .ReturnsDbSet(meals);
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.GetMealById(1);
+            var result = await controller.GetMealById("meal_1");
             var okResult = result.Result as OkObjectResult;
-            var returnedMeal = okResult.Value as MealDTO;
+            var returnedMeal = okResult.Value as MealModel;
 
             okResult.Should().NotBeNull();
             returnedMeal.Should().NotBeNull();
@@ -57,7 +56,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -85,7 +84,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Callback<Meal>((meal) => meals.Remove(meal));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.DeleteMeal(1);
+            var result = await controller.DeleteMeal("meal_1");
 
             var okResult = result as OkObjectResult;
             var mealsCountAfterDelete = contextMock.Object.Meals.Count();
@@ -101,7 +100,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -123,7 +122,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .Callback<Meal>((meal) => meals.Remove(meal));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.DeleteMeal(1);
+            var result = await controller.DeleteMeal("meal_1");
 
             var badRequestResult = result as BadRequestObjectResult;
 
@@ -146,7 +145,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = allergents,
@@ -155,7 +154,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }
             };
 
-            var editMealDto = new MealDTO()
+            var editMealModel = new MealModel()
             {
                 Name = "Pancake",
                 Calories = 130,
@@ -195,7 +194,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.EditMeal(1, editMealDto);
+            var result = await controller.EditMeal("meal_1", editMealModel);
             var okResult = result as OkObjectResult;
             var editedMeal = meals.FirstOrDefault();
 
@@ -212,7 +211,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -221,7 +220,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }
             };
 
-            var editMealDto = new MealDTO()
+            var editMealModel = new MealModel()
             {
                 Name = "Pancake",
                 Calories = 130,
@@ -237,7 +236,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .ReturnsDbSet(meals);
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.EditMeal(2, editMealDto);
+            var result = await controller.EditMeal("meal_2", editMealModel);
             var notFoundResult = result as NotFoundObjectResult;
 
             notFoundResult.Should().NotBeNull();
@@ -259,7 +258,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Cereals",
                     Calories = 100,
                     AllergentList = allergents,
@@ -267,7 +266,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = true
                 }
             };
-            var addMealDto = new MealDTO()
+            var addMealModel = new MealModel()
             {
                 Name = "Pancake",
                 Calories = 130,
@@ -307,7 +306,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 }));
 
             var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.AddMeal(addMealDto);
+            var result = await controller.AddMeal(addMealModel);
             var okResult = result as OkObjectResult;
             var addedMeal = meals.FirstOrDefault(meal => meal.Name == "Pancake");
 
@@ -325,7 +324,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -334,7 +333,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -343,7 +342,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -351,7 +350,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery();
+            var query = new GetMealsQueryModel();
 
             var options = new DbContextOptions<DataContext>();
             var contextMock = new Mock<DataContext>(options);
@@ -362,7 +361,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -376,7 +375,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -385,7 +384,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -394,7 +393,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -402,7 +401,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Offset = 1
             };
@@ -416,7 +415,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -431,7 +430,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -440,7 +439,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -449,7 +448,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -457,7 +456,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Limit = 1
             };
@@ -471,7 +470,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -486,7 +485,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -495,7 +494,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -504,7 +503,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -512,7 +511,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Sort = "calories(desc)"
             };
@@ -526,7 +525,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -540,7 +539,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -549,7 +548,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -558,7 +557,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -566,7 +565,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Name = "Banana"
             };
@@ -580,7 +579,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -594,7 +593,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -603,7 +602,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -612,7 +611,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -620,7 +619,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Name_with = "ur"
             };
@@ -634,7 +633,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();
@@ -649,7 +648,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             {
                 new Meal()
                 {
-                    MealId = 1,
+                    MealId = "meal_1",
                     Name = "Apple",
                     Calories = 100,
                     AllergentList = new List<Allergent>(),
@@ -658,7 +657,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 2,
+                    MealId = "meal_2",
                     Name = "Banana",
                     Calories = 200,
                     AllergentList = new List<Allergent>(),
@@ -667,7 +666,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Meal()
                 {
-                    MealId = 3,
+                    MealId = "meal_3",
                     Name = "Burger",
                     Calories = 500,
                     AllergentList = new List<Allergent>(),
@@ -675,7 +674,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     Vegan = false
                 }
             };
-            var query = new GetMealsQuery()
+            var query = new GetMealsQueryModel()
             {
                 Calories_ht = 300
             };
@@ -689,7 +688,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var controller = new MealsController(new MealRepository(contextMock.Object));
             var result = await controller.GetMeals(query);
             var okResult = result.Result as OkObjectResult;
-            var returnedMeals = okResult.Value as IEnumerable<GetMealDTO>;
+            var returnedMeals = okResult.Value as IEnumerable<GetMealsResponseModel>;
 
             okResult.Should().NotBeNull();
             returnedMeals.Should().NotBeNull();

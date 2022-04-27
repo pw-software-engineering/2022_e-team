@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class ComplaintStatusEnum
     {
         [Key, Required]
-        public virtual int ComplaintStatusId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string ComplaintStatusId { get; set; }
         [Required]
         [StringLength(50)]
         public virtual string ComplaintStatusValue { get; set; }

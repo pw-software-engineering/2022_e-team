@@ -88,7 +88,8 @@ namespace ECareter.Web.Test.ApiUnitTests
                     PostCode = "00-530",
                     City = "Krakow3"
                 },
-                PhoneNumber = "+48135792468"
+                PhoneNumber = "+48135792468",
+                Password = "12345678"
             };
 
             mockUserManager
@@ -98,7 +99,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 .ReturnsAsync(IdentityResult.Success);
             var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
 
-            var result = await _controller.Register(new RegisterUserModel() { Client = adambrown, Password = "12345678" });
+            var result = await _controller.Register(new RegisterUserModel() { Client = adambrown });
             var okResult = result.Result as OkObjectResult;
 
             okResult.Should().NotBeNull();
@@ -136,7 +137,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             context.Clients.AddRange(new List<Client>(){
                 new Client()
                 {
-                    ClientId = 1,
+                    ClientId = "client_1",
                     Name = "John",
                     LastName = "Smith",
                     Email= "john.smith@gmail.com",
@@ -145,7 +146,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 },
                 new Client()
                 {
-                    ClientId = 2,
+                    ClientId =  "client_2",
                     Name = "Tom",
                     LastName = "Lukas",
                     Email = "tom.lukas@gmail.com",
@@ -161,7 +162,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             var orders = new List<Order>();
             var address1 = new Address()
             {
-                AddressId = 1,
+                AddressId = "address_1",
                 Street = "Street 1",
                 BuildingNumber = "1",
                 ApartmentNumber = "1",
@@ -170,7 +171,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             };
             var address2 = new Address()
             {
-                AddressId = 2,
+                AddressId = "address_2",
                 Street = "Street 2",
                 BuildingNumber = "2",
                 ApartmentNumber = "2",
@@ -179,19 +180,19 @@ namespace ECareter.Web.Test.ApiUnitTests
             };
             var deliveryDetail1 = new DeliveryDetails()
             {
-                DeliveryDetailsId = 1,
+                DeliveryDetailsId = "details_1",
                 Address = address1,
                 PhoneNumber = "+48123456789"
             };
             var deliveryDetail2 = new DeliveryDetails()
             {
-                DeliveryDetailsId = 2,
+                DeliveryDetailsId = "details_2",
                 Address = address2,
                 PhoneNumber = "+48987654321"
             };
             var order1 = new Order()
             {
-                OrderId = 1,
+                OrderId = "order_1",
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail1,
                 StartDate = DateTime.Now,
@@ -200,7 +201,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             };
             var order2 = new Order()
             {
-                OrderId = 2,
+                OrderId = "order_2",
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail2,
                 StartDate = DateTime.Now.AddDays(20),
@@ -209,7 +210,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             };
             var order3 = new Order()
             {
-                OrderId = 3,
+                OrderId = "order_3",
                 Diets = new List<Diet>(),
                 DeliveryDetails = deliveryDetail1,
                 StartDate = DateTime.Now.AddDays(10),

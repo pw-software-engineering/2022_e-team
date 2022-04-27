@@ -12,12 +12,13 @@ namespace ECaterer.Core.Models
     public class Allergent
     {
         [Key, Required]
-        public virtual int AllergentId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string AllergentId { get; set; }
         [StringLength(250)]
         [Required]
         public virtual string Name { get; set; }
         [ForeignKey("Meal")]
-        public int MealId { get; set; }
+        public string MealId { get; set; }
         public Meal Meal { get; set; }
     }
 }

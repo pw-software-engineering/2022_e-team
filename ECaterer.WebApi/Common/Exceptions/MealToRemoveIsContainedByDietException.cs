@@ -7,7 +7,7 @@ namespace ECaterer.WebApi.Common.Exceptions
 {
     public class MealToRemoveIsContainedByDietException : Exception
     {
-        public MealToRemoveIsContainedByDietException(int mealId) : base($"Can't delete meal with specified ID: {mealId}, because it's contained by diet")
+        public MealToRemoveIsContainedByDietException(string mealId) : base($"Can't delete meal with specified ID: {mealId}, because it's contained by diet")
         {
         }
     }

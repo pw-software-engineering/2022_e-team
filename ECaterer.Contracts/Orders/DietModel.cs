@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECaterer.Contracts.Meals;
+using System;
 using System.Collections.Generic;
 using System.Text;
 

@@ -1,9 +1,9 @@
-﻿using ECaterer.Core;
+﻿using AutoMapper;
+using ECaterer.Contracts.Meals;
+using ECaterer.Core;
 using ECaterer.Core.Models;
-using ECaterer.Web.DTO.MealsDTO;
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
-using ECaterer.WebApi.Common.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,20 +20,29 @@ namespace ECaterer.WebApi.Controllers
     public class MealsController : ControllerBase
     {
         private readonly IMealRepository _meals;
+        private readonly Mapper _mapper;
 
         public MealsController(IMealRepository meals)
         {
             _meals = meals;
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Meal, MealModel>()
+                    .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToList()))
+                    .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToList()));
+                cfg.CreateMap<Meal, GetMealsResponseModel>();
+            });
+            _mapper = new Mapper(mappingConfig);
         }
 
         [HttpGet]
         //[Authorize(Roles = "producer, client")]
-        public async Task<ActionResult<GetMealDTO[]>> GetMeals([FromQuery] GetMealsQuery query)
+        public async Task<ActionResult<GetMealsResponseModel[]>> GetMeals([FromQuery] GetMealsQueryModel query)
         {
             try
             {
                 var meals = await _meals.GetMeals(query.Offset, query.Limit, query.Sort, query.Name, query.Name_with, query.Vegan, query.Calories, query.Calories_lt, query.Calories_ht);
-                var mealsDTO = meals.Select(meal => new GetMealDTO(meal)).ToList();
+                var mealsDTO = meals.Select(meal => _mapper.Map<GetMealsResponseModel>(meal)).ToList();
                 return Ok(mealsDTO);
             }
             catch
@@ -44,7 +53,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> AddMeal([FromBody] MealDTO mealDTO)
+        public async Task<ActionResult> AddMeal([FromBody] MealModel mealDTO)
         {
             try
             {
@@ -59,12 +68,12 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpGet("{mealId}")]
         //[Authorize(Roles = "producer, client")]
-        public async Task<ActionResult<MealDTO>> GetMealById(int mealId)
+        public async Task<ActionResult<MealModel>> GetMealById(string mealId)
         {
             try
             {
                 var meal = await _meals.GetMealById(mealId);
-                return Ok(new MealDTO(meal));
+                return Ok(_mapper.Map<MealModel>(meal));
             }
             catch (UnexistingMealException)
             {
@@ -78,11 +87,11 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPut("{mealId}")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> EditMeal(int mealId, [FromBody] MealDTO mealDTO)
+        public async Task<ActionResult> EditMeal(string mealId, [FromBody] MealModel mealModel)
         {
             try
             {
-                await _meals.EditMeal(mealId, mealDTO);
+                await _meals.EditMeal(mealId, mealModel);
                 return Ok("Powodzenie edycji posiłku");
             }
             catch (UnexistingMealException)
@@ -97,7 +106,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpDelete("{mealId}")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> DeleteMeal(int mealId)
+        public async Task<ActionResult> DeleteMeal(string mealId)
         {
             try
             {
