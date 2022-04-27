@@ -21,7 +21,6 @@ namespace ECaterer.WebApi.Integration.Test
     {
         private HttpClient Client;
         private static string mealId;
-        private static string authToken = "as";
 
         public MealsTests(TestFixture<Startup> fixture)
         {
@@ -29,10 +28,31 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task AATestAddMeal()
+        public async Task AATestLoginProducer()
+        {
+            var request = new
+            {
+                Url = "/api/client/login",
+                Body = CredentialResolver.ResolveProducer()
+            };
+
+            var response = await Client.PostAsJsonAsync<LoginUserModel>(request.Url, request.Body);
+
+            response.EnsureSuccessStatusCode();
+
+            var auth = response.Headers.GetValues("api-key").FirstOrDefault();
+
+            auth.Should().NotBeNull();
+
+            TokenHandler.SetToken(auth);
+
+        }
+
+        [Fact]
+        public async Task BATestAddMeal()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Pancake",
@@ -47,7 +67,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task ABTestGetMeals()
+        public async Task BBTestGetMeals()
         {
             var meals = await Client.GetFromJsonAsync<GetMealsResponseModel[]>("/api/meals");
             meals.Should().NotBeNull();
@@ -61,10 +81,10 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task ACTestEditMeal()
+        public async Task BCTestEditMeal()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/meals/{mealId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Cheesecake",
@@ -79,7 +99,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task ADTestGetMealById()
+        public async Task BDTestGetMealById()
         {
             var meal = await Client.GetFromJsonAsync<MealModel>($"/api/meals/{mealId}");
 
@@ -87,7 +107,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task AETestDeleteMeal()
+        public async Task BETestDeleteMeal()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
 

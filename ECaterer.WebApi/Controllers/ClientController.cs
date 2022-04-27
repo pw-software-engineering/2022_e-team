@@ -11,10 +11,11 @@ using ECaterer.Core.Models;
 using ECaterer.WebApi.Data;
 using ECaterer.Core;
 using ECaterer.Contracts;
+using ECaterer.Contracts.Client;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/client")]
     [ApiController]
     public class ClientController : ControllerBase
     {
@@ -31,7 +32,7 @@ namespace ECaterer.WebApi.Controllers
             _context = context;
         }
 
-        [Route("Login")]
+        [Route("login")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedUserModel>> Login([FromBody] LoginUserModel loginUser)
         {
@@ -54,38 +55,38 @@ namespace ECaterer.WebApi.Controllers
             return Unauthorized();
         }
 
-        [HttpPost("Register")]
-        public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthenticatedUserModel>> Register(ClientModel registerUser)
         {
-            if (_userManager.Users.Any(x => x.Email == registerUser.Client.Email))
+            if (_userManager.Users.Any(x => x.Email == registerUser.Email))
             {
                 return BadRequest("Email taken");
             }
 
             var user = new IdentityUser
             {
-                Email = registerUser.Client.Email,
-                UserName = registerUser.Client.Email
+                Email = registerUser.Email,
+                UserName = registerUser.Email
             };
 
-            var result = await _userManager.CreateAsync(user, registerUser.Client.Password);
+            var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (result.Succeeded)
             {
                 _context.Clients.Add(new Client()
                 {
-                    Name = registerUser.Client.Name,
-                    LastName = registerUser.Client.LastName,
-                    Email = registerUser.Client.Email,
-                    PhoneNumber = registerUser.Client.PhoneNumber,
+                    Name = registerUser.Name,
+                    LastName = registerUser.LastName,
+                    Email = registerUser.Email,
+                    PhoneNumber = registerUser.PhoneNumber,
 
                     Address = new Address()
                     {
-                        Street = registerUser.Client.Address.Street,
-                        BuildingNumber = registerUser.Client.Address.BuildingNumber,
-                        ApartmentNumber = registerUser.Client.Address.ApartmentNumber,
-                        PostCode = registerUser.Client.Address.PostCode,
-                        City = registerUser.Client.Address.City
+                        Street = registerUser.Address.Street,
+                        BuildingNumber = registerUser.Address.BuildingNumber,
+                        ApartmentNumber = registerUser.Address.ApartmentNumber,
+                        PostCode = registerUser.Address.PostCode,
+                        City = registerUser.Address.City
                     }
                 }) ;
 
