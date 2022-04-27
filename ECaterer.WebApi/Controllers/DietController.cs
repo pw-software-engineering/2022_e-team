@@ -34,7 +34,7 @@ namespace ECaterer.WebApi.Controllers
 
                 return Ok(diets);
             }
-            catch
+            catch(Exception e)
             {
                 throw new Exception("Niepowodzenie pobrania diet");
             }
