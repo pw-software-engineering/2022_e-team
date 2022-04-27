@@ -67,7 +67,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task ACTestEditDietChangePrice()
+        public async Task BCTestEditDietChangePrice()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
@@ -94,9 +94,9 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BDTestGetDietById()
         {
-            var meal = await Client.GetFromJsonAsync<MealModel>($"/api/diets/{dietId}");
+            var diet = await Client.GetFromJsonAsync<DietModel>($"/api/diets/{dietId}");
 
-            meal.Name.Should().Be("Sport");
+            diet.Name.Should().Be("Sport");
         }
 
         [Fact]
