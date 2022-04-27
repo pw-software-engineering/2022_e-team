@@ -21,7 +21,7 @@ namespace ECaterer.WebApi.Services
             _context = context;
         }
 
-        public async Task<DietModel> GetDietByID(int id)
+        public async Task<DietModel> GetDietByID(string id)
         {
             var diet = await GetDietFromDB(id);
            
@@ -87,7 +87,7 @@ namespace ECaterer.WebApi.Services
 
         public async Task<Diet> AddDiet(CreateDietMealsModel dietInfo)
         {
-            var meals = _context.Meals.Where(m => dietInfo.MealsId.Contains(m.MealId.ToString())).ToArray();
+            var meals = _context.Meals.Where(m => dietInfo.MealsId.Contains(m.MealId)).ToArray();
 
             var diet = new Diet
             {
@@ -104,7 +104,7 @@ namespace ECaterer.WebApi.Services
             return diet;
         }
 
-        public async Task<Diet> EditDiet(int dietId, CreateDietMealsModel dietInfo)
+        public async Task<Diet> EditDiet(string dietId, CreateDietMealsModel dietInfo)
         {
             var diet = await GetDietFromDB(dietId);
 
@@ -122,16 +122,16 @@ namespace ECaterer.WebApi.Services
             return diet;
         }
 
-        public async Task<Diet> DeleteDiet(int dietId)
+        public async Task<Diet> DeleteDiet(string dietId)
         {
-            var diet = await GetDietFromDB (dietId);
+            var diet = await GetDietFromDB(dietId);
             _context.Diets.Remove(diet);
             await _context.SaveChangesAsync();
 
             return diet;
         }
 
-        private async Task<Diet> GetDietFromDB(int dietId)
+        private async Task<Diet> GetDietFromDB(string dietId)
         {
             var diet = await _context.Diets.FirstOrDefaultAsync(d => d.DietId == dietId);
             if (diet is null)

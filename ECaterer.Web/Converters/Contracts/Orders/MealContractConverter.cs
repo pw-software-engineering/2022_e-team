@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using ECaterer.Core.Models;
 using System.Linq;
+using ECaterer.Contracts.Meals;
 
 namespace ECaterer.Contracts.Converters.Orders
 {
@@ -13,7 +14,6 @@ namespace ECaterer.Contracts.Converters.Orders
         {
             return new MealModel
             {
-                MealId = meal.MealId.ToString(),
                 Name = meal.Name,
                 Calories = meal.Calories,
                 Vegan = meal.Vegan,
@@ -26,7 +26,6 @@ namespace ECaterer.Contracts.Converters.Orders
         {
             return new Meal
             {
-                MealId = Int32.Parse(meal.MealId),
                 Name = meal.Name,
                 Calories = meal.Calories,
                 Vegan = meal.Vegan,

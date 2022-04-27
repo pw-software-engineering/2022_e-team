@@ -7,7 +7,7 @@ namespace ECaterer.WebApi.Common.Exceptions
 {
     public class UnexistingDietException: Exception
     {
-        public UnexistingDietException(int dietId): base($"Podana dieta nie istenie, id: {dietId}")
+        public UnexistingDietException(string dietId): base($"Podana dieta nie istenie, id: {dietId}")
         {
         }
     }

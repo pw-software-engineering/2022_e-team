@@ -42,7 +42,7 @@ namespace ECaterer.WebApi.Controllers
 
         // GET api/<DientController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DietModel>> GetDietByID(int id)
+        public async Task<ActionResult<DietModel>> GetDietByID(string id)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPut("{dietId}")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> EditDiet(int dietId, [FromBody] CreateDietMealsModel dietInfo)
+        public async Task<ActionResult> EditDiet(string dietId, [FromBody] CreateDietMealsModel dietInfo)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteDiet(int id)
+        public async Task<ActionResult> DeleteDiet(string id)
         {
             try
             {
