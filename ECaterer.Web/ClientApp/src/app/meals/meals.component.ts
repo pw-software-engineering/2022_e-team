@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RegistrationService } from '../registration/api/registration.service';
 import { MealsService } from './api/meals.service'
-import { mealDto } from './api/mealsDtos'
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-meals',
   templateUrl: './meals.component.html',
 })
 
