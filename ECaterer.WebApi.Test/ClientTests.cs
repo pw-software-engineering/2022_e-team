@@ -21,8 +21,6 @@ namespace ECaterer.WebApi.Integration.Test
 
         private static string random = new Random().Next().ToString();
 
-        private static string authToken;
-
         public ClientTests(TestFixture<Startup> fixture)
         {
             Client = fixture.Client;
@@ -31,6 +29,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task AATestRegisterUser()
         {
+            TokenHandler.SetToken("authtokene");
             var request = new
             {
                 Url = "/api/client/register",
@@ -48,18 +47,17 @@ namespace ECaterer.WebApi.Integration.Test
                     Name = "Jan",
                     LastName = "Kowalski",
                     Password = "1234!Aaaa"
-                }   
+                }
             };
 
             var response = await Client.PostAsJsonAsync<ClientModel>(request.Url, request.Body);
             response.EnsureSuccessStatusCode();
 
+            var auth = response.Headers.GetValues("api-key").FirstOrDefault();
 
-            var value = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
+            auth.Should().NotBeNull();
 
-            value.Token.Should().NotBeEmpty();
-
-            authToken = value.Token;
+            TokenHandler.SetToken(auth);
 
         }
 
@@ -84,7 +82,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             auth.Should().NotBeNull();
 
-            authToken = auth;
+            TokenHandler.SetToken(auth);
 
         }
 
@@ -92,7 +90,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task ACTestGetAccountUser()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/client/account");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
 
@@ -108,7 +106,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task ADTestPutAccountUser()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, "/api/client/account");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new ClientModel()
             {
                 Email = $"{random}@gmail.com",
@@ -134,10 +132,10 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task AETestGetOrders()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/client/orders");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", authToken);
-            
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
             var parameters = new Dictionary<string, string>() { { "limit", "10" } };
-            
+
 
             requestMessage.Content = new FormUrlEncodedContent(parameters);
             var response = await Client.SendAsync(requestMessage);
