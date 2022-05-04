@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class Client
     {
         [Key, Required]
-        public virtual int ClientId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string ClientId { get; set; }
         [Required]
         [StringLength(50)]
         public virtual string Name { get; set; }

@@ -42,12 +42,15 @@ export class ClientLogin implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      this.registrationService.loginUser()
+      this.registrationService.loginUser(this.loginData)
         .then(() => {
-          console.log("Pomyślnie zalogowano.");
+          this.router.navigate(['/home']);
         })
         .catch((err) => {
-          this.showError(err);
+          if (err.status == 401)
+            this.showError("Nieprawidłowy mail lub hasło");
+          else
+            this.showError("Wystąpił błąd serwera. Spróbuj ponownie później.");
         });
     }
     else {

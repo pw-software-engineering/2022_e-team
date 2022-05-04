@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class Order
     {
         [Key, Required]
-        public virtual int OrderId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string OrderId { get; set; }
         [Required]
         public virtual ICollection<Diet> Diets { get; set; }
         [Required]

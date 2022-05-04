@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ECaterer.WebApi.Models;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,10 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using ECaterer.Core.Models;
 using ECaterer.WebApi.Data;
 using ECaterer.Core;
+using ECaterer.Contracts;
+using System.Net;
+using ECaterer.Contracts.Client;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/client")]
     [ApiController]
     public class ClientController : ControllerBase
     {
@@ -31,9 +33,9 @@ namespace ECaterer.WebApi.Controllers
             _context = context;
         }
 
-        [Route("Login")]
+        [Route("login")]
         [HttpPost]
-        public async Task<ActionResult<AuthenticatedUserModel>> Login([FromBody] LoginUserModel loginUser)
+        public async Task<ActionResult> Login([FromBody] LoginUserModel loginUser)
         {
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
@@ -41,46 +43,67 @@ namespace ECaterer.WebApi.Controllers
                 return Unauthorized();
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
-
+            
             if (result.Succeeded)
             {
-                return new AuthenticatedUserModel
+                var authModel = new AuthenticatedUserModel
                 {
-                    Token = _tokenService.CreateToken(user),
-                   // UserName = user.Email
+                    Token = _tokenService.CreateToken(user)
                 };
+
+                Response.Headers.Add("api-key", authModel.Token);
+
+                return Ok();
+
+                //    new AuthenticatedUserModel
+                //{
+                //    Token = _tokenService.CreateToken(user)
+                //});
             }
 
             return Unauthorized();
         }
 
-        [HttpPost("Register")]
-        public async Task<ActionResult<AuthenticatedUserModel>> Register(RegisterUserModel registerUser)
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthenticatedUserModel>> Register(ClientModel registerUser)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == registerUser.Client.Email))
+            if (_userManager.Users.Any(x => x.Email == registerUser.Email))
             {
                 return BadRequest("Email taken");
             }
 
             var user = new IdentityUser
             {
-                Email = registerUser.Client.Email,
-                UserName = registerUser.Client.Email
+                Email = registerUser.Email,
+                UserName = registerUser.Email
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (result.Succeeded)
             {
-
-                _context.Clients.Add(registerUser.Client);
-                _context.SaveChanges();
-
-                return new AuthenticatedUserModel
+                _context.Clients.Add(new Client()
                 {
-                    //UserName = user.UserName,
-                    Token = _tokenService.CreateToken(user)
-                };
+                    Name = registerUser.Name,
+                    LastName = registerUser.LastName,
+                    Email = registerUser.Email,
+                    PhoneNumber = registerUser.PhoneNumber,
+
+                    Address = new Address()
+                    {
+                        Street = registerUser.Address.Street,
+                        BuildingNumber = registerUser.Address.BuildingNumber,
+                        ApartmentNumber = registerUser.Address.ApartmentNumber,
+                        PostCode = registerUser.Address.PostCode,
+                        City = registerUser.Address.City
+                    }
+                }) ;
+
+                _context.SaveChanges();
+                var Token = _tokenService.CreateToken(user);
+
+                Response.Headers.Add("api-key", Token);
+                return Ok();
             }
 
             return BadRequest("Problem registering user");

@@ -1,4 +1,5 @@
 using ECaterer.Core;
+using ECaterer.WebApi.Common.Interfaces;
 using ECaterer.WebApi.Data;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -87,6 +88,7 @@ namespace ECaterer.WebApi
 
                 });
 
+            services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<TokenService>();
 
             //SWAGGER
@@ -124,6 +126,8 @@ namespace ECaterer.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            DatabaseManagementService.MigrationInitialisation(app);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

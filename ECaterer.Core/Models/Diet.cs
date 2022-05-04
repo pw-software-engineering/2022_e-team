@@ -12,7 +12,8 @@ namespace ECaterer.Core.Models
     public class Diet
     {
         [Key, Required]
-        public virtual int DietId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual string DietId { get; set; }
         [Required]
         [StringLength(50)]
         public virtual string Title { get; set; }
