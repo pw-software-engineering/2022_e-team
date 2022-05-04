@@ -1,7 +1,7 @@
 
 <main id="client-registration">
   <h1>Zarejestruj się</h1>
-  <div id="registrationForm" class="userInfo">
+  <div id="registrationForm" class="userInfo" [ngClass]="{'modalIn': !secondTab && secondTabAlreadyShown, 'modalLeave': secondTab}">
     <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
     <form class="k-form" [formGroup]="form">
       <fieldset class="k-form-fieldset">
@@ -59,7 +59,7 @@
       </fieldset>
     </form>
   </div>
-  <div *ngIf="secondTab" id="registrationForm" class="addressInfo">
+  <div *ngIf="secondTabAlreadyShown" id="registrationForm" class="addressInfo" [ngClass]="{'modalIn': secondTab, 'modalLeave': !secondTab}">
     <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
     <form class="k-form" [formGroup]="addressForm">
       <fieldset class="k-form-fieldset">
@@ -111,6 +111,7 @@
         </kendo-formfield>
         <button class="wideBtn" kendoButton themeColor="primary" (click)="submitForm()">Zarejestruj się</button>
         <button class="shortBtn" kendoButton themeColor="primary" (click)="redirectToLogin()">Zaloguj się</button>
+        <button class="backBtn" kendoButton themeColor="primary" (click)="backToUserForm()">Wstecz</button>
       </fieldset>
     </form>
   </div>

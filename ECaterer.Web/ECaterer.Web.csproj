@@ -34,6 +34,7 @@
     <None Remove="ClientApp\src\app\meals\api\meals.service.ts" />
     <None Remove="ClientApp\src\app\meals\api\mealsDtos.ts" />
     <None Remove="ClientApp\src\app\meals\meals.component.ts" />
+    <None Remove="ClientApp\src\app\diets\api\dietDTO.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
