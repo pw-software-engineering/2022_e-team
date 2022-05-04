@@ -15,6 +15,7 @@ import { Router } from "@angular/router";
 export class ClientRegistration implements OnInit {
 
   public secondTab = false;
+  public secondTabAlreadyShown = false;
 
   public phoneNumberMask = '+48-000-000-000';
   public postCodeMask = '00-000';
@@ -78,8 +79,8 @@ export class ClientRegistration implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      $("#registrationForm.userInfo").addClass("modalLeave");
       this.secondTab = true;
+      this.secondTabAlreadyShown = true;
     }
     else {
       this.showError("Niepoprawne dane.");
@@ -101,6 +102,10 @@ export class ClientRegistration implements OnInit {
     else {
       this.showError("Niepoprawne dane.");
     }
+  }
+
+  backToUserForm(): void {
+    this.secondTab = false;
   }
 
 
