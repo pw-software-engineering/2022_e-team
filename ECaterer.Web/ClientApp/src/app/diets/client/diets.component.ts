@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from "@angular/router";
-import { DietsService } from './api/diets.service';
-import { RegistrationService } from '../registration/api/registration.service';
+import { DietsService } from '../api/diets.service';
+import { RegistrationService } from '../../registration/api/registration.service';
+import { DietDTO } from '../api/dietDTO';
 
 @Component({
   selector: 'app-diets',
@@ -11,29 +12,23 @@ import { RegistrationService } from '../registration/api/registration.service';
   encapsulation: ViewEncapsulation.None
 })
 
-export class Diets implements OnInit {
+export class DietsComponent implements OnInit {
   constructor(private TitleService: Title, private router: Router, private dietsService: DietsService, private registrationService: RegistrationService) {
     this.TitleService.setTitle("Lista dostępnych diet");
   }
 
-  public diets: any;
+
+  public diets: DietDTO[];
 
   ngOnInit(): void {
-    this.diets = this.dietsService.getDiets();
+    this.dietsService.getDiets()
+      .then((data) => {
+        this.diets = (data as DietDTO[]);
+      });
   }
 
-  public goToDiets() {
-    window.location.reload();
+  goToDiet(dietId: number) {
+    this.router.navigate(["client/diets", dietId]);
   }
 
-  public goToCart() {
-  }
-
-  public goToDiet() {
-  }
-
-  public logout() {
-    this.registrationService.logout();
-    this.router.navigate(['/client/login']);
-  }
 }

@@ -1,8 +1,11 @@
 
 export interface mealDto {
-  Name: string;
-  AllergentList: Array<string>;
-  IngredientList: Array<string>;
-  Calories: number;
-  Vegan: boolean;
+  id: string;
+  name: string;
+  allergentList: Array<string>;
+  allergentString: string;
+  ingredientList: Array<string>;
+  ingredientString: string;
+  calories: number;
+  vegan: boolean;
 }

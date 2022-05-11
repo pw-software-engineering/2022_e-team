@@ -1,10 +1,12 @@
-<main id="mealsInDiets">
+
+<main id="diets">
   <div>
-    <h2>Lista posiłków w diecie</h2>
+    <h2>Lista dostępnych diet</h2>
     <section>
       <div>
         <div>
-          <kendo-grid [kendoGridBinding]="meals"
+          <kendo-grid
+                      [kendoGridBinding]="diets"
                       [sortable]="true"
                       [filterable]="true"
                       [height]="600"
@@ -13,14 +15,15 @@
                       [pageSize]="6"
                       [skip]="0">
             <kendo-grid-column field="name" title="Nazwa">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton (click)="goToDiet(dataItem.id)" fillMode="link" themeColor="primary">{{ dataItem.name }}</button>
+              </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="ingredientString" title="Lista składników">
-            </kendo-grid-column>
-            <kendo-grid-column field="allergentString" title="Lista alergenów">
+            <kendo-grid-column field="price" title="Cena" filter="numeric">
             </kendo-grid-column>
             <kendo-grid-column field="calories" title="Wartość energetyczna [kcal]" filter="numeric">
             </kendo-grid-column>
-            <kendo-grid-column field="vegan" title="Czy jest wegański" filter="boolean">
+            <kendo-grid-column field="vegan" title="Czy jest wegańska" filter="boolean">
               <kendo-grid-messages filterIsTrue="Tak"
                                    filterIsFalse="Nie"
                                    filterBooleanAll="---">
@@ -28,6 +31,11 @@
 
               <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.vegan ? "Tak" : "Nie"}}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column>
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton themeColor="primary">Dodać do zamówienia</button>
               </ng-template>
             </kendo-grid-column>
           </kendo-grid>

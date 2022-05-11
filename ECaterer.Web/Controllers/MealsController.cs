@@ -49,5 +49,58 @@ namespace ECaterer.Web.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("GetMealsInDiet/{dietId}")]
+        public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(int dietId)
+        {
+            return Ok(new List<MealDTO>()
+            {
+                new MealDTO()
+                {
+                    Id = "1",
+                    Name = "Tort orzechowy",
+                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
+                    AllergentList = new string[]{"orzechy", "laktoza" },
+                    Calories = 1000,
+                    Vegan = true
+                },
+                new MealDTO()
+                {
+                    Id = "2",
+                    Name = "Tort orzechowy3",
+                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
+                    AllergentList = new string[]{"orzechy", "laktoza" },
+                    Calories = 1000,
+                    Vegan = true
+                },
+                new MealDTO()
+                {
+                    Id = "3",
+                    Name = "Tort orzechowy4",
+                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
+                    AllergentList = new string[]{"orzechy", "laktoza" },
+                    Calories = 1500,
+                    Vegan = true
+                },
+                new MealDTO()
+                {
+                    Id = "4",
+                    Name = "Tort orzechowy5",
+                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
+                    AllergentList = new string[]{"orzechy", "laktoza" },
+                    Calories = 1300,
+                    Vegan = false
+                },
+                new MealDTO()
+                {
+                    Id = "5",
+                    Name = "Tort orzechowy6",
+                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
+                    AllergentList = new string[]{"orzechy", "laktoza" },
+                    Calories = 1400,
+                    Vegan = false
+                }
+            });
+        }
     }
 }

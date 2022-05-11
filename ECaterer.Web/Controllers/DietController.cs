@@ -45,26 +45,98 @@ namespace ECaterer.Web.Controllers
             query["price"] = price.ToString();
             query["price_lt"] = price_lt.ToString();
             query["price_ht"] = price_ht.ToString();
-            var response = await _apiClient.GetAsync("api/diets" + query.ToString());
 
-            if (response.IsSuccessStatusCode)
+            return Ok(new DietDTO[]
             {
-                var content = await response.Content.ReadFromJsonAsync<DietModel[]>();
-                var diets = new DietDTO[content.Length];
-                for (int i = 0; i < content.Length; i++)
+                new DietDTO()
                 {
-                    diets[i] = DietConverter.ConvertBack(content[i]);
+                   Id = "1",
+                    Name = "meatballs",
+                     Price = 10,
+                   Calories = 1234,
+                     Vegan = false
+                },
+                new DietDTO()
+                {
+                   Id = "1",
+                    Name = "meatballs2",
+                     Price = 10,
+                   Calories = 1234,
+                     Vegan = false
+                },
+                new DietDTO()
+                {
+                   Id = "1",
+                    Name = "meatballs3",
+                     Price = 10,
+                   Calories = 1234,
+                     Vegan = false
                 }
-                return Ok(diets);
-            }
-            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            });
+            //var response = await _apiClient.GetAsync("api/diets" + query.ToString());
+
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    var content = await response.Content.ReadFromJsonAsync<DietModel[]>();
+            //    var diets = new DietDTO[content.Length];
+            //    for (int i = 0; i < content.Length; i++)
+            //    {
+            //        diets[i] = DietConverter.ConvertBack(content[i]);
+            //    }
+            //    return Ok(diets);
+            //}
+            //else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            //{
+            //    return Unauthorized();
+            //}
+            //else
+            //{
+            //    return BadRequest();
+            //}
+        }
+
+        [HttpGet("getProducerDiets")]
+        public async Task<ActionResult<ProducerDietDTO[]>> GetProducerDiets()
+        {
+            return Ok(new ProducerDietDTO[]
             {
-                return Unauthorized();
-            }
-            else
+                new ProducerDietDTO()
+                {
+                   Id = "1",
+                   Name = "meatballs",
+                   Description = "some meatballs"
+                },
+                new ProducerDietDTO()
+                {
+                   Id = "1",
+                   Name = "meatballs2",
+                   Description = "even more meatballs"
+                },
+                new ProducerDietDTO()
+                {
+                   Id = "1",
+                   Name = "meatballs3",
+                   Description = "meatballs"
+                }
+            });
+        }
+
+        [HttpGet("getEditDiets/{id}")]
+        public async Task<ActionResult<EditDietDTO>> GetEditDietModel()
+        {
+            return Ok(new EditDietDTO()
             {
-                return BadRequest();
-            }
+                Id = "1",
+                Calories = 1000,
+                Vegan = true,
+                Description = "taka sobie fajna dieta"
+            });
+        }
+
+        [HttpGet("deleteDiet/{id}")]
+        public async Task<ActionResult> DeleteDiet(int dietId)
+        {
+            return Ok();
         }
     }
 }
