@@ -41,4 +41,7 @@ export class ProducerDietsComponent implements OnInit {
     this.router.navigate(["producer/diets", dietId]);
   }
 
+  createDiet() {
+    this.router.navigate(["producer/diets", 0]);
+  }
 }

@@ -27,6 +27,8 @@ export class EditDietComponent implements OnInit {
   private dietId: number;
 
   public addMealDialog: boolean = false;
+  
+  public previewMealDialog: boolean = false;
 
   public mealsInDiet: mealDto[] = [];
 
@@ -48,6 +50,8 @@ export class EditDietComponent implements OnInit {
     calories: 0,
     vegan: true
   };
+
+  public selectedMeal: mealDto;
 
   ngOnInit(): void {
     this.inRoute.params.subscribe((params: Params) => {
@@ -89,8 +93,8 @@ export class EditDietComponent implements OnInit {
       alert("Nazwa posiłku nie może być pusta");
       return;
     }
-    this.newMealData.allergentList = this.newMealData.allergentString.split(',');
-    this.newMealData.ingredientList = this.newMealData.ingredientString.split(',');
+    this.newMealData.allergentList = this.newMealData.allergentString.split(';');
+    this.newMealData.ingredientList = this.newMealData.ingredientString.split(';');
     // this is temporary id for uniqueness while removing
     this.newMealData.id = (-this.mealsInDiet.length).toString();
     this.mealsInDiet.push(this.newMealData);
@@ -103,8 +107,20 @@ export class EditDietComponent implements OnInit {
     this.updateCaloriesAndVegan();
   }
 
-  addMeal() {
+  public previewMeal(mealId: string) {
+    this.selectedMeal = this.mealsInDiet.find(m => m.id == mealId);
+    this.previewMealDialog = true;
+  }
 
+  public closePreview() {
+    this.previewMealDialog = false;
+  }
+
+  public saveDiet() {
+    this.dietsService.editDiet(this.mealsInDiet, this.editModel)
+      .then((data) => {
+        this.router.navigate(["/producer/diets"]);
+      });
   }
 
 }

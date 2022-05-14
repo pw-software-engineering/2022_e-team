@@ -35,7 +35,7 @@
             </kendo-grid-column>
             <kendo-grid-column>
               <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button kendoButton themeColor="primary">Dodać do zamówienia</button>
+                <button kendoButton themeColor="primary" (click)="addDietToCart(dataItem.id)">Dodaj do zamówienia</button>
               </ng-template>
             </kendo-grid-column>
           </kendo-grid>

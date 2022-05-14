@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import { OrderService } from '../order/api/order.service';
 import { RegistrationService } from '../registration/api/registration.service';
 
 @Component({
@@ -10,18 +11,19 @@ import { RegistrationService } from '../registration/api/registration.service';
 })
 
 export class Navigation implements OnInit {
-  constructor(private router: Router, private registrationService: RegistrationService) {
+  constructor(private router: Router, private registrationService: RegistrationService, private orderService: OrderService) {
   }
 
   ngOnInit(): void {
-   
+    this.orderService.refreshCartCount();
   }
 
   public goToDiets() {
-    window.location.reload();
+    this.router.navigate(['/client/diets']);
   }
 
   public goToCart() {
+    this.router.navigate(['/client/cart']);
   }
 
   public goToDiet() {

@@ -53,6 +53,10 @@ namespace ECaterer.Web.Controllers
         [HttpGet("GetMealsInDiet/{dietId}")]
         public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(int dietId)
         {
+            if (dietId == 0)
+            {
+                return Ok(new List<MealDTO>());
+            }
             return Ok(new List<MealDTO>()
             {
                 new MealDTO()

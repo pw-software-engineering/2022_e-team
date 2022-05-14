@@ -2,7 +2,8 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DietDTO } from './dietDTO';
 import { ProducerDietDTO } from './producerDietDTO';
-import { EditDietDTO } from './editDietDTOs';
+import { EditDietDTO, SaveDietDTO } from './editDietDTOs';
+import { mealDto } from '../../meals/api/mealsDtos';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,16 @@ export class DietsService {
 
   public deleteDiet(dietId: number): Promise<void> {
     return this.http.put<void>(this.dietUrl + "deleteDiet/" + dietId, { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public editDiet(meals: mealDto[], dietModel: EditDietDTO): Promise<void> {
+    var saveDietData: SaveDietDTO = {
+      meals: meals,
+      id: dietModel.id,
+      calories: dietModel.calories,
+      vegan: dietModel.vegan,
+      description: dietModel.description
+    };
+    return this.http.post<void>(this.dietUrl + "editDiet", saveDietData, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 }

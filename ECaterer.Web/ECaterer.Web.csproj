@@ -37,11 +37,14 @@
     <None Remove="ClientApp\src\app\meals\api\mealsDtos.ts" />
     <None Remove="ClientApp\src\app\meals\meals.component.ts" />
     <None Remove="ClientApp\src\app\diets\api\dietDTO.ts" />
+    <None Remove="ClientApp\src\app\order\api\orderDTO.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Remove="ClientApp\src\app\cart\cart.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\cart\cart.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\client-registration\client-registration.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\client-registration\client-registration.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\diets\client\diets.component.spec.ts" />
@@ -51,6 +54,7 @@
     <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\navigation\navigation.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\api\order.service.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.spec.ts" />

@@ -1,0 +1,72 @@
+
+main#cart {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 10vh;
+
+  div#wrapper {
+    width: 80vw;
+
+    .k-grid * {
+      overflow: hidden !important;
+    }
+
+    table {
+
+      thead {
+        background-color: rgb(128, 128, 128);
+
+        th {
+          outline-style: none;
+          color: white;
+          font-weight: bold;
+          padding: 30px 10px 10px 30px;
+        }
+
+        th, tr, td {
+          border-style: none;
+        }
+      }
+    }
+  }
+
+  #deliveryDetails {
+    width: 80vw;
+
+    h2 {
+      margin-top: 60px;
+      margin-bottom: 60px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    #addressDetails>fieldset {
+        width: 40%;
+    }
+
+    #dateDetails {
+      fieldset > div:nth-child(1), fieldset > div:nth-child(2) {
+        display: flex;
+        justify-content: space-between;
+
+        span {
+          width: 40%;
+        }
+      }
+
+      fieldset > div:nth-child(3) {
+        display: flex;
+        justify-content: center;
+
+        button {
+          width: 20%;
+        }
+      }
+    }
+
+    fieldset > * {
+      margin-top: 30px;
+    }
+  }
+}

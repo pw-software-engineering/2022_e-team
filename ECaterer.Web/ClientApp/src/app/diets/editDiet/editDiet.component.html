@@ -7,7 +7,7 @@
         <h2>Lista posiłków w diecie</h2>
         <ul>
           <li *ngFor="let meal of mealsInDiet">
-            <span>{{meal.name}}</span> <button kendoButton themeColor="secondary" (click)="removeFromDiet(meal.id)">Usuń</button>
+            <span>{{meal.name}}</span> <span><button kendoButton themeColor="primary" (click)="previewMeal(meal.id)">Podgląd</button> <button kendoButton themeColor="secondary" (click)="removeFromDiet(meal.id)">Usuń</button></span>
           </li>
         </ul>
         <div class="wrapper">
@@ -41,7 +41,7 @@
         </kendo-formfield>
       </fieldset>
     </form>
-    <button kendoButton themeColor="primary" id="saveDietBtn">Zapisz</button>
+    <button kendoButton themeColor="primary" id="saveDietBtn" (click)="saveDiet()">Zapisz</button>
   </div>
 </main>
 
@@ -64,14 +64,14 @@
                          required></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
-          <kendo-label text="Składniki (rozdzielone przecinkiem)"></kendo-label>
+          <kendo-label text="Składniki (rozdzielone średnikiem)"></kendo-label>
           <kendo-textbox [(ngModel)]="newMealData.ingredientString"
                          [value]="newMealData.ingredientString"
                          [ngModelOptions]="{standalone: true}"
                          #ingredientString></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
-          <kendo-label text="Alergeny (rozdzielone przecinkiem)"></kendo-label>
+          <kendo-label text="Alergeny (rozdzielone średnikiem)"></kendo-label>
           <kendo-textbox [(ngModel)]="newMealData.allergentString"
                          [value]="newMealData.allergentString"
                          [ngModelOptions]="{standalone: true}"
@@ -100,5 +100,28 @@
     <button kendoButton id="saveDietBtn" (click)="saveNewMeal()" themeColor="primary">
       Zapisz
     </button>
+  </kendo-dialog-actions>
+</kendo-dialog>
+
+<kendo-dialog tile="Podgląd posiłku"
+              *ngIf="previewMealDialog"
+              (close)="closePreview()"
+              [minWidth]="250"
+              [width]="450">
+
+  <p>Lista składników</p>
+  <ul>
+    <li *ngFor="let ingredient of selectedMeal.ingredientList">
+      <span>{{ingredient}}</span>
+    </li>
+  </ul>
+  <p>Lista alergenów</p>
+  <ul>
+    <li *ngFor="let allergent of selectedMeal.allergentList">
+      <span>{{allergent}}</span>
+    </li>
+  </ul>
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closePreview()" themeColor="secondary">Zamknij</button>
   </kendo-dialog-actions>
 </kendo-dialog>

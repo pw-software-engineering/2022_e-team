@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { DietsService } from '../api/diets.service';
 import { RegistrationService } from '../../registration/api/registration.service';
 import { DietDTO } from '../api/dietDTO';
+import { OrderService } from '../../order/api/order.service';
 
 @Component({
   selector: 'app-diets',
@@ -13,7 +14,7 @@ import { DietDTO } from '../api/dietDTO';
 })
 
 export class DietsComponent implements OnInit {
-  constructor(private TitleService: Title, private router: Router, private dietsService: DietsService, private registrationService: RegistrationService) {
+  constructor(private TitleService: Title, private router: Router, private dietsService: DietsService, private orderService: OrderService, private registrationService: RegistrationService) {
     this.TitleService.setTitle("Lista dostępnych diet");
   }
 
@@ -29,6 +30,10 @@ export class DietsComponent implements OnInit {
 
   goToDiet(dietId: number) {
     this.router.navigate(["client/diets", dietId]);
+  }
+
+  public addDietToCart(dietId: number) {
+    this.orderService.putDietInCart(dietId);
   }
 
 }

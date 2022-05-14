@@ -11,6 +11,7 @@ using System.Text.Json;
 using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
 using System.Web;
+using System.Collections.Generic;
 
 namespace ECaterer.Web.Controllers
 {
@@ -122,8 +123,18 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpGet("getEditDiets/{id}")]
-        public async Task<ActionResult<EditDietDTO>> GetEditDietModel()
+        public async Task<ActionResult<EditDietDTO>> GetEditDietModel(int dietId)
         {
+            if (dietId == 0)
+            {
+                return Ok(new EditDietDTO()
+                {
+                    Id = "0",
+                    Calories = 0,
+                    Vegan = true,
+                    Description = ""
+                });
+            }
             return Ok(new EditDietDTO()
             {
                 Id = "1",
@@ -133,10 +144,37 @@ namespace ECaterer.Web.Controllers
             });
         }
 
-        [HttpGet("deleteDiet/{id}")]
+        [HttpPut("deleteDiet/{id}")]
         public async Task<ActionResult> DeleteDiet(int dietId)
         {
             return Ok();
+        }
+
+        [HttpPost("editDiet")]
+        public async Task<ActionResult> EditDiet([FromBody]SaveDietDTO model)
+        {
+            // create diet
+            if (model.Id == "0")
+            {
+                return Ok();
+            }
+            // edit diet
+            return Ok();
+        }
+
+        [HttpPut("getDietsWithIds")]
+        public async Task<ActionResult<DietDTO[]>> GetDietsWithIds([FromBody]IEnumerable<string> dietIds)
+        {
+            return Ok(new List<DietDTO>() {
+                new DietDTO()
+                {
+                    Id = "1",
+                    Name = "meatballs",
+                    Price = 10,
+                    Calories = 1234,
+                    Vegan = false
+                } 
+            });
         }
     }
 }
