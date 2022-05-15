@@ -133,45 +133,64 @@ namespace ECaterer.WebApi.Controllers
         //[Authorize(Roles = "client")]
         public async Task<ActionResult<OrderModel[]>> GetOrders([FromQuery] GetOrdersQueryModel getOrdersQuery)
         {
-            var orders = await _ordersService.GetOrders(getOrdersQuery);
-            if (orders == null)
-                return BadRequest();
+            try
+            {
+                var orders = await _ordersService.GetOrders(getOrdersQuery);
+                if (orders == null)
+                    return BadRequest("Pobranie nie powiodło się");
 
-            var ordersModel = orders
-                .Select(order => _mapper.Map<OrderModel>(order))
-                .ToArray();
+                var ordersModel = orders
+                    .Select(order => _mapper.Map<OrderModel>(order))
+                    .ToArray();
 
-            return Ok(ordersModel);
+                return Ok(ordersModel);
+            }
+            catch
+            {
+                return BadRequest("Pobranie nie powiodło się");
+            }
         }
 
         [HttpPost("orders")]
         //[Authorize/*(Roles = "client")*/]
         public async Task<IActionResult> AddOrder(AddOrderModel model)
         {
-            var user = _userManager.GetUserAsync(User);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                var user = _userManager.GetUserAsync(User);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var order = _ordersService.AddOrder(userId, model);
+                var order = _ordersService.AddOrder(userId, model);
 
-            if (order is null)
+                return CreatedAtAction("Zapisano zamówienie", order.Id);
+            }
+            catch
+            {
                 return BadRequest("Zapisanie nie powiodło się");
-
-            return CreatedAtAction("Zapisano zamówienie", order.Id);
+            }
+            
         }
 
         [HttpPost("orders/{orderId}/pay")]
         //[Authorize(Roles = "client")]
         public async Task<IActionResult> PayOrder(string orderId)
         {
-            var (exist, paid) = await _ordersService.PayOrder(orderId);
+            try
+            {
+                var (exist, paid) = await _ordersService.PayOrder(orderId);
 
-            if (!exist)
-                return NotFound("Podane zamówienie nie istnieje");
+                if (!exist)
+                    return NotFound("Podane zamówienie nie istnieje");
 
-            if (!paid)
+                if (!paid)
+                    return BadRequest("Opłacenie zamówienia nie powiodło się");
+
+                return Ok("Opłacono zamówienie");
+            }
+            catch
+            {
                 return BadRequest("Opłacenie zamówienia nie powiodło się");
-
-            return Ok("Opłacono zamówienie");
+            }
         }
     }
 }

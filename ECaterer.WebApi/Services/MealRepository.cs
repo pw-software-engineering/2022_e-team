@@ -52,7 +52,7 @@ namespace ECaterer.WebApi.Services
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
             var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
@@ -71,7 +71,7 @@ namespace ECaterer.WebApi.Services
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
 
             var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i})
@@ -104,8 +104,7 @@ namespace ECaterer.WebApi.Services
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
-            if (meal is null)
-                throw new UnexistingMealException(mealId);
+
             return meal;
         }
 
