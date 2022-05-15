@@ -15,6 +15,10 @@ using System.Net;
 using ECaterer.Contracts.Client;
 using ECaterer.Contracts.Orders;
 using ECaterer.WebApi.Common.Interfaces;
+using System.Security.Claims;
+using ECaterer.Contracts.Meals;
+using ECaterer.Core.Models.Enums;
+using AutoMapper;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -28,6 +32,7 @@ namespace ECaterer.WebApi.Controllers
         private readonly DataContext _context;
 
         private readonly IOrdersService _ordersService;
+        private readonly Mapper _mapper;
 
         public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrdersService ordersService)
         {
@@ -35,6 +40,17 @@ namespace ECaterer.WebApi.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
+            _ordersService = ordersService;
+
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Address, AddressModel>();
+                cfg.CreateMap<DeliveryDetails, DeliveryDetailsModel>();
+                cfg.CreateMap<Complaint, ComplaintModel>();
+                cfg.CreateMap<Order, OrderModel>()
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString())); ;
+            });
+            _mapper = new Mapper(mappingConfig);
         }
 
         [Route("login")]
@@ -45,7 +61,7 @@ namespace ECaterer.WebApi.Controllers
 
             if (user == null)
                 return Unauthorized();
-
+            var Token = _tokenService.CreateToken(user);
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
             
             if (result.Succeeded)
@@ -114,21 +130,37 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("orders")]
-        [Authorize(Roles = "client")]
-        public async Task<IActionResult> GetOrders(GetOrdersQueryModel registerUser)
+        //[Authorize(Roles = "client")]
+        public async Task<ActionResult<OrderModel[]>> GetOrders([FromQuery] GetOrdersQueryModel getOrdersQuery)
         {
-            return BadRequest();
+            var orders = await _ordersService.GetOrders(getOrdersQuery);
+            if (orders == null)
+                return BadRequest();
+
+            var ordersModel = orders
+                .Select(order => _mapper.Map<OrderModel>(order))
+                .ToArray();
+
+            return Ok(ordersModel);
         }
 
         [HttpPost("orders")]
-        [Authorize(Roles = "client")]
-        public async Task<IActionResult> AddOrder(ClientModel registerUser)
+        //[Authorize/*(Roles = "client")*/]
+        public async Task<IActionResult> AddOrder(AddOrderModel model)
         {
-            return BadRequest();
+            var user = _userManager.GetUserAsync(User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var order = _ordersService.AddOrder(userId, model);
+
+            if (order is null)
+                return BadRequest("Zapisanie nie powiodło się");
+
+            return CreatedAtAction("Zapisano zamówienie", order.Id);
         }
 
         [HttpPost("orders/{orderId}/pay")]
-        [Authorize(Roles = "client")]
+        //[Authorize(Roles = "client")]
         public async Task<IActionResult> PayOrder(string orderId)
         {
             var (exist, paid) = await _ordersService.PayOrder(orderId);

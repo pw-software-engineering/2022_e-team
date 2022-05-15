@@ -42,7 +42,7 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var meals = await _meals.GetMeals(query.Offset, query.Limit, query.Sort, query.Name, query.Name_with, query.Vegan, query.Calories, query.Calories_lt, query.Calories_ht);
+                var meals = await _meals.GetMeals(query);
                 var mealsDTO = meals.Select(meal => _mapper.Map<GetMealsResponseModel>(meal)).ToList();
                 return Ok(mealsDTO);
             }
