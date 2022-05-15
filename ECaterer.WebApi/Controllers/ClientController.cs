@@ -13,6 +13,8 @@ using ECaterer.Core;
 using ECaterer.Contracts;
 using System.Net;
 using ECaterer.Contracts.Client;
+using ECaterer.Contracts.Orders;
+using ECaterer.WebApi.Common.Interfaces;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -25,7 +27,9 @@ namespace ECaterer.WebApi.Controllers
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
 
-        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context)
+        private readonly IOrdersService _ordersService;
+
+        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrdersService ordersService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -103,10 +107,39 @@ namespace ECaterer.WebApi.Controllers
                 var Token = _tokenService.CreateToken(user);
 
                 Response.Headers.Add("api-key", Token);
-                return Ok();
+                return Ok(new AuthenticatedUserModel() { Token = Token });
             }
 
             return BadRequest("Problem registering user");
+        }
+
+        [HttpGet("orders")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> GetOrders(GetOrdersQueryModel registerUser)
+        {
+            return BadRequest();
+        }
+
+        [HttpPost("orders")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> AddOrder(ClientModel registerUser)
+        {
+            return BadRequest();
+        }
+
+        [HttpPost("orders/{orderId}/pay")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> PayOrder(string orderId)
+        {
+            var (exist, paid) = await _ordersService.PayOrder(orderId);
+
+            if (!exist)
+                return NotFound("Podane zamówienie nie istnieje");
+
+            if (!paid)
+                return BadRequest("Opłacenie zamówienia nie powiodło się");
+
+            return Ok("Opłacono zamówienie");
         }
     }
 }

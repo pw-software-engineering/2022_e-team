@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ECaterer.Contracts;
 using ECaterer.Contracts.Client;
+using ECaterer.WebApi.Common.Interfaces;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
@@ -36,6 +37,7 @@ namespace ECareter.Web.Test.ApiUnitTests
         {
             var mockUserManager = _fixture.GetMockUserManager();
             var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
+            var ordersService = _fixture.GetMockOrderService();
             var johnSmith = _fixture.context.Clients.FirstOrDefault();
 
             mockUserManager
@@ -52,7 +54,8 @@ namespace ECareter.Web.Test.ApiUnitTests
                     It.Is<string>(password => password == "12345678"),
                     false))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context, ordersService.Object);
+            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
             LoginUserModel loginUserModel = new LoginUserModel() 
             { 
@@ -61,12 +64,11 @@ namespace ECareter.Web.Test.ApiUnitTests
             };
 
             var result = await _controller.Login(loginUserModel);
-            var okResult = result.Result as OkObjectResult;
-            var token = okResult.Value as AuthenticatedUserModel;
+            var okResult = result as OkResult;
+            var token = _controller.Response.Headers["api-key"];
 
             okResult.Should().NotBeNull();
             token.Should().NotBeNull();
-            token.Token.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -74,6 +76,7 @@ namespace ECareter.Web.Test.ApiUnitTests
         {
             var mockUserManager = _fixture.GetMockUserManager();
             var mockSignInManager = _fixture.GetMockSignInManager(mockUserManager);
+            var ordersService = _fixture.GetMockOrderService();
 
             var adambrown = new ClientModel()
             {
@@ -97,17 +100,28 @@ namespace ECareter.Web.Test.ApiUnitTests
                     It.Is<IdentityUser>(user => user.Email == adambrown.Email),
                     It.Is<string>(password => password == "12345678")))
                 .ReturnsAsync(IdentityResult.Success);
-            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(), _fixture.context, ordersService.Object);
+            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
-            var result = await _controller.Register(new RegisterUserModel() { Client = adambrown });
+            var result = await _controller.Register(new ClientModel() 
+            { 
+                Address = adambrown.Address,
+                Email = adambrown.Email,
+                LastName = adambrown.LastName,
+                Name = adambrown.Name,
+                Password = adambrown.Password,
+                PhoneNumber = adambrown.PhoneNumber
+            });
             var okResult = result.Result as OkObjectResult;
 
             okResult.Should().NotBeNull();
 
-            var token = okResult.Value as AuthenticatedUserModel;
+            var tokenFromHeader = _controller.Response.Headers["api-key"];
+            var tokenFromModel = okResult.Value as AuthenticatedUserModel;
 
-            token.Should().NotBeNull();
-            token.Token.Should().NotBeNullOrWhiteSpace();
+            tokenFromHeader.Should().NotBeNull();
+            tokenFromModel.Should().NotBeNull();
+            tokenFromHeader.Should().Equal(tokenFromModel.Token);
 
             var lastAddedUser = _fixture.context.Clients.Last();
             var lastAddedUserEmail = lastAddedUser.Email;
@@ -248,6 +262,11 @@ namespace ECareter.Web.Test.ApiUnitTests
                  new Mock<ILogger<SignInManager<IdentityUser>>>().Object,
                  new Mock<IAuthenticationSchemeProvider>().Object,
                  new Mock<IUserConfirmation<IdentityUser>>().Object);
+        }
+
+        public Mock<IOrdersService> GetMockOrderService()
+        {
+            return new Mock<IOrdersService>();
         }
 
         public void Dispose()
