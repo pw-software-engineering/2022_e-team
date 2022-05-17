@@ -39,7 +39,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.PostAsJsonAsync(request.Url, request.Body);
 
-            response.StatusCode.Should().Be(HttpStatusCode.Ok);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var auth = response.Headers.GetValues("api-key").FirstOrDefault();
 
@@ -323,88 +323,5 @@ namespace ECaterer.WebApi.Integration.Test
             }
         }
 
-            //[Fact]
-            //public async Task BATestAddDiet()
-            //{
-            //    var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/diets");
-            //    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            //    requestMessage.Content = JsonContent.Create(new DietModel()
-            //    {
-            //        Name = "Sport",
-            //        Description = "Diet to get fit fast",
-            //        Meals = new MealModel()
-            //        {
-            //            Name = "Soup",
-            //            Calories = 250,
-            //            AllergentList = new string[] { "Onion", "Cheese" },
-            //            IngredientList = new string[] { "Water", "Pork", "Onion", "Cheese" },
-            //            Vegan = false
-            //        },
-            //        Price = 55,
-            //        Vegan = false
-            //    });
-
-            //    var response = await Client.SendAsync(requestMessage);
-            //    response.EnsureSuccessStatusCode();
-            //}
-
-            //[Fact]
-            //public async Task BBTestGetDiets()
-            //{
-            //    // get based on controller and contracts
-            //    var diets = await Client.GetFromJsonAsync<GetDietModel[]>("/api/diets");
-            //    diets.Should().NotBeNull();
-            //    diets.Count().Should().NotBe(0);
-
-            //    var addedDietId = diets.Where(diet => diet.Name == "Sport" && diet.Price == 55).Select(diet => diet.Id).FirstOrDefault();
-
-            //    addedDietId.Should().NotBeNull();
-
-            //    dietId = addedDietId;
-            //}
-
-            //[Fact]
-            //public async Task BCTestEditDietChangePrice()
-            //{
-            //    var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
-            //    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            //    requestMessage.Content = JsonContent.Create(new DietModel()
-            //    {
-            //        Name = "Sport",
-            //        Description = "Diet to get fit fast",
-            //        Meals = new MealModel()
-            //        {
-            //            Name = "Soup",
-            //            Calories = 250,
-            //            AllergentList = new string[] { "Onion", "Cheese" },
-            //            IngredientList = new string[] { "Water", "Pork", "Onion", "Cheese" },
-            //            Vegan = false
-            //        },
-            //        Price = 60,
-            //        Vegan = false
-            //    });
-
-            //    var response = await Client.SendAsync(requestMessage);
-            //    response.EnsureSuccessStatusCode();
-            //}
-
-            //[Fact]
-            //public async Task BDTestGetDietById()
-            //{
-            //    var diet = await Client.GetFromJsonAsync<DietModel>($"/api/diets/{dietId}");
-
-            //    diet.Name.Should().Be("Sport");
-            //}
-
-            //[Fact]
-            //public async Task BETestDeleteDiet()
-            //{
-            //    var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/{dietId}");
-            //    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            //    var responseMessage = await Client.SendAsync(requestMessage);
-
-            //    responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
-            //}
-        }
+    }
 }
