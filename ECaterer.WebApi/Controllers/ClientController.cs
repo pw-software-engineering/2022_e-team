@@ -13,6 +13,7 @@ using ECaterer.Core;
 using ECaterer.Contracts;
 using System.Net;
 using ECaterer.Contracts.Client;
+using System.Security.Claims;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -54,18 +55,13 @@ namespace ECaterer.WebApi.Controllers
                 Response.Headers.Add("api-key", authModel.Token);
 
                 return Ok();
-
-                //    new AuthenticatedUserModel
-                //{
-                //    Token = _tokenService.CreateToken(user)
-                //});
             }
 
             return Unauthorized();
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AuthenticatedUserModel>> Register(ClientModel registerUser)
+        public async Task<ActionResult> Register(ClientModel registerUser)
         {
             if (_userManager.Users.Any(x => x.Email == registerUser.Email))
             {
@@ -107,6 +103,65 @@ namespace ECaterer.WebApi.Controllers
             }
 
             return BadRequest("Problem registering user");
+        }
+
+        [Route("account")]
+        [HttpGet]
+        public ActionResult<ClientModel> GetAccount()
+        {
+            var email = this.User.FindFirstValue(ClaimTypes.Email);
+
+            if (email != null)
+            {
+                return Ok(_context.Clients.Where(client => client.Email == email).Include(c => c.Address).FirstOrDefault());
+            }
+
+            return Unauthorized();
+        }
+
+        [Route("account")]
+        [HttpPut]
+        public ActionResult UpdateAccount(ClientModel client)
+        {
+            var email = this.User.FindFirstValue(ClaimTypes.Email);
+
+            if (email != null)
+            {
+                var old = _context.Clients.Where(client => client.Email == email).Include(c => c.Address).FirstOrDefault();
+                var oldAddress = old.Address;
+
+                _context.Entry(old).CurrentValues.SetValues(client);
+                _context.SaveChanges();
+
+                // Update - children separately
+                if (old != null)
+                {
+                    if(client.Address == null)
+                    {
+                        old.Address = null;
+                    }
+                    else if (oldAddress != null)
+                    {
+                        _context.Entry(oldAddress).CurrentValues.SetValues(client.Address);
+                        
+                    }
+                    else if (client.Address != null)
+                    {
+                        old.Address = new Address
+                        {
+                            Street = client.Address.Street,
+                            BuildingNumber = client.Address.BuildingNumber,
+                            ApartmentNumber = client.Address.ApartmentNumber,
+                            PostCode = client.Address.PostCode,
+                            City = client.Address.City
+                        };
+                    }
+                    _context.SaveChanges();
+                    return Ok();
+                }
+                return StatusCode(400);
+            }
+            return Unauthorized();
         }
     }
 }

@@ -48,11 +48,11 @@ main#client-registration {
   }
 
   #registrationForm.modalLeave {
-    animation: 1s linear 0s 1 slideOut;
+    animation: 1s linear 0s 1 slideOut forwards;
   }
 
-  #registrationForm.addressInfo {
-    animation: 1s linear 0s 1 slideIn;
+  #registrationForm.modalIn {
+    animation: 1s linear 0s 1 slideIn forwards;
   }
 
   .notification {

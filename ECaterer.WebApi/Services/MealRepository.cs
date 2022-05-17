@@ -85,6 +85,7 @@ namespace ECaterer.WebApi.Services
             meal.IngredientList = ingredients;
             meal.AllergentList = allergents;
             meal.Name = mealModel.Name;
+            meal.Calories = mealModel.Calories;
             meal.Vegan = mealModel.Vegan;
 
             _context.Meals.Update(meal);
