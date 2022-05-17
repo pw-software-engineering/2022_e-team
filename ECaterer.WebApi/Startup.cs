@@ -86,6 +86,34 @@ namespace ECaterer.WebApi
                         ClockSkew = TimeSpan.FromMinutes(5)
                     };
 
+                    // Change "api-key" keyword to be treated as "bearer"
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            string authorization = context.Request.Headers["Authorization"];
+
+                            if (string.IsNullOrEmpty(authorization))
+                            {
+                                context.NoResult();
+                                return Task.CompletedTask;
+                            }
+
+                            if (authorization.StartsWith("api-key", StringComparison.OrdinalIgnoreCase))
+                            {
+                                context.Token = authorization.Substring("api-key".Length).Trim();
+                            }
+
+                            if (string.IsNullOrEmpty(context.Token))
+                            {
+                                context.NoResult();
+                                return Task.CompletedTask;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+
                 });
 
             services.AddScoped<IMealRepository, MealRepository>();
