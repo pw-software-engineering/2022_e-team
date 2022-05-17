@@ -14,8 +14,8 @@ namespace ECaterer.WebApi.Integration.Test
         {
             return new LoginUserModel()
             {
-                Email = "prodcer@login.com",
-                Password = "1234"
+                Email = ConfigurationManager.AppSettings["producerLogin"],
+                Password = ConfigurationManager.AppSettings["producerPassword"]
             };
         }
 
