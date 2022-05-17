@@ -19,7 +19,6 @@ using System.Security.Claims;
 using ECaterer.Contracts.Meals;
 using ECaterer.Core.Models.Enums;
 using AutoMapper;
-using System.Security.Claims;
 
 namespace ECaterer.WebApi.Controllers
 {
@@ -47,9 +46,10 @@ namespace ECaterer.WebApi.Controllers
             {
                 cfg.CreateMap<Address, AddressModel>();
                 cfg.CreateMap<DeliveryDetails, DeliveryDetailsModel>();
-                cfg.CreateMap<Complaint, ComplaintModel>();
+                cfg.CreateMap<Complaint, ComplaintModel>()
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
                 cfg.CreateMap<Order, OrderModel>()
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString())); ;
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()));
             });
             _mapper = new Mapper(mappingConfig);
         }
@@ -125,68 +125,6 @@ namespace ECaterer.WebApi.Controllers
             return BadRequest("Problem registering user");
         }
 
-        [HttpGet("orders")]
-        //[Authorize(Roles = "client")]
-        public async Task<ActionResult<OrderModel[]>> GetOrders([FromQuery] GetOrdersQueryModel getOrdersQuery)
-        {
-            try
-            {
-                var orders = await _ordersService.GetOrders(getOrdersQuery);
-                if (orders == null)
-                    return BadRequest("Pobranie nie powiodło się");
-
-                var ordersModel = orders
-                    .Select(order => _mapper.Map<OrderModel>(order))
-                    .ToArray();
-
-                return Ok(ordersModel);
-            }
-            catch
-            {
-                return BadRequest("Pobranie nie powiodło się");
-            }
-        }
-
-        [HttpPost("orders")]
-        //[Authorize/*(Roles = "client")*/]
-        public async Task<IActionResult> AddOrder(AddOrderModel model)
-        {
-            try
-            {
-                var user = _userManager.GetUserAsync(User);
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var order = _ordersService.AddOrder(userId, model);
-
-                return CreatedAtAction("Zapisano zamówienie", order.Id);
-            }
-            catch
-            {
-                return BadRequest("Zapisanie nie powiodło się");
-            }
-            
-        }
-
-        [HttpPost("orders/{orderId}/pay")]
-        //[Authorize(Roles = "client")]
-        public async Task<IActionResult> PayOrder(string orderId)
-        {
-            try
-            {
-                var (exist, paid) = await _ordersService.PayOrder(orderId);
-
-                if (!exist)
-                    return NotFound("Podane zamówienie nie istnieje");
-
-                if (!paid)
-                    return BadRequest("Opłacenie zamówienia nie powiodło się");
-
-                return Ok("Opłacono zamówienie");
-            }
-            catch
-            {
-                return BadRequest("Opłacenie zamówienia nie powiodło się");
-            }
         [Route("account")]
         [HttpGet]
         public ActionResult<ClientModel> GetAccount()
@@ -218,14 +156,14 @@ namespace ECaterer.WebApi.Controllers
                 // Update - children separately
                 if (old != null)
                 {
-                    if(client.Address == null)
+                    if (client.Address == null)
                     {
                         old.Address = null;
                     }
                     else if (oldAddress != null)
                     {
                         _context.Entry(oldAddress).CurrentValues.SetValues(client.Address);
-                        
+
                     }
                     else if (client.Address != null)
                     {
@@ -244,6 +182,70 @@ namespace ECaterer.WebApi.Controllers
                 return StatusCode(400);
             }
             return Unauthorized();
+        }
+
+        [HttpGet("orders")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<ActionResult<OrderModel[]>> GetOrders([FromQuery] GetOrdersQueryModel getOrdersQuery)
+        {
+            try
+            {
+                var orders = (await _ordersService.GetOrders(getOrdersQuery));
+                if (orders == null)
+                    return BadRequest("Pobranie nie powiodło się");
+
+                var ordersModel = orders
+                    .Select(order => _mapper.Map<OrderModel>(order))
+                    .ToArray();
+
+                return Ok(ordersModel);
+            }
+            catch
+            {
+                return BadRequest("Pobranie nie powiodło się");
+            }
+        }
+
+        [HttpPost("orders")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<IActionResult> AddOrder(AddOrderModel model)
+        {
+            try
+            {
+                var email = this.User.FindFirstValue(ClaimTypes.Email);
+                var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
+
+                var order = await _ordersService.AddOrder(userId, model);
+
+                return CreatedAtAction(nameof(AddOrder), order.OrderId);
+            }
+            catch
+            {
+                return BadRequest("Zapisanie nie powiodło się");
+            }
+            
+        }
+
+        [HttpPost("orders/{orderId}/pay")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<IActionResult> PayOrder(string orderId)
+        {
+            try
+            {
+                var (exist, paid) = await _ordersService.PayOrder(orderId);
+
+                if (!exist)
+                    return NotFound("Podane zamówienie nie istnieje");
+
+                if (!paid)
+                    return BadRequest("Opłacenie zamówienia nie powiodło się");
+
+                return Ok("Opłacono zamówienie");
+            }
+            catch
+            {
+                return BadRequest("Opłacenie zamówienia nie powiodło się");
+            }
         }
     }
 }

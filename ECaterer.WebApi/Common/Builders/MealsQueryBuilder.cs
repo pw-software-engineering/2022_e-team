@@ -94,5 +94,10 @@ namespace ECaterer.WebApi.Common.Builder
                 meals = meals.Take((int)limit);
             return new MealsQueryBuilder(meals);
         }
+
+        public IQueryable<Meal> GetQuery()
+        {
+            return meals;
+        }
     }
 }

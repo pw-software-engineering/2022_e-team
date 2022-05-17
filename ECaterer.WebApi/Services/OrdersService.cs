@@ -62,28 +62,32 @@ namespace ECaterer.WebApi.Services
 
         public async Task<IEnumerable<Order>> GetOrders(GetOrdersQueryModel query)
         {
-            IQueryable<Order> orders;
+            IQueryable<Order> orders; 
             try 
             {
-                orders = _context.Orders;
+                orders = _context.Orders
+                    .Include(o => o.DeliveryDetails)
+                    .Include(o => o.Complaint)
+                    .Include(o => o.DeliveryDetails.Address);
+
+                var builder = new OrdersQueryBuilder(orders);
+                builder = builder
+                    .SetPriceFilter(query.Price)
+                    .SetPriceLowerThanFilter(query.Price_lt)
+                    .SetPriceHigherThanFilter(query.Price_ht)
+                    .SetStartDateFilter(query.StartDate)
+                    .SetEndDateFilter(query.EndDate)
+                    .SetStatusFilter(query.OrderStatus)
+                    .SetSorting(query.Sort)
+                    .SetOffset(query.Offset)
+                    .SetLimit(query.Limit);
+
+                return builder.GetQuery();
             }
             catch
             {
                 return null;
             }
-            var builder = new OrdersQueryBuilder(orders);
-            builder
-                .SetPriceFilter(query.Price)
-                .SetPriceLowerThanFilter(query.Price_lt)
-                .SetPriceHigherThanFilter(query.Price_ht)
-                .SetStartDateFilter(query.StartDate)
-                .SetEndDateFilter(query.EndDate)
-                .SetStatusFilter(query.OrderStatus)
-                .SetSorting(query.Sort)
-                .SetOffset(query.Offset)
-                .SetLimit(query.Limit);
-
-            return orders;
         }
 
         public async Task<(bool exists, bool paid)> PayOrder(string orderId)

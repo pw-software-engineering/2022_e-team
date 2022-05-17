@@ -112,7 +112,7 @@ namespace ECaterer.WebApi.Services
         {
             IQueryable<Meal> meals =  _context.Meals;
             var builder = new MealsQueryBuilder(meals);
-            builder
+            builder = builder
                 .SetNameFilter(query.Name)
                 .SetNameWithFilter(query.Name_with)
                 .SetCaloriesLowerThanFilter(query.Calories_lt)
@@ -122,7 +122,7 @@ namespace ECaterer.WebApi.Services
                 .SetOffset(query.Offset)
                 .SetLimit(query.Limit);
                 
-            return meals;
+            return builder.GetQuery();
         }
 
         public void Dispose()

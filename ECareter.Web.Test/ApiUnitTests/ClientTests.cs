@@ -112,7 +112,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                 Password = adambrown.Password,
                 PhoneNumber = adambrown.PhoneNumber
             });
-            var okResult = result.Result as OkObjectResult;
+            var okResult = result as OkObjectResult;
 
             okResult.Should().NotBeNull();
 

@@ -108,5 +108,10 @@ namespace ECaterer.WebApi.Common.Builders
                 orders = orders.Take((int)limit);
             return new OrdersQueryBuilder(orders);
         }
+
+        public IQueryable<Order> GetQuery()
+        {
+            return orders;
+        }
     }
 }
