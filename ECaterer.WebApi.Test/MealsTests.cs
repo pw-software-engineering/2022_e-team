@@ -83,56 +83,6 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task BC_TestAddMeal_BadRequest()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            requestMessage.Content = JsonContent.Create(new MealModel()
-            {
-                Calories = 450,
-                AllergentList = new string[] { "Beaf", "Cheese" },
-                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
-                Vegan = false
-            });
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CA_TestGetMeals_OK()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
-            requestMessage.Content = JsonContent.Create(new MealModel()
-            {
-                Calories = 450,
-                AllergentList = new string[] { "Beaf", "Cheese" },
-                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
-                Vegan = false
-            });
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        }
-
-        [Fact]
-        public async Task BC_TestAddMeal_BadRequest()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            requestMessage.Content = JsonContent.Create(new MealModel()
-            {
-                Calories = 450,
-                AllergentList = new string[] { "Beaf", "Cheese" },
-                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
-                Vegan = false
-            });
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
         public async Task CA_TestGetMeals_OK()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
