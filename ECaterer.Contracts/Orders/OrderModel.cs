@@ -6,6 +6,7 @@ namespace ECaterer.Contracts.Orders
 {
     public class OrderModel
     {
+        public string Id { get; set; }
         public string[] DietIDs { get; set; }
         public DeliveryDetailsModel DeliveryDetails { get; set; }
         public DateTime StartDate { get; set; }
