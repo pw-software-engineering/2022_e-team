@@ -237,10 +237,9 @@ namespace ECaterer.WebApi.Integration.Test
         {
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders$limit=10");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Fact]
@@ -251,7 +250,7 @@ namespace ECaterer.WebApi.Integration.Test
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
