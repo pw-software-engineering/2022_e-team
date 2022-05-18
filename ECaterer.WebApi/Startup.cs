@@ -117,6 +117,7 @@ namespace ECaterer.WebApi
                 });
 
             services.AddScoped<IMealRepository, MealRepository>();
+            services.AddScoped<IOrdersService, OrdersService>();
             services.AddScoped<TokenService>();
 
             //SWAGGER
