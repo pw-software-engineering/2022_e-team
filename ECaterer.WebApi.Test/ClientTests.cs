@@ -222,7 +222,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CA_GetOrders_OK()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenHandler.GetToken());
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             var orders = await Client.GetFromJsonAsync<OrderModel[]>("/api/orders");
             orders.Should().NotBeNull();
             orders.Count().Should().NotBe(0);

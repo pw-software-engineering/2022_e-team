@@ -135,7 +135,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CA_TestGetMeals_OK()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenHandler.GetToken());
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             var meals = await Client.GetFromJsonAsync<GetMealsResponseModel[]>("/api/meals");
             meals.Should().NotBeNull();
             meals.Count().Should().NotBe(0);
