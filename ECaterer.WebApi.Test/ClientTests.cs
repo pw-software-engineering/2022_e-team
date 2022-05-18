@@ -222,6 +222,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CA_GetOrders_OK()
         {
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TokenHandler.GetToken());
             var orders = await Client.GetFromJsonAsync<OrderModel[]>("/api/orders");
             orders.Should().NotBeNull();
             orders.Count().Should().NotBe(0);
@@ -275,7 +276,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CA_PayOrder_NotFound()
+        public async Task CC_PayOrder_NotFound()
         {
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/client/orders/unexisting-meal/pay");
