@@ -63,11 +63,44 @@ namespace ECaterer.WebApi.Integration.Test
             });
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
         public async Task BB_TestAddMeal_Unauthorized()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Calories = 450,
+                AllergentList = new string[] { "Beaf", "Cheese" },
+                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
+                Vegan = false
+            });
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task BC_TestAddMeal_BadRequest()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Calories = 450,
+                AllergentList = new string[] { "Beaf", "Cheese" },
+                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
+                Vegan = false
+            });
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CA_TestGetMeals_OK()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
             requestMessage.Content = JsonContent.Create(new MealModel()
@@ -122,16 +155,6 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        }
-
-        [Fact]
-        public async Task CC_TestGetMeals_BadRequest()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals/");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -222,16 +245,6 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task EC_TestGetMealById_BadRequest()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/api/meals/{mealId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
         public async Task ED_TestGetMealById_NotFound()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals/unexisting-id");
@@ -242,13 +255,13 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task FA_TestDeleteMeal_OK()
+        public async Task FA_TestDeleteMeal_NotFound()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "/api/meals/unexisting-meal");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -271,13 +284,13 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task FD_TestDeleteMeal_NotFound()
+        public async Task FD_TestDeleteMeal_OK()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "/api/meals/unexisting-meal");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

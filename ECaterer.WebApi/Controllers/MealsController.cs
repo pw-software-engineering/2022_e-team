@@ -16,7 +16,7 @@ namespace ECaterer.WebApi.Controllers
 {
     [Route("api/meals")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class MealsController : ControllerBase
     {
         private readonly IMealRepository _meals;
@@ -37,7 +37,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "producer, client")]
+        [Authorize/*(Roles = "producer, client")*/]
         public async Task<ActionResult<GetMealsResponseModel[]>> GetMeals([FromQuery] GetMealsQueryModel query)
         {
             try
@@ -53,7 +53,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<ActionResult> AddMeal([FromBody] MealModel mealDTO)
         {
             try
@@ -68,7 +68,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("{mealId}")]
-        //[Authorize(Roles = "producer, client")]
+        [Authorize/*(Roles = "producer, client")*/]
         public async Task<ActionResult<MealModel>> GetMealById(string mealId)
         {
             try
@@ -85,7 +85,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPut("{mealId}")]
-        //[Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<ActionResult> EditMeal(string mealId, [FromBody] MealModel mealModel)
         {
             try
@@ -102,7 +102,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpDelete("{mealId}")]
-        //[Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<ActionResult> DeleteMeal(string mealId)
         {
             try
