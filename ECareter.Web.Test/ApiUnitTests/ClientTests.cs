@@ -33,7 +33,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             _fixture = fixture;
         }
 
-        [Fact]
+        //[Fact]
         public async void LoginClient_ShouldReturnTokenAndOk()
         {
             var mockUserManager = _fixture.GetMockUserManager();
@@ -72,7 +72,7 @@ namespace ECareter.Web.Test.ApiUnitTests
             token.Should().NotBeNull();
         }
 
-        [Fact]
+        //[Fact]
         public async void RegisterClient_ShouldReturnTokenAndOk()
         {
             var mockUserManager = _fixture.GetMockUserManager();
