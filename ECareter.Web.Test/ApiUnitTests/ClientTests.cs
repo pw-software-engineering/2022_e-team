@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using ECaterer.Contracts;
 using ECaterer.Contracts.Client;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Data;
 
 namespace ECareter.Web.Test.ApiUnitTests
 {
