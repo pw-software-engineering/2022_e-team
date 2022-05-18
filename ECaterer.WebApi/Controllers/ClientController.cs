@@ -49,7 +49,8 @@ namespace ECaterer.WebApi.Controllers
                 cfg.CreateMap<Complaint, ComplaintModel>()
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
                 cfg.CreateMap<Order, OrderModel>()
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()));
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId));
             });
             _mapper = new Mapper(mappingConfig);
         }
