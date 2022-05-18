@@ -45,6 +45,7 @@
     "@progress/kendo-theme-bootstrap": "^5.2.0",
     "@progress/kendo-theme-classic": "^5.2.0",
     "@progress/kendo-theme-default": "^5.0.0",
+    "@progress/kendo-angular-dialog": "^6.0.0",
     "bootstrap": "^4.6.0",
     "core-js": "^3.8.3",
     "jquery": "^3.6.0",
