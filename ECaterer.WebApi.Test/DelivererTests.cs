@@ -1,12 +1,15 @@
 ﻿using ECaterer.Contracts;
 using ECaterer.Contracts.Client;
+using ECaterer.Contracts.Deliverer;
 using ECaterer.Contracts.Meals;
 using ECaterer.Contracts.Orders;
 using ECaterer.Core.Models;
 using FluentAssertions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -56,7 +59,7 @@ namespace ECaterer.WebApi.Integration.Test
                         PostCode = "12-345",
                         City = "Testowe"
                     },
-                    PhoneNumber = "123456789"
+                    PhoneNumber = "010101999"
                 },
                 DietIDs = new List<string>(),
                 StartDate = DateTime.Now.AddDays(1),
@@ -65,9 +68,6 @@ namespace ECaterer.WebApi.Integration.Test
 
             var addResponse = await Client.SendAsync(addOrderMessage);
         }
-
-        // TODO
-        //  private async Task CleanDatabase()
 
         [Fact]
         public async Task AATestLoginDeliverer()
@@ -89,6 +89,8 @@ namespace ECaterer.WebApi.Integration.Test
             TokenHandler.SetToken(auth);
         }
 
+
+
         [Fact]
         public async Task ABTestGetDietsFromSeed()
         {
@@ -99,56 +101,63 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
+
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+
+            var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
+
+            order.Should().NotBeNull();
         }
-
         [Fact]
-        public async Task BBTestGetMeals()
+        public async Task ACTestGetDietsFromSeedUnauthorized()
         {
-            var meals = await Client.GetFromJsonAsync<GetMealsResponseModel[]>("/api/meals");
-            meals.Should().NotBeNull();
-            meals.Count().Should().NotBe(0);
-
-            var addedMealId = meals.Where(meal => meal.Name == "Pancake" && meal.Calories == 130).Select(meal => meal.Id).FirstOrDefault();
-
-            addedMealId.Should().NotBeNull();
-
-            mealId = addedMealId;
-        }
-
-        [Fact]
-        public async Task BCTestEditMeal()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/meals/{mealId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            requestMessage.Content = JsonContent.Create(new MealModel()
-            {
-                Name = "Cheesecake",
-                Calories = 250,
-                AllergentList = new string[] { "Milk", "Egg", "Cheese" },
-                IngredientList = new string[] { "Milk", "Eggs", "Flour", "Cheese" },
-                Vegan = false
-            });
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/deliverer/orders");
 
             var response = await Client.SendAsync(requestMessage);
-            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+        [Fact]
+        public async Task ADTestFulfillDelivery()
+        {
+            // Get delivery ID
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/deliverer/orders");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+
+            var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
+            int id = order.Id;
+
+            // Fulfill
+            var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var fulfillResponse = await Client.SendAsync(requestMessage);
+            fulfillResponse.EnsureSuccessStatusCode();
         }
 
         [Fact]
-        public async Task BDTestGetMealById()
+        public async Task AETestGetDietsFromSeedUnauthorized()
         {
-            var meal = await Client.GetFromJsonAsync<MealModel>($"/api/meals/{mealId}");
+            // Get delivery ID
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/deliverer/orders");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
-            meal.Name.Should().Be("Cheesecake");
-        }
+            var response = await Client.SendAsync(requestMessage);
+            string jsonContent = response.Content.ReadAsStringAsync().Result;
+            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
 
-        [Fact]
-        public async Task BETestDeleteMeal()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
+            var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
+            int id = order.Id;
 
-            var responseMessage = await Client.SendAsync(requestMessage);
+            // Fulfill
+            var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
 
-            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+            var fulfillResponse = await Client.SendAsync(requestMessage);
+            fulfillResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
     }
 }
