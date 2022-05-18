@@ -12,7 +12,7 @@ namespace ECaterer.Web.Converters
                 Id = input.DietId,
                 Name = input.Name,
                 Price = input.Price,
-                Calories = input.Calories,
+                Calories = input.Meals.Calories,
                 Vegan = input.Vegan,
             };
         }
