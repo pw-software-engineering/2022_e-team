@@ -3,7 +3,7 @@ using System;
 
 namespace ECaterer.Web.DTO.ClientDTO
 {
-    public class OrderDTO
+    public class ClientOrderDTO
     {
         public string[] dietIDs { get; set; }
         public DeliveryDetails deliveryDetails { get; set; }

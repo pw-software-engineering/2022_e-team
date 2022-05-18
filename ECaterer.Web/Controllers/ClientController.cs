@@ -82,7 +82,7 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpPost("orders")]
-        public async Task<ActionResult> PostOrder([FromBody] OrderDTO orderDTO)
+        public async Task<ActionResult> PostOrder([FromBody] ClientOrderDTO orderDTO)
         {
             return BadRequest();
         }
