@@ -4,14 +4,16 @@ using ECaterer.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ECaterer.Core.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220515191518_RemovedOrderAndComplaintStatusesEnumTables_AddedStatusFiledsToOrderAndComplaint")]
+    partial class RemovedOrderAndComplaintStatusesEnumTables_AddedStatusFiledsToOrderAndComplaint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,9 +118,6 @@ namespace ECaterer.Core.Migrations
                     b.Property<string>("ComplaintId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Answer")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
