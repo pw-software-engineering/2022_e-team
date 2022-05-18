@@ -285,5 +285,95 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+
+        [Fact]
+        public async Task DATestLoginUnexistingUser()
+        {
+            var request = new
+            {
+                Url = "/api/client/login",
+                Body = new LoginUserModel()
+                {
+                    Email = $"blabla@gmail.com",
+                    Password = "1234"
+                }
+            };
+
+            var response = await Client.PostAsJsonAsync(request.Url, request.Body);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task DBTestLoginInvalidPassword()
+        {
+            var request = new
+            {
+                Url = "/api/client/login",
+                Body = new LoginUserModel()
+                {
+                    Email = $"{random}@gmail.com",
+                    Password = "1234!bla"
+                }
+            };
+
+            var response = await Client.PostAsJsonAsync(request.Url, request.Body);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task EATestRegisterUserBadEmail()
+        {
+            var request = new
+            {
+                Url = "/api/client/register",
+                Body = new ClientModel()
+                {
+                    Email = $"{random}gmail.com",
+                    Address = new Contracts.Client.AddressModel()
+                    {
+                        City = "Strzelno",
+                        BuildingNumber = "1",
+                        Street = "Kościuszki",
+                        PostCode = "88-320"
+                    },
+                    PhoneNumber = "+48-666-666-666",
+                    Name = "Jan",
+                    LastName = "Kowalski",
+                    Password = "1234!Aaaa"
+                }
+            };
+
+            var response = await Client.PostAsJsonAsync(request.Url, request.Body);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task EBTestRegisterUserBadPassword()
+        {
+            var request = new
+            {
+                Url = "/api/client/register",
+                Body = new ClientModel()
+                {
+                    Email = $"{random}@gmail.com",
+                    Address = new Contracts.Client.AddressModel()
+                    {
+                        City = "Strzelno",
+                        BuildingNumber = "1",
+                        Street = "Kościuszki",
+                        PostCode = "88-320"
+                    },
+                    PhoneNumber = "+48-666-666-666",
+                    Name = "Jan",
+                    LastName = "Kowalski",
+                    Password = "1234"
+                }
+            };
+
+            var response = await Client.PostAsJsonAsync(request.Url, request.Body);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }
