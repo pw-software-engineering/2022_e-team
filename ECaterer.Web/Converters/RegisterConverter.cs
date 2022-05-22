@@ -10,26 +10,24 @@ namespace ECaterer.Web.Converters
 {
     public static class RegisterConverter
     {
-        public static RegisterUserModel Convert(RegisterDTO input)
+        public static ClientModel Convert(RegisterDTO input)
         {
-            return new RegisterUserModel()
+            return new ClientModel()
             {
-                Client = new ClientModel()
+                Name = input.Client.FirstName,
+                LastName = input.Client.LastName,
+                Email = input.Client.Email,
+                PhoneNumber = input.Client.Phone,
+                Address = new AddressModel()
                 {
-                    Name = input.Client.FirstName,
-                    LastName = input.Client.LastName,
-                    Email = input.Client.Email,
-                    PhoneNumber = input.Client.Phone,
-                    Address = new AddressModel()
-                    {
-                        ApartmentNumber = input.Address.Apartment,
-                        BuildingNumber = input.Address.Building,
-                        City = input.Address.City,
-                        PostCode = input.Address.Code,
-                        Street = input.Address.Street
-                    },
-                    Password = input.Password
-                }
+                    ApartmentNumber = input.Address.Apartment,
+                    BuildingNumber = input.Address.Building,
+                    City = input.Address.City,
+                    PostCode = input.Address.Code,
+                    Street = input.Address.Street
+                },
+                Password = input.Password
+
             };
         }
     }

@@ -9,16 +9,31 @@ services:
     ports:
     - "1440:1433"
 
-  ecaterer.webapi:
-    image: powoeuwcrossteamacr.azurecr.io/e_backend:2.0
-    #build:
-    #  context: .
-    #  dockerfile: ECaterer.WebApi/Dockerfile
+  front-app:
+    #image: front-app
+    build:
+      context: .
+      dockerfile: ECaterer.Web/Dockerfile
+    depends_on:
+    - ecaterer.webapi
+    - db
     environment:
-    - ConnectionStrings__DefaultConnection=Server=db;Database=aspnet-ECaterer.WebApi-Authentication;User=sa;Password=Test_Password123;
-    - ConnectionStrings__CoreDbConnection=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;
+    - APIUrl=http://ecaterer.webapi
+    - ConnectionStrings__Default=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;TrustServerCertificate=true;
     - ASPNETCORE_URLS=http://+:80
-    - ASPNETCORE_HTTPS_PORT=44302
+    ports:
+    - "44330:80"
+    - "44331:443"
+
+  ecaterer.webapi:
+    #image: powoeuwcrossteamacr.azurecr.io/e_backend:2.0
+    build:
+      context: .
+      dockerfile: ECaterer.WebApi/Dockerfile
+    environment:
+    - ConnectionStrings__DefaultConnection=Server=db;Database=aspnet-ECaterer.WebApi-Authentication;User=sa;Password=Test_Password123;TrustServerCertificate=true;
+    - ConnectionStrings__CoreDbConnection=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;TrustServerCertificate=true;
+    - ASPNETCORE_URLS=http://+:80
     depends_on:
     - db
     ports:
