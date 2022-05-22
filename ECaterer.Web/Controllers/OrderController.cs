@@ -11,6 +11,7 @@ using System.Text.Json;
 using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
 using System.Web;
+using System.Collections.Generic;
 
 namespace ECaterer.Web.Controllers
 {
@@ -32,6 +33,42 @@ namespace ECaterer.Web.Controllers
             //{
             //    /* fetch address for current user */
             //}
+            return Ok();
+        }
+
+        [HttpGet("getDelivererOrders")]
+        public async Task<ActionResult<DelivererOrderDTO[]>> GetDelivererOrders()
+        {
+            // we need a way to convert address to string, probably...
+            return Ok(new DelivererOrderDTO[]
+            {
+                new DelivererOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Comment = ""
+                },
+                new DelivererOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Comment = "nie dzwonić"
+                },
+                new DelivererOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Comment = ""
+                }
+            });
+        }
+
+        [HttpPatch("deliverOrder/{orderNumber}")]
+        public async Task<ActionResult> DeliverOrder(string orderNumber)
+        {
             return Ok();
         }
     }

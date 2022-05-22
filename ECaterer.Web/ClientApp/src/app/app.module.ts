@@ -29,6 +29,7 @@ import { Navigation } from './navigation/navigation.component';
 import { ProducerDietsComponent } from './diets/producer/producerDiets.component';
 import { EditDietComponent } from './diets/editDiet/editDiet.component';
 import { CartComponent } from './cart/cart.component';
+import { DelivererOrdersComponent } from './order/deliverer/delivererOrders.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { CartComponent } from './cart/cart.component';
     MealsComponent,
     ProducerDietsComponent,
     EditDietComponent,
-    CartComponent
+    CartComponent,
+    DelivererOrdersComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -58,7 +60,8 @@ import { CartComponent } from './cart/cart.component';
       { path: 'client/diets/:id', component: MealsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/diets', component: ProducerDietsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/diets/:id', component: EditDietComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'client/cart', component: CartComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+      { path: 'client/cart', component: CartComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'deliverer/orders', component: DelivererOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] }
     ]),
     GridModule,
     BrowserAnimationsModule,
