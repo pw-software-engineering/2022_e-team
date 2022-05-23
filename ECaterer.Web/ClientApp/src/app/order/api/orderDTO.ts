@@ -7,3 +7,10 @@ export interface OrderDTO {
   dietIds: string[];
   address: addressDto;
 };
+
+export interface DelivererOrderDTO {
+  orderNumber: string;
+  address: string;
+  phone: string;
+  comment: string;
+}
