@@ -5,7 +5,7 @@ on:
 
 env:
   ACR_URL: 'powoeuwacr.azurecr.io'
-  NAMESPACE: 'et'                         # Name of your team {b, j, n}
+  NAMESPACE: 'eteam'                         # Name of your team {b, j, n}
   APP_NAME: 'eteam-api'                      # Name of your application {client, server, hotel}
   DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
   DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location
@@ -59,8 +59,6 @@ jobs:
         echo "${{ env.IMAGE_ID }}"
     - name: Substitute environment variables in app deployment file
       run: envsubst < "${{ env.DEPLOYMENT_DIRECTORY }}/${{ env.DEPLOYMENT_FILE_NAME }}" > "${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }}"
-    - name: Delete prev
-      run: kubectl delete -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
     - name: Deploy app to the cluster
       run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
     - name: Get pods
