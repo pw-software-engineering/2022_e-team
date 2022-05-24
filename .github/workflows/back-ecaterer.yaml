@@ -12,6 +12,17 @@ env:
   IMAGE_ID: 'powoeuwcrossteamacr.azurecr.io/e_backend:5.0'
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Login to ACR
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.ACR_URL }}
+        username: ${{ secrets.ACR_USER_ID }}
+        password: ${{ secrets.ACR_USER_PASSWORD }}
+    - name: Push docker image
+      run: docker pull ${{ env.IMAGE_ID }}
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -45,4 +56,6 @@ jobs:
       run: kubectl get svc -n ${NAMESPACE}
     - name: Get ingress
       run: kubectl get ingress -n ${NAMESPACE}
+    - name: Describe pod
+      run: kubectl describe pod eteam-api-856676c575-lc4zl -n ${NAMESPACE}
       
