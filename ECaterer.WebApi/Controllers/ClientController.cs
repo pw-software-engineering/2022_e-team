@@ -22,7 +22,7 @@ using AutoMapper;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/client")]
+    [Route("client")]
     [ApiController]
     public class ClientController : ControllerBase
     {
