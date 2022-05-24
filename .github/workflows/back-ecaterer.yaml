@@ -9,20 +9,30 @@ env:
   APP_NAME: 'eteam-api'                      # Name of your application {client, server, hotel}
   DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
   DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location
-  IMAGE_ID: 'powoeuwcrossteamacr.azurecr.io/e_backend:5.0'
+  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_backend:5.0'
+  ACR_NAME: 'powoeuwcrossteamacr'
+  SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
+  SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Pull docker image
+      run: docker login ${{ ACR_NAME}}.azurecr.io --username ${SP_APP_ID} --password ${SP_PASSWD} && docker pull ${{ env.IMAGE_ID_TEMP }}
     - name: Login to ACR
       uses: docker/login-action@v1
       with:
         registry: ${{ env.ACR_URL }}
         username: ${{ secrets.ACR_USER_ID }}
         password: ${{ secrets.ACR_USER_PASSWORD }}
-    - name: Push docker image
-      run: docker pull ${{ env.IMAGE_ID }}
+    - name: Set IMAGE_ID as env variable
+      run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Tag image
+      run: docker tag ${{ env.IMAGE_ID_TEMP }} ${{ env.IMAGE_ID }} 
+    - name: Push image
+      run: docker push ${{ env.IMAGE_ID }}
+
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -38,8 +48,8 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ secrets.AKS_NAME }}
         resource-group: ${{ secrets.AKS_RG_NAME }}
-    # - name: Set IMAGE_ID as env variable
-    #  run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set IMAGE_ID as env variable
+      run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
     - name: Set DOMAIN env variable
       run: echo "DOMAIN=$(az aks show -g ${{ secrets.AKS_RG_NAME }} -n ${{ secrets.AKS_NAME }} --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)" >> $GITHUB_ENV
     - name: Print DOMAIN and IMAGE_ID
