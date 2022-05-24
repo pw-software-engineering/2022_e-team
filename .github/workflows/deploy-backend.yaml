@@ -1,7 +1,7 @@
 name: DeployBackendApp
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 env:
   ACR_URL: 'powoeuwacr.azurecr.io'
