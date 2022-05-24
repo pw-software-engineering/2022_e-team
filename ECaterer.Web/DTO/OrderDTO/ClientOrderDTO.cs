@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ECaterer.Web.DTO
 {
-    public class OrderDTO
+    public class ClientOrderDTO
     {
         public DateTime StartDate { get; set; }
 

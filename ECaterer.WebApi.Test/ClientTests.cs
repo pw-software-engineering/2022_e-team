@@ -23,7 +23,7 @@ namespace ECaterer.WebApi.Integration.Test
         private HttpClient Client;
 
         private static string random = new Random().Next().ToString();
-        private string orderId;
+        private static string orderId;
 
         public ClientTests(TestFixture<Startup> fixture)
         {
@@ -36,7 +36,7 @@ namespace ECaterer.WebApi.Integration.Test
             TokenHandler.SetToken("authtokene");
             var request = new
             {
-                Url = "/api/client/register",
+                Url = "/client/register",
                 Body = new ClientModel()
                 {
                     Email = $"{random}@gmail.com",
@@ -70,7 +70,7 @@ namespace ECaterer.WebApi.Integration.Test
         {
             var request = new
             {
-                Url = "/api/client/login",
+                Url = "/client/login",
                 Body = new LoginUserModel()
                 {
                     Email = $"{random}@gmail.com",
@@ -93,7 +93,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task ACTestGetAccountUser()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/client/account");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/client/account");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -109,7 +109,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task ADTestPutAccountUser()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, "/api/client/account");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, "/client/account");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new ClientModel()
             {
@@ -133,10 +133,12 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task BA_AddOrder_OK()
+        public async Task BA_AddOrder_Created()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            var diets = await Client.GetFromJsonAsync<GetDietModel[]>("/api/diets?limit=3");
+            var diets = await Client.GetFromJsonAsync<GetDietModel[]>("/diets?limit=3");
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
+
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/client/orders");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new AddOrderModel()
@@ -153,14 +155,14 @@ namespace ECaterer.WebApi.Integration.Test
                         PostCode = "00-662"
                     },
                     PhoneNumber = "226219312",
-                    CommentForDeliverer = "Sample comment"
+                    CommentForDeliverer = $"{random}"
                 },
                 StartDate = DateTime.Now.Date.AddDays(+1).AddHours(14),
                 EndDate = DateTime.Now.Date.AddDays(+5).AddHours(14)
             });
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
         [Fact]
@@ -181,7 +183,7 @@ namespace ECaterer.WebApi.Integration.Test
                         PostCode = "00-662"
                     },
                     PhoneNumber = "226219312",
-                    CommentForDeliverer = "Sample comment"
+                    CommentForDeliverer = $"{random}"
                 },
                 StartDate = DateTime.Now.Date.AddDays(+1).AddHours(14),
                 EndDate = DateTime.Now.Date.AddDays(+5).AddHours(14)
@@ -210,7 +212,7 @@ namespace ECaterer.WebApi.Integration.Test
                         PostCode = "00-662"
                     },
                     PhoneNumber = "226219312",
-                    CommentForDeliverer = "Sample comment"
+                    CommentForDeliverer = $"{random}"
                 },
                 StartDate = DateTime.Now.Date.AddDays(-10).AddHours(14),
                 EndDate = DateTime.Now.Date.AddDays(+5).AddHours(14)
@@ -224,11 +226,13 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task CA_GetOrders_OK()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            var orders = await Client.GetFromJsonAsync<OrderModel[]>("/api/orders");
+            var orders = await Client.GetFromJsonAsync<OrderModel[]>("/client/orders");
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
+
             orders.Should().NotBeNull();
             orders.Count().Should().NotBe(0);
 
-            orderId = orders.Last().Id;
+            orderId = orders.FirstOrDefault(o => o.DeliveryDetails.CommentForDeliverer == random).Id;
 
             orderId.Should().NotBeNull();
         }
@@ -236,50 +240,26 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CB_GetOrders_Unauthorized()
         {
-
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders$limit=10");
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        }
-
-        [Fact]
-        public async Task CC_GetOrders_BadRequest()
-        {
-
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders$limit=10");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task CA_PayOrder_OK()
-        {
-
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders/{orderId}/pay");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
-        [Fact]
-        public async Task CB_PayOrder_Unauthorized()
-        {
-
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders/{orderId}/pay");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/client/orders?Limit=10");
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Fact]
-        public async Task CC_PayOrder_NotFound()
+        public async Task DA_PayOrder_Unauthorized()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/client/orders/{orderId}/pay");
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task DB_PayOrder_NotFound()
         {
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/client/orders/unexisting-meal/pay");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/client/orders/unexisting-meal/pay");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -287,11 +267,22 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task DATestLoginUnexistingUser()
+        public async Task DC_PayOrder_OK()
+        {
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/client/orders/{orderId}/pay");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task EATestLoginUnexistingUser()
         {
             var request = new
             {
-                Url = "/api/client/login",
+                Url = "/client/login",
                 Body = new LoginUserModel()
                 {
                     Email = $"blabla@gmail.com",
@@ -305,11 +296,11 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task DBTestLoginInvalidPassword()
+        public async Task EBTestLoginInvalidPassword()
         {
             var request = new
             {
-                Url = "/api/client/login",
+                Url = "/client/login",
                 Body = new LoginUserModel()
                 {
                     Email = $"{random}@gmail.com",
@@ -323,14 +314,14 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task EATestRegisterUserBadEmail()
+        public async Task FATestRegisterUserBadEmail()
         {
             var request = new
             {
-                Url = "/api/client/register",
+                Url = "/client/register",
                 Body = new ClientModel()
                 {
-                    Email = $"{random}gmail.com",
+                    Email = "very-bad-email",
                     Address = new Contracts.Client.AddressModel()
                     {
                         City = "Strzelno",
@@ -350,11 +341,11 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task EBTestRegisterUserBadPassword()
+        public async Task FBTestRegisterUserBadPassword()
         {
             var request = new
             {
-                Url = "/api/client/register",
+                Url = "/client/register",
                 Body = new ClientModel()
                 {
                     Email = $"{random}@gmail.com",

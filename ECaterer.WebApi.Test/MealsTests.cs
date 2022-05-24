@@ -38,7 +38,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.PostAsJsonAsync(request.Url, request.Body);
 
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var auth = response.Headers.GetValues("api-key").FirstOrDefault();
 
@@ -95,13 +95,13 @@ namespace ECaterer.WebApi.Integration.Test
             addedMealId.Should().NotBeNull();
 
             mealId = addedMealId;
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
         }
 
         [Fact]
         public async Task CB_TestGetMeals_Unathorized()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals/");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -129,7 +129,6 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task DB_TestEditMeal_Unauthorized()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/meals/{mealId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Cheesecake",
@@ -147,6 +146,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task DC_TestEditMeal_BadRequest()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/meals/{mealId}");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Calories = 250,
@@ -163,6 +163,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task DD_TestEditMeal_NotFound()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, "/api/meals/unexisting-meal");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Calories = 250,
@@ -182,7 +183,7 @@ namespace ECaterer.WebApi.Integration.Test
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
@@ -195,7 +196,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task ED_TestGetMealById_NotFound()
+        public async Task EC_TestGetMealById_NotFound()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals/unexisting-id");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -224,17 +225,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task FC_TestDeleteMeal_BadRequest()
-        {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
-            var response = await Client.SendAsync(requestMessage);
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
-        [Fact]
-        public async Task FD_TestDeleteMeal_OK()
+        public async Task FC_TestDeleteMeal_OK()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
