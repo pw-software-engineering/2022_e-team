@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Pull docker image
-      run: docker login ${{ ACR_NAME}}.azurecr.io --username ${SP_APP_ID} --password ${SP_PASSWD} && docker pull ${{ env.IMAGE_ID_TEMP }}
+      run: docker login ${ACR_NAME}.azurecr.io --username ${SP_APP_ID} --password ${SP_PASSWD} && docker pull ${{ env.IMAGE_ID_TEMP }}
     - name: Login to ACR
       uses: docker/login-action@v1
       with:
