@@ -1,0 +1,42 @@
+name: DeployBackendApp
+
+on:
+  workflow_dispatch:
+
+env:
+  ACR_URL: 'powoeuwacr.azurecr.io'
+  NAMESPACE: 'et'                         # Name of your team {b, j, n}
+  APP_NAME: 'eteam-api'                      # Name of your application {client, server, hotel}
+  DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
+  DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location
+  IMAGE_ID: 'powoeuwcrossteamacr.azurecr.io/e_backend:5.0'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.18.8'
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AKS_NAME }}
+        resource-group: ${{ secrets.AKS_RG_NAME }}
+    # - name: Set IMAGE_ID as env variable
+    #  run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set DOMAIN env variable
+      run: echo "DOMAIN=$(az aks show -g ${{ secrets.AKS_RG_NAME }} -n ${{ secrets.AKS_NAME }} --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)" >> $GITHUB_ENV
+    - name: Print DOMAIN and IMAGE_ID
+      run: |
+        echo "${{ env.DOMAIN }}"
+        echo "${{ env.IMAGE_ID }}"
+    - name: Substitute environment variables in app deployment file
+      run: envsubst < "${{ env.DEPLOYMENT_DIRECTORY }}/${{ env.DEPLOYMENT_FILE_NAME }}" > "${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }}"
+    - name: Deploy app to the cluster
+      run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
