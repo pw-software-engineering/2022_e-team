@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ${APP_NAME}
-        image: front-ecaterer:1.0
+        image: ${IMAGE_ID}
         resources:
           requests:
             cpu: 100m
