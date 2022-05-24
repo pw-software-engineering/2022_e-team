@@ -38,5 +38,11 @@ jobs:
         echo "${{ env.IMAGE_ID }}"
     - name: Substitute environment variables in app deployment file
       run: envsubst < "${{ env.DEPLOYMENT_DIRECTORY }}/${{ env.DEPLOYMENT_FILE_NAME }}" > "${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }}"
-    - name: Deploy app to the cluster
-      run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
+    #- name: Deploy app to the cluster
+    #  run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
+    - name: Get pods
+      run: kubectl get pods -n ${NAMESPACE} -o wide
+    - name: Get svc
+      run: kubectl get svc -n ${NAMESPACE} 
+    - name: Get ingress
+      run: kubectl get ingress -n ${NAMESPACE}
