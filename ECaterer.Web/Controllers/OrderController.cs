@@ -71,5 +71,49 @@ namespace ECaterer.Web.Controllers
         {
             return Ok();
         }
+
+        [HttpGet("getProducerOrders")]
+        public async Task<ActionResult<DelivererOrderDTO[]>> GetProducerOrders()
+        {
+            return Ok(new ProducerOrderDTO[]
+            {
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    OrderDate = DateTime.Now,
+                    Status = "Dostarczone"
+                },
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    OrderDate = DateTime.Now,
+                    Status = "Dostarczone"
+                },
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "2345",
+                    OrderDate = DateTime.Now,
+                    Status = "Nie dostarczone"
+                }
+            });
+        }
+
+        [HttpGet("previewOrder/{orderNumber}")]
+        public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
+        {
+            return Ok(new PreviewOrderDTO()
+            {
+                OrderNumber = "1234",
+                DietNames = new List<string>() { "diet1", "diet2" },
+                Comment = "xd",
+                Status = "ToRealized",
+                Address = "Długa 15, Warszawa",
+                Phone = "666-666-666",
+                Cost = 100.05M,
+                OrderDate = DateTime.Now,
+                DeliverDate = DateTime.Now,
+                HasComplaint = true
+            });
+        }
     }
 }

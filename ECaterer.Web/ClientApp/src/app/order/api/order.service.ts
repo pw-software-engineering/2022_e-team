@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DietDTO } from '../../diets/api/dietDTO';
-import { DelivererOrderDTO, OrderDTO } from './orderDTO';
+import { DelivererOrderDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
 import { CookieOptions, CookieService } from 'ngx-cookie';
 
 @Injectable({
@@ -74,5 +74,13 @@ export class OrderService {
 
   public deliverOrder(orderNumber: string): Promise<void> {
     return this.http.patch<void>(this.orderUrl + `deliverOrder/${orderNumber}`, {}, { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public getProducerOrders(): Promise<ProducerOrderDTO[]> {
+    return this.http.get<ProducerOrderDTO[]>(this.orderUrl + "getProducerOrders", { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public previewOrder(orderNumber: string): Promise<PreviewOrderDTO> {
+    return this.http.get<PreviewOrderDTO>(this.orderUrl + "previewOrder/" + orderNumber, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 }

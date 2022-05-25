@@ -30,6 +30,8 @@ import { ProducerDietsComponent } from './diets/producer/producerDiets.component
 import { EditDietComponent } from './diets/editDiet/editDiet.component';
 import { CartComponent } from './cart/cart.component';
 import { DelivererOrdersComponent } from './order/deliverer/delivererOrders.component';
+import { ProducerOrdersComponent } from './order/producer/producerOrders.component';
+import { PreviewOrderComponent } from './order/previewOrder/previewOrder.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { DelivererOrdersComponent } from './order/deliverer/delivererOrders.comp
     ProducerDietsComponent,
     EditDietComponent,
     CartComponent,
-    DelivererOrdersComponent
+    DelivererOrdersComponent,
+    ProducerOrdersComponent,
+    PreviewOrderComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -61,7 +65,9 @@ import { DelivererOrdersComponent } from './order/deliverer/delivererOrders.comp
       { path: 'producer/diets', component: ProducerDietsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/diets/:id', component: EditDietComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'client/cart', component: CartComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'deliverer/orders', component: DelivererOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+      { path: 'deliverer/orders', component: DelivererOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'producer/orders', component: ProducerOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'producer/orders/:id', component: PreviewOrderComponent, pathMatch: 'full', canActivate: [AuthGuard] }
     ]),
     GridModule,
     BrowserAnimationsModule,
