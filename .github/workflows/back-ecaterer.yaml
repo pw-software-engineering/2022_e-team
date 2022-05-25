@@ -67,4 +67,8 @@ jobs:
       run: kubectl get svc -n ${NAMESPACE}
     - name: Get ingress
       run: kubectl get ingress -n ${NAMESPACE}
+    - name: Get all ingresses
+      run: kubectl get ingress -A
+    - name: Get all svcs
+      run: kubectl get svc -A
        
