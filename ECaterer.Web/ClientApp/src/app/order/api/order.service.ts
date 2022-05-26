@@ -83,4 +83,8 @@ export class OrderService {
   public previewOrder(orderNumber: string): Promise<PreviewOrderDTO> {
     return this.http.get<PreviewOrderDTO>(this.orderUrl + "previewOrder/" + orderNumber, { headers: this.commonHeaders, params: {} }).toPromise();
   }
+
+  public sendOrderToDeliverer(orderNumber: string): Promise<void> {
+    return this.http.patch<void>(this.orderUrl + `sendOrderToDeliverer/${orderNumber}`, {}, { headers: this.commonHeaders, params: {} }).toPromise();
+  }
 }

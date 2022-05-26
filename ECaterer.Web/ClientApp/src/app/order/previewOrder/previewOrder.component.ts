@@ -45,7 +45,15 @@ export class PreviewOrderComponent implements OnInit {
     this.orderService.previewOrder(this.orderNumber)
       .then((data) => {
         this.editModel = data as PreviewOrderDTO;
+        this.editModel.orderDate = new Date(this.editModel.orderDate);
+        this.editModel.deliverDate = new Date(this.editModel.deliverDate);
       })
   }
 
+  redirectDeliverer() {
+    this.orderService.sendOrderToDeliverer(this.orderNumber)
+      .then(() => {
+        this.router.navigate(["producer/orders"]);
+      })
+  }
 }

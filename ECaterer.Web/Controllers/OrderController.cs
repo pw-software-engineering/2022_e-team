@@ -115,5 +115,13 @@ namespace ECaterer.Web.Controllers
                 HasComplaint = true
             });
         }
+
+
+        [HttpPatch("sendOrderToDeliverer/{orderNumber}")]
+        public async Task<ActionResult> SendOrderToDeliverer(string orderNumber)
+        {
+            return Ok();
+        }
+
     }
 }
