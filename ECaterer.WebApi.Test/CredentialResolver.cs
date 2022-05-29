@@ -14,8 +14,10 @@ namespace ECaterer.WebApi.Integration.Test
         {
             return new LoginUserModel()
             {
-                Email = ConfigurationManager.AppSettings["clientLogin"],
-                Password = ConfigurationManager.AppSettings["clientPassword"]
+                Email = "klient@klient.pl",
+                Password = "Klient123!"
+                //Email = ConfigurationManager.AppSettings["clientLogin"],
+                //Password = ConfigurationManager.AppSettings["clientPassword"]
             };
         }
 
@@ -25,8 +27,10 @@ namespace ECaterer.WebApi.Integration.Test
         {
             return new LoginUserModel()
             {
-                Email = ConfigurationManager.AppSettings["producerLogin"],
-                Password = ConfigurationManager.AppSettings["producerPassword"]
+                Email = "producent@producent.pl",
+                Password = "Producent123!"
+                //Email = ConfigurationManager.AppSettings["producerLogin"],
+                //Password = ConfigurationManager.AppSettings["producerPassword"]
             };
         }
 
@@ -35,8 +39,10 @@ namespace ECaterer.WebApi.Integration.Test
         {
             return new LoginUserModel()
             {
-                Email = ConfigurationManager.AppSettings["delivererLogin"],
-                Password = ConfigurationManager.AppSettings["delivererPassword"]
+                Email = "dostawca@dostawca.pl",
+                Password = "Dostawca123!"
+                //Email = ConfigurationManager.AppSettings["delivererLogin"],
+                //Password = ConfigurationManager.AppSettings["delivererPassword"]
             };
         }
     }

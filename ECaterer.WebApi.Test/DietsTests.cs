@@ -52,8 +52,8 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task ABTestEnsureMealsExist()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            var a = TokenHandler.GetToken();
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Meal 1",
@@ -66,6 +66,8 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Meal 2",
@@ -78,7 +80,8 @@ namespace ECaterer.WebApi.Integration.Test
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
                 Name = "Meal 3",
@@ -92,6 +95,7 @@ namespace ECaterer.WebApi.Integration.Test
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);

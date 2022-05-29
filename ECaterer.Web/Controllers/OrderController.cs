@@ -27,7 +27,7 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpPost("sendOrder")]
-        public async Task<ActionResult> SendOrder([FromBody]OrderDTO model)
+        public async Task<ActionResult> SendOrder([FromBody]ClientOrderDTO model)
         {
             //if (model.address == null)
             //{

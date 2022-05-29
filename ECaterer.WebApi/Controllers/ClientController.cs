@@ -62,7 +62,7 @@ namespace ECaterer.WebApi.Controllers
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
             if (user == null)
-                return Unauthorized();
+                return BadRequest();
             var Token = _tokenService.CreateToken(user);
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
             
@@ -78,7 +78,7 @@ namespace ECaterer.WebApi.Controllers
                 return Ok();
             }
 
-            return Unauthorized();
+            return BadRequest();
         }
 
         [HttpPost("register")]
