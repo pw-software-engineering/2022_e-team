@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/meals")]
+    [Route("meals")]
     [ApiController]
     [Authorize]
     public class MealsController : ControllerBase
