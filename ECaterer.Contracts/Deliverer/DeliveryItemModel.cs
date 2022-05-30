@@ -7,7 +7,7 @@ namespace ECaterer.Contracts.Deliverer
 {
     public class DeliveryItemModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public DeliveryDetailsModel DeliveryDetails { get; set; }
     }
