@@ -1,5 +1,6 @@
 using ECaterer.Core;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Controllers;
 using ECaterer.WebApi.Data;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,6 +55,7 @@ namespace ECaterer.WebApi
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllers();
+            services.AddTransient<ClientController>();
 
             //IDENTITY
             services.AddIdentityCore<IdentityUser>(opt =>

@@ -7,6 +7,7 @@ using ECaterer.Core.Models;
 using ECaterer.Core.Models.Enums;
 using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,15 +18,16 @@ namespace ECaterer.WebApi.Controllers
 {
     [Route("producer")]
     [ApiController]
-    [Authorize]
     public class ProducerController : ControllerBase
     {
         private readonly IOrdersService _ordersService;
+        private readonly ClientController _clientController;
         private readonly Mapper _mapper;
 
-        public ProducerController(IOrdersService ordersService)
+        public ProducerController(IOrdersService ordersService, ClientController clientController)
         {
             _ordersService = ordersService;
+            _clientController = clientController;
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Address, AddressModel>();
@@ -41,16 +43,20 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginUserModel loginUser)
         {
-            return Redirect("/client/login");
+            _clientController.ControllerContext = new ControllerContext(ControllerContext);
+            var response = await _clientController.Login(loginUser);
+            ControllerContext = new ControllerContext(_clientController.ControllerContext);
+            
+            return response;
         }
 
         [HttpPost("orders/{orderId}/complete")]
-        [Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<IActionResult> CompleteOrder([FromRoute] string orderId)
         {
             try
             {
-                var (exist, completed) = await _ordersService.PayOrder(orderId);
+                var (exist, completed) = await _ordersService.CompleteOrder(orderId);
 
                 if (!exist)
                     return NotFound("Podane zamówienie nie istnieje");
@@ -67,21 +73,21 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPost("orders/{complaintId}/answer-complaint")]
-        [Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<IActionResult> AnswerComplaint([FromRoute] Guid complaintId/*, [FromBody] AnswerComplaintModel model*/)
         {
             return BadRequest("Zapisanie nie powiodło się");
         }
 
         [HttpGet("orders/complaints")]
-        [Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<IActionResult> GetOrdersComplaints()
         {
             return BadRequest();
         }
 
         [HttpGet("orders")]
-        [Authorize(Roles = "producer")]
+        [Authorize/*(Roles = "producer")*/]
         public async Task<ActionResult<OrderProducerModel[]>> GetOrders([FromQuery] GetOrdersProducerQueryModel getOrdersQuery)
         {
             try

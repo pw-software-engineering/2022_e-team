@@ -121,10 +121,18 @@ namespace ECaterer.WebApi.Services
             var order = await _context.Orders
                .Where(o => o.Status == (int)OrderStatus.WaitingForPayment)
                .FirstOrDefaultAsync(o => o.OrderId == orderId);
-            //sprawdzenie klienta - dodanie ClientId do Order?
             if (order == default)
-                return (exists: false, paid: false);
+            {
+                var orderOnlyById = _context.Orders
+                    .FirstOrDefault(o => o.OrderId == orderId);
+                if (orderOnlyById == default)
+                    return (exists: false, paid: false);
+                else
+                    return (exists: true, paid: false);
+            }
+
             //przekazanie do zewnętrznego serwisu platnosci
+
             order.Status = (int)OrderStatus.Paid;
             await _context.SaveChangesAsync();
 
@@ -136,9 +144,17 @@ namespace ECaterer.WebApi.Services
             var order = _context.Orders
                 .Where(o => o.Status == (int)OrderStatus.ToRealized)
                 .FirstOrDefault(o => o.OrderId == orderId);
-
             if (order == default)
-                return (exists: false, completed: false);
+            {
+                var orderOnlyById= _context.Orders
+                    .FirstOrDefault(o => o.OrderId == orderId);
+                if (orderOnlyById == default)
+                    return (exists: false, completed: false);
+                else
+                    return (exists: true, completed: false);
+            }
+
+            //przekazanie do deliverera
 
             order.Status = (int)OrderStatus.Prepared; 
             await _context.SaveChangesAsync();
