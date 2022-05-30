@@ -1,0 +1,32 @@
+
+<main id="delivererOrders">
+  <div>
+    <h2>Lista zamówień do realizacji</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="orders"
+                      [height]="600"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="orderNumber" title="Numer zamówienia">
+            </kendo-grid-column>
+            <kendo-grid-column field="address" title="Adres">
+            </kendo-grid-column>
+            <kendo-grid-column field="phone" title="Numer telefonu">
+            </kendo-grid-column>
+            <kendo-grid-column field="comment" title="Komentarz od klienta">
+            </kendo-grid-column>
+            <kendo-grid-column [width]="200">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton (click)="deliverOrder(dataItem.orderNumber)" themeColor="primary">Dostarczone</button>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

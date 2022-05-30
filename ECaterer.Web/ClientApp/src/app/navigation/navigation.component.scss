@@ -1,0 +1,15 @@
+
+
+#navigation {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+
+    ul {
+
+        width: 80vw;
+        list-style: none;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

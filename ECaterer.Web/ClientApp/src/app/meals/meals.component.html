@@ -1,0 +1,38 @@
+<main id="mealsInDiets">
+  <div>
+    <h2>Lista posiłków w diecie</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="meals"
+                      [sortable]="true"
+                      [filterable]="true"
+                      [height]="600"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="name" title="Nazwa">
+            </kendo-grid-column>
+            <kendo-grid-column field="ingredientString" title="Lista składników">
+            </kendo-grid-column>
+            <kendo-grid-column field="allergentString" title="Lista alergenów">
+            </kendo-grid-column>
+            <kendo-grid-column field="calories" title="Wartość energetyczna [kcal]" filter="numeric">
+            </kendo-grid-column>
+            <kendo-grid-column field="vegan" title="Czy jest wegański" filter="boolean">
+              <kendo-grid-messages filterIsTrue="Tak"
+                                   filterIsFalse="Nie"
+                                   filterBooleanAll="---">
+              </kendo-grid-messages>
+
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.vegan ? "Tak" : "Nie"}}
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
