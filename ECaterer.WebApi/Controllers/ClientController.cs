@@ -48,7 +48,7 @@ namespace ECaterer.WebApi.Controllers
                 cfg.CreateMap<DeliveryDetails, DeliveryDetailsModel>();
                 cfg.CreateMap<Complaint, ComplaintModel>()
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
-                cfg.CreateMap<Order, OrderModel>()
+                cfg.CreateMap<Order, OrderClientModel>()
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()))
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId));
             });
@@ -187,7 +187,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpGet("orders")]
         [Authorize/*(Roles = "client")*/]
-        public async Task<ActionResult<OrderModel[]>> GetOrders([FromQuery] GetOrdersQueryModel getOrdersQuery)
+        public async Task<ActionResult<OrderClientModel[]>> GetOrders([FromQuery] GetOrdersClientQueryModel getOrdersQuery)
         {
             try
             {
@@ -196,7 +196,7 @@ namespace ECaterer.WebApi.Controllers
                     return BadRequest("Pobranie nie powiodło się");
 
                 var ordersModel = orders
-                    .Select(order => _mapper.Map<OrderModel>(order))
+                    .Select(order => _mapper.Map<OrderClientModel>(order))
                     .ToArray();
 
                 return Ok(ordersModel);

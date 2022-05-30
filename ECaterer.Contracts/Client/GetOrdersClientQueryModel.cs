@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ECaterer.Contracts.Orders
 {
-    public class GetOrdersQueryModel
+    public class GetOrdersClientQueryModel
     {
         public int? Offset { get; set; }
         public int? Limit { get; set; }

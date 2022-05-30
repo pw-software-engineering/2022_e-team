@@ -27,7 +27,11 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpPost("sendOrder")]
+<<<<<<< Updated upstream
         public async Task<ActionResult> SendOrder([FromBody]ClientOrderDTO model)
+=======
+        public async Task<ActionResult> SendOrder([FromBody]DTO.ClientDTO.OrderDTO model)
+>>>>>>> Stashed changes
         {
             //if (model.address == null)
             //{
