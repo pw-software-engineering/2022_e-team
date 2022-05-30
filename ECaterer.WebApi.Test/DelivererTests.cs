@@ -129,7 +129,7 @@ namespace ECaterer.WebApi.Integration.Test
             ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
-            int id = order.Id;
+            var id = order.Id;
 
             // Fulfill
             var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
@@ -151,7 +151,7 @@ namespace ECaterer.WebApi.Integration.Test
             ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
-            int id = order.Id;
+            var id = order.Id;
 
             // Fulfill
             var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
