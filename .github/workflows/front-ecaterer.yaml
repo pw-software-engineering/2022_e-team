@@ -9,7 +9,7 @@ env:
   APP_NAME: 'eteam-app'                      # Name of your application {client, server, hotel}
   DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
   DEPLOYMENT_FILE_NAME: 'front-ecaterer.yaml'      # Name of deployment file for application in deployment location
-  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_front:5.0'
+  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_frontend:latest'
   ACR_NAME: 'powoeuwcrossteamacr'
   SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
   SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
@@ -61,9 +61,4 @@ jobs:
       run: envsubst < "${{ env.DEPLOYMENT_DIRECTORY }}/${{ env.DEPLOYMENT_FILE_NAME }}" > "${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }}"
     - name: Deploy app to the cluster
       run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
-    - name: Get pods
-      run: kubectl get pods -n ${NAMESPACE} -o wide
-    - name: Get svc
-      run: kubectl get svc -n ${NAMESPACE}
-    - name: Get ingress
-      run: kubectl get ingress -n ${NAMESPACE}
+  
