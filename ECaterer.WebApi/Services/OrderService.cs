@@ -5,6 +5,8 @@ using ECaterer.Core;
 using ECaterer.Core.Models;
 using ECaterer.Core.Models.Enums;
 using ECaterer.WebApi.Common.Builders;
+using ECaterer.WebApi.Common.Filters;
+using ECaterer.WebApi.Common.Filters.Orders;
 using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -71,17 +73,17 @@ namespace ECaterer.WebApi.Services
                     .Include(o => o.Complaint)
                     .Include(o => o.DeliveryDetails.Address);
 
-                var builder = new OrdersQueryBuilder(orders);
+                var builder = new QueryBuilder<Order>(orders);
                 builder = builder
-                    .SetPriceFilter(query.Price)
-                    .SetPriceLowerThanFilter(query.Price_lt)
-                    .SetPriceHigherThanFilter(query.Price_ht)
-                    .SetStartDateFilter(query.StartDate)
-                    .SetEndDateFilter(query.EndDate)
-                    .SetStatusFilter(query.OrderStatus)
-                    .SetSorting(query.Sort)
-                    .SetOffset(query.Offset)
-                    .SetLimit(query.Limit);
+                    .PerformAction(new OrderPriceFilter(query.Price))
+                    .PerformAction(new OrderPriceLowerThanFilter(query.Price_lt))
+                    .PerformAction(new OrderPriceHigherThanFilter(query.Price_ht))
+                    .PerformAction(new OrderStartDateFilter(query.StartDate))
+                    .PerformAction(new OrderEndDateFilter(query.EndDate))
+                    .PerformAction(new OrderStatusFilter(query.OrderStatus))
+                    .PerformAction(new OrderSort(query.Sort))
+                    .PerformAction(new Offset<Order>(query.Offset))
+                    .PerformAction(new Limit<Order>(query.Limit));
 
                 return builder.GetQuery();
             }
@@ -100,13 +102,13 @@ namespace ECaterer.WebApi.Services
                     .Include(o => o.DeliveryDetails)
                     .Include(o => o.DeliveryDetails.Address);
 
-                var builder = new OrdersQueryBuilder(orders);
+                var builder = new QueryBuilder<Order>(orders);
                 builder = builder
-                    .SetStartDateFilter(query.StartDate)
-                    .SetEndDateFilter(query.EndDate)
-                    .SetSorting(query.Sort)
-                    .SetOffset(query.Offset)
-                    .SetLimit(query.Limit);
+                    .PerformAction(new OrderStartDateFilter(query.StartDate))
+                    .PerformAction(new OrderEndDateFilter(query.EndDate))
+                    .PerformAction(new OrderSort(query.Sort))
+                    .PerformAction(new Offset<Order>(query.Offset))
+                    .PerformAction(new Limit<Order>(query.Limit));
 
                 return builder.GetQuery();
             }
@@ -206,7 +208,7 @@ namespace ECaterer.WebApi.Services
                 .Include(o => o.DeliveryDetails)
                 .Include(o => o.DeliveryDetails.Address);
 
-            var builder = new OrdersQueryBuilder(orders).SetStatusFilter(OrderStatus.Prepared.ToString());
+            var builder = new QueryBuilder<Order>(orders).PerformAction(new OrderStatusFilter(OrderStatus.Prepared.ToString()));
 
             return builder.GetQuery();
         }
