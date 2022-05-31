@@ -1,0 +1,34 @@
+
+<main id="producerOrders">
+  <div>
+    <h2>Lista złożonych zamówień</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="orders"
+                      [height]="600"
+                      [scrollable]="false"
+                      [filterable]="true"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="orderNumber" title="Numer zamówienia">
+            </kendo-grid-column>
+            <kendo-grid-column field="orderDate" title="Data zamówienia" filter="date">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.orderDate | date: 'dd.MM.yyyy'}}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="status" title="Status">
+            </kendo-grid-column>
+            <kendo-grid-column [width]="200">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton (click)="previewOrder(dataItem.orderNumber)" themeColor="primary">Podgląd</button>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

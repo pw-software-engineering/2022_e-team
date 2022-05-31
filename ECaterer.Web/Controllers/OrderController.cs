@@ -71,5 +71,111 @@ namespace ECaterer.Web.Controllers
         {
             return Ok();
         }
+
+        [HttpGet("getProducerOrders")]
+        public async Task<ActionResult<DelivererOrderDTO[]>> GetProducerOrders()
+        {
+            return Ok(new ProducerOrderDTO[]
+            {
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    OrderDate = DateTime.Now,
+                    Status = "Dostarczone"
+                },
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    OrderDate = DateTime.Now,
+                    Status = "Dostarczone"
+                },
+                new ProducerOrderDTO()
+                {
+                    OrderNumber = "2345",
+                    OrderDate = DateTime.Now,
+                    Status = "Nie dostarczone"
+                }
+            });
+        }
+
+        [HttpGet("previewOrder/{orderNumber}")]
+        public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
+        {
+            if (orderNumber == "1")
+                return Ok(new PreviewOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    DietNames = new List<string>() { "diet1", "diet2" },
+                    Comment = "xd",
+                    Status = "ToRealized",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Cost = 100.05M,
+                    OrderDate = DateTime.Now,
+                    DeliverDate = DateTime.Now,
+                    HasComplaint = true
+                });
+            else if (orderNumber == "2")
+                return Ok(new PreviewOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    DietNames = new List<string>() { "diet1", "diet2" },
+                    Comment = "xd",
+                    Status = "Paid",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Cost = 100.05M,
+                    OrderDate = DateTime.Now,
+                    DeliverDate = DateTime.Now,
+                    HasComplaint = true
+                });
+            else if(orderNumber == "3")
+                return Ok(new PreviewOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    DietNames = new List<string>() { "diet1", "diet2" },
+                    Comment = "xd",
+                    Status = "ToRealized",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Cost = 100.05M,
+                    OrderDate = DateTime.Now,
+                    DeliverDate = DateTime.Now,
+                    HasComplaint = false
+                });
+            else
+                return Ok(new PreviewOrderDTO()
+                {
+                    OrderNumber = "1234",
+                    DietNames = new List<string>() { "diet1", "diet2" },
+                    Comment = "xd",
+                    Status = "Paid",
+                    Address = "Długa 15, Warszawa",
+                    Phone = "666-666-666",
+                    Cost = 100.05M,
+                    OrderDate = DateTime.Now,
+                    DeliverDate = DateTime.Now,
+                    HasComplaint = false
+                });
+        }
+
+
+        [HttpPatch("sendOrderToDeliverer/{orderNumber}")]
+        public async Task<ActionResult> SendOrderToDeliverer(string orderNumber)
+        {
+            return Ok();
+        }
+
+        [HttpGet("{orderNumber}/complaint")]
+        public async Task<ActionResult<ComplaintDTO>> GetComplaint()
+        {
+            return Ok(new ComplaintDTO
+            {
+                Description = "opis reklamacji",
+                Status = "Do rozpatrzenia",
+                ClientName = "120231",
+                ComplaintDate = DateTime.Now
+            });
+        }
     }
 }
