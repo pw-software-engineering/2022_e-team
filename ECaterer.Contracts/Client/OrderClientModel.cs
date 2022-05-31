@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ECaterer.Contracts.Orders
 {
-    public class OrderModel
+    public class OrderClientModel
     {
         public string Id { get; set; }
         public string[] DietIDs { get; set; }

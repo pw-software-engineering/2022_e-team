@@ -226,7 +226,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task CA_GetOrders_OK()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            var orders = await Client.GetFromJsonAsync<OrderModel[]>("/client/orders");
+            var orders = await Client.GetFromJsonAsync<OrderClientModel[]>("/client/orders");
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
 
             orders.Should().NotBeNull();

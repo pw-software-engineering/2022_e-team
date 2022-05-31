@@ -1,5 +1,6 @@
 using ECaterer.Core;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Controllers;
 using ECaterer.WebApi.Data;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -117,8 +118,11 @@ namespace ECaterer.WebApi
                 });
 
             services.AddScoped<IMealRepository, MealRepository>();
-            services.AddScoped<IOrdersService, OrdersService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<TokenService>();
+
+            services.AddTransient<ClientController>();
 
             //SWAGGER
             services.AddSwaggerGen(c =>

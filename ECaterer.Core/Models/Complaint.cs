@@ -15,6 +15,8 @@ namespace ECaterer.Core.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual string ComplaintId { get; set; }
         [Required]
+        public virtual string OrderId { get; set; }
+        [Required]
         public virtual string Description { get; set; }
         [Required]
         public virtual DateTime Date { get; set; }

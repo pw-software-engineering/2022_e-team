@@ -1,5 +1,6 @@
 ﻿using ECaterer.Contracts.Client;
 using ECaterer.Contracts.Orders;
+using ECaterer.Contracts.Producer;
 using ECaterer.Core;
 using ECaterer.Core.Models;
 using ECaterer.Core.Models.Enums;
@@ -13,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Services
 {
-    public class OrdersService : IOrdersService
+    public class OrderService : IOrderService
     {
         private readonly DataContext _context;
 
-        public OrdersService(DataContext context)
+        public OrderService(DataContext context)
         {
             _context = context;
         }
@@ -60,7 +61,7 @@ namespace ECaterer.WebApi.Services
             return order;
         }
 
-        public async Task<IEnumerable<Order>> GetOrders(GetOrdersQueryModel query)
+        public async Task<IEnumerable<Order>> GetOrders(GetOrdersClientQueryModel query)
         {
             IQueryable<Order> orders; 
             try 
@@ -90,19 +91,64 @@ namespace ECaterer.WebApi.Services
             }
         }
 
+        public async Task<IEnumerable<Order>> GetOrders(GetOrdersProducerQueryModel query)
+        {
+            IQueryable<Order> orders;
+            try
+            {
+                orders = _context.Orders
+                    .Include(o => o.DeliveryDetails)
+                    .Include(o => o.DeliveryDetails.Address);
+
+                var builder = new OrdersQueryBuilder(orders);
+                builder = builder
+                    .SetStartDateFilter(query.StartDate)
+                    .SetEndDateFilter(query.EndDate)
+                    .SetSorting(query.Sort)
+                    .SetOffset(query.Offset)
+                    .SetLimit(query.Limit);
+
+                return builder.GetQuery();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<(bool exists, bool paid)> PayOrder(string orderId)
         {
             var order = await _context.Orders
-               .Where(o => o.Status == (int)OrderStatus.WaitingForPayment)
                .FirstOrDefaultAsync(o => o.OrderId == orderId);
-            //sprawdzenie klienta - dodanie ClientId do Order?
+
             if (order == default)
                 return (exists: false, paid: false);
+            if (order.Status != (int)OrderStatus.WaitingForPayment)
+                    return (exists: true, paid: false);
+
             //przekazanie do zewnętrznego serwisu platnosci
+
             order.Status = (int)OrderStatus.Paid;
             await _context.SaveChangesAsync();
 
             return (exists: true, paid: true);
+        }
+
+        public async Task<(bool exists, bool completed)> CompleteOrder(string orderId)
+        {
+            var order = _context.Orders
+                .FirstOrDefault(o => o.OrderId == orderId);
+
+            if (order == default)
+                return (exists: false, completed: false);
+            if (order.Status != (int)OrderStatus.ToRealized)
+                return (exists: true, completed: false);
+
+            //przekazanie do deliverera
+
+            order.Status = (int)OrderStatus.Prepared; 
+            await _context.SaveChangesAsync();
+            return (exists: true, completed: true);
         }
 
         private bool ValidateDietsIDs(string[] dietIDs)
@@ -113,14 +159,14 @@ namespace ECaterer.WebApi.Services
         private async Task<Address> GetDeliveryAddress(string userId, AddOrderModel model)
         {
             Address address;
-            if (model.DeliveryDetails.Address == null)
+            if (model.DeliveryDetails.Address is null)
             {
                 address = await GetUserAddress(userId);
             }
             else
             {
                 address = await SearchForAddressInDatabase(model.DeliveryDetails.Address);
-                if (address == null)
+                if (address is null)
                 {
                     address = new Address()
                     {
