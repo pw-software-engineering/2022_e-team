@@ -33,7 +33,7 @@ namespace ECaterer.WebApi.Integration.Test
         {
             var request = new
             {
-                Url = "/api/client/login",
+                Url = "/producer/login",
                 Body = CredentialResolver.ResolveProducer()
             };
 
@@ -51,7 +51,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task ABTestEnsureMealsExist()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/meals");
             var a = TokenHandler.GetToken();
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
@@ -66,7 +66,7 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/meals");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
@@ -80,7 +80,7 @@ namespace ECaterer.WebApi.Integration.Test
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/meals");
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, "/meals");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
@@ -94,7 +94,7 @@ namespace ECaterer.WebApi.Integration.Test
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/meals");
+            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/meals");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             response = await Client.SendAsync(requestMessage);
@@ -106,7 +106,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BATestAddDiet()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
@@ -122,7 +122,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BBTestGetDiets()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -138,7 +138,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BCTestEditDietPrice()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
@@ -154,7 +154,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BDTestDeleteDiet()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -164,7 +164,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CATestGetDietByIdUnauthorized()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/diets/{dietId}");
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -173,7 +173,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CBTestGetUnexistingDietById()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/api/diets/some_invalid_id");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/diets/some_invalid_id");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -183,7 +183,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CATestAddDietAndGetId()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
@@ -192,7 +192,7 @@ namespace ECaterer.WebApi.Integration.Test
                 Price = 1200
             });
 
-            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/diets");
+            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/diets");
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -206,7 +206,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CBTestEditDietUnexistingMeal()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
@@ -222,7 +222,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CCTestDeleteDiet()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -232,7 +232,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task CDTestDeleteUnexistingDiet()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/some_invalid_id");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/some_invalid_id");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -242,7 +242,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task DATestAddDietAndGetId()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
@@ -254,7 +254,7 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/diets");
+            requestMessage = new HttpRequestMessage(HttpMethod.Get, "/diets");
 
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -268,7 +268,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task DBTestEditDietUnauthorized()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/diets/{dietId}");
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
                 Name = "Diet 1",
@@ -283,7 +283,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task EATestGetDietsUnauthorized()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/diets");
 
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -292,7 +292,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task EBTestAddDietUnauthorized()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/api/diets");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
                 Name = "Diet 1",
@@ -307,7 +307,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task FATestDeleteDiet()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/diets/{dietId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
             var response = await Client.SendAsync(requestMessage);
@@ -319,7 +319,7 @@ namespace ECaterer.WebApi.Integration.Test
         {
             foreach (var mealId in mealsIds)
             {
-                var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
+                var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/meals/{mealId}");
                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
                 var response = await Client.SendAsync(requestMessage);

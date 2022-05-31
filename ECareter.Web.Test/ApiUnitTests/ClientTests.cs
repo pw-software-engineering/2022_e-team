@@ -265,9 +265,9 @@ namespace ECareter.Web.Test.ApiUnitTests
                  new Mock<IUserConfirmation<IdentityUser>>().Object);
         }
 
-        public Mock<IOrdersService> GetMockOrderService()
+        public Mock<IOrderService> GetMockOrderService()
         {
-            return new Mock<IOrdersService>();
+            return new Mock<IOrderService>();
         }
 
         public void Dispose()
