@@ -34,9 +34,9 @@ spec:
         - containerPort: 80
         env:
         - name: "ConnectionStrings__DefaultConnection"
-          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamAuth;Persist Security Info=False;${secrets.AZURE_DB_CREDS}MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamAuth;Persist Security Info=False;${secrets.AZURE_DB_CREDS};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         - name: "ConnectionStrings__CoreDbConnection"
-          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamData;Persist Security Info=False;${secrets.AZURE_DB_CREDS}MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"  
+          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamData;Persist Security Info=False;${secrets.AZURE_DB_CREDS};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"  
         imagePullPolicy: "IfNotPresent"
 ---
 apiVersion: v1
