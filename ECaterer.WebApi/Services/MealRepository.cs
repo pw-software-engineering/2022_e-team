@@ -1,8 +1,10 @@
 ﻿using ECaterer.Contracts.Meals;
 using ECaterer.Core;
 using ECaterer.Core.Models;
-using ECaterer.WebApi.Common.Builder;
+using ECaterer.WebApi.Common.Builders;
 using ECaterer.WebApi.Common.Exceptions;
+using ECaterer.WebApi.Common.Filters;
+using ECaterer.WebApi.Common.Filters.Meals;
 using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -111,16 +113,16 @@ namespace ECaterer.WebApi.Services
         public async Task<IEnumerable<Meal>> GetMeals(GetMealsQueryModel query)
         {
             IQueryable<Meal> meals =  _context.Meals;
-            var builder = new MealsQueryBuilder(meals);
+            var builder = new QueryBuilder<Meal>(meals);
             builder = builder
-                .SetNameFilter(query.Name)
-                .SetNameWithFilter(query.Name_with)
-                .SetCaloriesLowerThanFilter(query.Calories_lt)
-                .SetCaloriesHigherThanFilter(query.Calories_ht)
-                .SetVeganFilter(query.Vegan)
-                .SetSorting(query.Sort)
-                .SetOffset(query.Offset)
-                .SetLimit(query.Limit);
+                .PerformAction(new MealNameFilter(query.Name))
+                .PerformAction(new MealNameWithFilter(query.Name_with))
+                .PerformAction(new MealCaloriesLowerThanFilter(query.Calories_lt))
+                .PerformAction(new MealCaloriesHigherThanFilter(query.Calories_ht))
+                .PerformAction(new MealVeganFilter(query.Vegan))
+                .PerformAction(new MealSort(query.Sort))
+                .PerformAction(new Offset<Meal>(query.Offset))
+                .PerformAction(new Limit<Meal>(query.Limit));
                 
             return builder.GetQuery();
         }
