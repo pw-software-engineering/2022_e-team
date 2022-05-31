@@ -40,3 +40,5 @@ jobs:
       run: kubectl get ingress -A
     - name: Get all svcs
       run: kubectl get svc -A
+    - name: describe api
+      run: kubectl describe pod eteam-api-56bbf8c85d-fsgh5 -n ${NAMESPACE}
