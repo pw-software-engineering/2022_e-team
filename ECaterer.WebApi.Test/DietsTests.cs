@@ -111,7 +111,7 @@ namespace ECaterer.WebApi.Integration.Test
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
             {
                 Name = "Diet 1",
-                MealIds = mealsIds,
+                MealIds = new string[0],
                 Price = 1200
             });
 
@@ -128,7 +128,7 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var diets = await response.Content.ReadFromJsonAsync<GetDietModel[]>();
+            var diets = await response.Content.ReadFromJsonAsync<GetDietsModel[]>();
 
             var newDietId = diets.Where(diet => diet.Name == "Diet 1" && diet.Price == 1200).Select(diet => diet.Id).FirstOrDefault();
             newDietId.Should().NotBe(default(string));
@@ -197,7 +197,7 @@ namespace ECaterer.WebApi.Integration.Test
             var response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var diets = await response.Content.ReadFromJsonAsync<GetDietModel[]>();
+            var diets = await response.Content.ReadFromJsonAsync<GetDietsModel[]>();
 
             var newDietId = diets.Where(diet => diet.Name == "Diet 1" && diet.Price == 1200).Select(diet => diet.Id).FirstOrDefault();
             dietId = newDietId;
@@ -259,7 +259,7 @@ namespace ECaterer.WebApi.Integration.Test
             response = await Client.SendAsync(requestMessage);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var diets = await response.Content.ReadFromJsonAsync<GetDietModel[]>();
+            var diets = await response.Content.ReadFromJsonAsync<GetDietsModel[]>();
 
             var newDietId = diets.Where(diet => diet.Name == "Diet 1" && diet.Price == 1200).Select(diet => diet.Id).FirstOrDefault();
             dietId = newDietId;

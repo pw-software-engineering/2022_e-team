@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Common.Queries
 {
-    public class DietQuery
+    public class GetDietsQueryModel
     {
         public int? Offset { get; set; }
         public int? Limit { get; set; }

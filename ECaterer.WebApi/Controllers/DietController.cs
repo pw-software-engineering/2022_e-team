@@ -1,9 +1,13 @@
-﻿using ECaterer.Contracts.Orders;
+﻿using AutoMapper;
+using ECaterer.Contracts.Diets;
+using ECaterer.Contracts.Meals;
 using ECaterer.Core;
+using ECaterer.Core.Models; 
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
 using ECaterer.WebApi.Common.Queries;
 using ECaterer.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,42 +16,55 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class DietController : Controller
     {
-        IDietController _service;
-        public DietController(IDietController service)
+        private readonly IDietRepository _diets;
+        private readonly Mapper _mapper;
+
+
+        public DietController(IDietRepository diets)
         {
-            _service = service;
+            _diets = diets;
+
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Diet, DietModel>()
+                    .ForMember(dest => dest.MealIds, opt => opt.MapFrom(col => col.Meals.Select(m => m.MealId).ToArray()));
+                cfg.CreateMap<Diet, GetDietsModel>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.DietId));
+            });
+            _mapper = new Mapper(mappingConfig);
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult<DietModel[]>> GetDiets([FromQuery] DietQuery query)
+        [HttpGet("diets")]
+        public async Task<ActionResult<GetDietsModel[]>> GetDiets([FromQuery] GetDietsQueryModel query)
         {
             try
             {
-                var diets = await _service.GetDiets(query.Offset, query.Limit, query.Sort, query.Name, query.NameWith, 
-                                                    query.Vegan, query.Calories, query.CaloriesLt, query.CaloriesHt, 
-                                                    query.Price, query.PriceLt, query.PriceHt);
-
-                return Ok(diets);
+                var diets = await _diets.GetDiets(query);
+                if (diets is null)
+                    return BadRequest("Niepowodzenie pobrania diet");
+                var dietsDTO = diets.Select(diet => _mapper.Map<GetDietsModel>(diet)).ToList();
+                return Ok(dietsDTO);
             }
-            catch(Exception e)
+            catch
             {
-                throw new Exception("Niepowodzenie pobrania diet");
+                return BadRequest("Niepowodzenie pobrania diet");
             }
         }
 
-        // GET api/<DientController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DietModel>> GetDietByID(string id)
+        [HttpGet("diets/{dietId}")]
+        [Authorize/*(Roles = "producer, client")*/]
+        public async Task<ActionResult<DietModel>> GetDietByID(string dietId)
         {
             try
             {
-                var diet = await _service.GetDietByID(id);
-                return Ok(diet);
+                var diet = await _diets.GetDietById(dietId);
+                if (diet is null)
+                    return NotFound("Podana dieta nie istnieje");
+                return Ok(_mapper.Map<DietModel>(diet));
             }
             catch
             {
@@ -55,33 +72,31 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("diets")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> AddDiet([FromBody] CreateDietMealsModel dietInfo)
+        public async Task<ActionResult> AddDiet([FromBody] DietModel dietModel)
         {
             try
             {
-                await _service.AddDiet(dietInfo);
+                var diet = await _diets.AddDiet(dietModel);
+                if (diet is null)
+                    return BadRequest("Niepowodzenie dodania diety"); ;
                 return Ok("Powodzenie dodania diety");
             }
-            catch
+            catch(Exception e)
             {
                 return BadRequest("Niepowodzenie dodania diety");
             }
         }
 
-        [HttpPut("{dietId}")]
+        [HttpPut("diets/{dietId}")]
         //[Authorize(Roles = "producer")]
-        public async Task<ActionResult> EditDiet(string dietId, [FromBody] CreateDietMealsModel dietInfo)
+        public async Task<ActionResult> EditDiet(string dietId, [FromBody] DietModel dietModel)
         {
             try
             {
-                await _service.EditDiet(dietId, dietInfo);
+                await _diets.EditDiet(dietId, dietModel);
                 return Ok("Powodzenie edycji diety");
-            }
-            catch (UnexistingDietException)
-            {
-                return NotFound("Podana dieta nie istnieje");
             }
             catch
             {
@@ -89,17 +104,16 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteDiet(string id)
+        [HttpDelete("diets/{dietId}")]
+        [Authorize/*(Roles = "producer")*/]
+        public async Task<ActionResult> DeleteDiet(string dietId)
         {
             try
             {
-                await _service.DeleteDiet(id);
+                var diet = await _diets.DeleteDiet(dietId);
+                if (diet is null)
+                    return NotFound("Podana dieta nie istnieje");
                 return Ok("Powodzenie usunięcia diety");
-            }
-            catch (UnexistingDietException)
-            {
-                return NotFound("Podana dieta nie istnieje");
             }
             catch
             {
@@ -107,9 +121,4 @@ namespace ECaterer.WebApi.Controllers
             }
         }
     }
-
-   
-
-
-
 }

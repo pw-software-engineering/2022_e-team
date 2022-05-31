@@ -136,7 +136,7 @@ namespace ECaterer.WebApi.Integration.Test
         public async Task BA_AddOrder_Created()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
-            var diets = await Client.GetFromJsonAsync<GetDietModel[]>("/diets?limit=3");
+            var diets = await Client.GetFromJsonAsync<GetDietsModel[]>("/diets?limit=3");
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/client/orders");

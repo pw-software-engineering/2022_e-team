@@ -118,7 +118,7 @@ namespace ECaterer.WebApi
                 });
 
 
-            services.AddScoped<IDietController, DietControllerService>();
+            services.AddScoped<IDietRepository, DietRepository>();
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IComplaintService, ComplaintService>();
