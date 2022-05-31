@@ -33,3 +33,10 @@ export interface PreviewOrderDTO {
   comment: string;
   hasComplaint: boolean;
 }
+
+export interface ComplaintDTO {
+  clientName: string;
+  description: string;
+  complaintDate: Date;
+  status: string;
+}

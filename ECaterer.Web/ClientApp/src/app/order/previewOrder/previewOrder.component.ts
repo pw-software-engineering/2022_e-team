@@ -34,6 +34,8 @@ export class PreviewOrderComponent implements OnInit {
     status: ""
   };
 
+  public isReadyToDeliver: boolean = false;
+
   ngOnInit(): void {
     this.inRoute.params.subscribe((params: Params) => {
       this.orderNumber = params['id'];
@@ -47,6 +49,7 @@ export class PreviewOrderComponent implements OnInit {
         this.editModel = data as PreviewOrderDTO;
         this.editModel.orderDate = new Date(this.editModel.orderDate);
         this.editModel.deliverDate = new Date(this.editModel.deliverDate);
+        this.isReadyToDeliver = this.editModel.status == "ToRealized";
       })
   }
 
@@ -55,5 +58,9 @@ export class PreviewOrderComponent implements OnInit {
       .then(() => {
         this.router.navigate(["producer/orders"]);
       })
+  }
+
+  showComplaint() {
+    this.router.navigate([`producer/orders/${this.orderNumber}/complaint`]);
   }
 }

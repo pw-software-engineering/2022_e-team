@@ -59,6 +59,8 @@
     <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producerComplaint\producerComplaint.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producerComplaint\producerComplaint.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\producer\producerOrders.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\producer\producerOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.spec.ts" />

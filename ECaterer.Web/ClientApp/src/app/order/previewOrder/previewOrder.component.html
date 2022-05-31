@@ -71,6 +71,9 @@
         </kendo-formfield>
       </fieldset>
     </form>
-    <button kendoButton themeColor="primary" id="redierectDelivererBtn" (click)="redirectDeliverer()">Przekieruj do dostawcy</button>
-  </div>
+    <div class="parallel-wrapper">
+      <button [disabled]="!editModel.hasComplaint" kendoButton themeColor="primary" id="showComplaintBtn" (click)="showComplaint()">Otwórz reklamację</button>
+      <button [disabled]="!isReadyToDeliver" kendoButton themeColor="primary" id="redierectDelivererBtn" (click)="redirectDeliverer()">Przekieruj do dostawcy</button>
+    </div>
+    </div>
 </main>
