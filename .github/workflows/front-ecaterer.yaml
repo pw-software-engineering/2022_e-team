@@ -13,6 +13,8 @@ env:
   ACR_NAME: 'powoeuwcrossteamacr'
   SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
   SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
+  A_LOGIN: ${{ secrets.A_LOGIN }}
+  A_PASSWORD: ${{ secrets.A_PASSWORD }}
 
 jobs:
   build:
