@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ECaterer.Contracts.Deliverer
 {
-    public class DeliveryItemModel
+    public class OrderDelivererModel
     {
         public string Id { get; set; }
 

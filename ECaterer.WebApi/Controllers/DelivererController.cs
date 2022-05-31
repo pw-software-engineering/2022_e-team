@@ -21,35 +21,25 @@ namespace ECaterer.WebApi.Controllers
     [ApiController]
     public class DelivererController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly TokenService _tokenService;
         private readonly DataContext _context;
-        private readonly IOrdersService _ordersService;
+        private readonly ClientController _clientController;
+        private readonly IOrderService _ordersService;
         private readonly Mapper _mapper;
 
-        public DelivererController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrdersService ordersService)
+        public DelivererController(DataContext context, IOrderService ordersService, ClientController clientController)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenService = tokenService;
             _context = context;
+            _clientController = clientController;
             _ordersService = ordersService;
 
             var mapperConfig = new MapperConfiguration(config =>
             {
                 config.CreateMap<Address, AddressModel>();
-                config.CreateMap<DeliveryDetails, DeliveryDetailsModel>()
-                .ForMember(
-                    dest => dest.Address,
-                    act => act.MapFrom(src => src.Address));
-                config.CreateMap<Order, DeliveryItemModel>()
+                config.CreateMap<DeliveryDetails, DeliveryDetailsModel>();
+                config.CreateMap<Order, OrderDelivererModel>()
                 .ForMember(
                     dest => dest.Id,
-                    act => act.MapFrom(src => src.OrderId))
-                .ForMember(
-                    dest => dest.DeliveryDetails,
-                    act => act.MapFrom(src => src.DeliveryDetails));
+                    act => act.MapFrom(src => src.OrderId));
             });
 
             _mapper = new Mapper(mapperConfig);
@@ -58,44 +48,22 @@ namespace ECaterer.WebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginUserModel loginUser)
         {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(loginUser.Email);
+            _clientController.ControllerContext = new ControllerContext(ControllerContext);
+            var response = await _clientController.Login(loginUser);
+            ControllerContext = new ControllerContext(_clientController.ControllerContext);
 
-                if (user == null)
-                    return BadRequest("Niepowodzenie logowania");
-
-                var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
-
-                if (result.Succeeded)
-                {
-                    var authModel = new AuthenticatedUserModel
-                    {
-                        Token = _tokenService.CreateToken(user)
-                    };
-
-                    Response.Headers.Add("api-key", authModel.Token);
-
-                    return Ok();
-                }
-
-                return BadRequest("Niepowodzenie logowania");
-            }
-            catch
-            {
-                return BadRequest("Niepowodzenie logowania");
-            }
+            return response;
         }
 
         [HttpGet("orders")]
-        [Authorize(Roles = "deliverer")]
-        public async Task<ActionResult<DeliveryItemModel[]>> GetOrdersToDeliver()
+        [Authorize/*(Roles = "deliverer")*/]
+        public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersToDeliver()
         {
             try
             {
-                var statusPrepared = await _ordersService.GetOrders(new GetOrdersQueryModel() { OrderStatus = OrderStatus.Prepared.ToString() });
-                var deliveryDetailsDTO = statusPrepared.Select(o => _mapper.Map<DeliveryItemModel>(o));
-                return Ok(deliveryDetailsDTO.ToArray());
+                var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetOrdersDelivererQueryModel());
+                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<OrderDelivererModel>(o)).ToArray();
+                return Ok(deliveryDetailsDTO);
             }
             catch
             {
@@ -104,8 +72,8 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPost("orders/{orderID}/deliver")]
-        [Authorize(Roles = "deliverer")]
-        public async Task<ActionResult> FinishDelivery(string orderID)
+        [Authorize/*(Roles = "deliverer")*/]
+        public async Task<ActionResult> FinishDelivery([FromQuery] string orderID)
         {
             try
             {

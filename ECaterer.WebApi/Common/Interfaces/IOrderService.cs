@@ -12,6 +12,7 @@ namespace ECaterer.WebApi.Common.Interfaces
     {
         Task<IEnumerable<Order>> GetOrders(GetOrdersClientQueryModel getOrdersQuery);
         Task<IEnumerable<Order>> GetOrders(GetOrdersProducerQueryModel getOrdersQuery);
+        Task<IEnumerable<Order>> GetOrders(GetOrdersDelivererQueryModel getOrdersQuery);
         Task<Order> AddOrder(string userId, AddOrderModel addOrderModel);
         Task<(bool exists, bool paid)> PayOrder(string orderId);
         Task<(bool exists, bool completed)> CompleteOrder(string orderId);

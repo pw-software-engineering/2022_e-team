@@ -103,7 +103,7 @@ namespace ECaterer.WebApi.Integration.Test
             response.EnsureSuccessStatusCode();
 
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
 
@@ -126,7 +126,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
             var id = order.Id;
@@ -148,7 +148,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
             var id = order.Id;
