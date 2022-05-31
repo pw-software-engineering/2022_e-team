@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}
+    spec:
+      containers:
+      - name: ${APP_NAME}
+        image: ${IMAGE_ID}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+        env:
+        - name: "APIUrl"
+          value: "http://eteam-api"
+        - name: "ConnectionStrings__Default"
+          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamData;Persist Security Info=False;User ID=${A_LOGIN};Password=${A_PASSWORD};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        - name: ASPNETCORE_URLS
+          value: http://+:80
+        imagePullPolicy: "IfNotPresent"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APP_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: ${APP_NAME}
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ${APP_NAME}
+  namespace: ${NAMESPACE}
+  labels:
+    name: ${APP_NAME}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+  - host: ${NAMESPACE}.${DOMAIN}
+    http:
+      paths:
+      - backend:
+          serviceName: ${APP_NAME}
+          servicePort: 80
+        path: /

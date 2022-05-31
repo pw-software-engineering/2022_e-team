@@ -117,6 +117,9 @@ namespace ECaterer.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Answer")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -124,30 +127,19 @@ namespace ECaterer.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StatusComplaintStatusId")
+                    b.Property<string>("OrderId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("ComplaintId");
 
-                    b.HasIndex("StatusComplaintStatusId");
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.ToTable("Complaint");
-                });
-
-            modelBuilder.Entity("ECaterer.Core.Models.ComplaintStatusEnum", b =>
-                {
-                    b.Property<string>("ComplaintStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ComplaintStatusValue")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ComplaintStatusId");
-
-                    b.ToTable("ComplaintStatusEnum");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.DeliveryDetails", b =>
@@ -260,9 +252,6 @@ namespace ECaterer.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ComplaintId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("DeliveryDetailsId")
                         .HasColumnType("nvarchar(450)");
 
@@ -275,34 +264,14 @@ namespace ECaterer.Core.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("StatusOrderStatusId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ComplaintId");
-
                     b.HasIndex("DeliveryDetailsId");
 
-                    b.HasIndex("StatusOrderStatusId");
-
                     b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("ECaterer.Core.Models.OrderStatusEnum", b =>
-                {
-                    b.Property<string>("OrderStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OrderStatusValue")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("OrderStatusId");
-
-                    b.ToTable("OrderStatusEnum");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Allergent", b =>
@@ -325,11 +294,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Complaint", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.ComplaintStatusEnum", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusComplaintStatusId");
-
-                    b.Navigation("Status");
+                    b.HasOne("ECaterer.Core.Models.Order", null)
+                        .WithOne("Complaint")
+                        .HasForeignKey("ECaterer.Core.Models.Complaint", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.DeliveryDetails", b =>
@@ -366,23 +335,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.Complaint", "Complaint")
-                        .WithMany()
-                        .HasForeignKey("ComplaintId");
-
                     b.HasOne("ECaterer.Core.Models.DeliveryDetails", "DeliveryDetails")
                         .WithMany()
                         .HasForeignKey("DeliveryDetailsId");
 
-                    b.HasOne("ECaterer.Core.Models.OrderStatusEnum", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusOrderStatusId");
-
-                    b.Navigation("Complaint");
-
                     b.Navigation("DeliveryDetails");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Diet", b =>
@@ -399,6 +356,8 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>
                 {
+                    b.Navigation("Complaint");
+
                     b.Navigation("Diets");
                 });
 #pragma warning restore 612, 618

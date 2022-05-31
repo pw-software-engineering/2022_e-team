@@ -32,14 +32,38 @@
     <None Remove="ClientApp\src\app\app.component.spec.ts" />
     <None Remove="ClientApp\src\app\authGuard\authGuard.ts" />
     <None Remove="ClientApp\src\app\authGuard\loginGuard.ts" />
+    <None Remove="ClientApp\src\app\diets\api\editDietDTOs.ts" />
+    <None Remove="ClientApp\src\app\diets\api\producerDietDTO.ts" />
+    <None Remove="ClientApp\src\app\meals\api\meals.service.ts" />
+    <None Remove="ClientApp\src\app\meals\api\mealsDtos.ts" />
+    <None Remove="ClientApp\src\app\meals\meals.component.ts" />
     <None Remove="ClientApp\src\app\diets\api\dietDTO.ts" />
+    <None Remove="ClientApp\src\app\order\api\orderDTO.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Remove="ClientApp\src\app\cart\cart.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\cart\cart.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\client-registration\client-registration.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\client-registration\client-registration.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\client\diets.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\client\diets.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\editDiet\editDiet.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\editDiet\editDiet.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\navigation\navigation.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\api\order.service.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producerComplaint\producerComplaint.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producerComplaint\producerComplaint.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producer\producerOrders.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\producer\producerOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.spec.ts" />

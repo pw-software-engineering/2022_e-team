@@ -1,7 +1,10 @@
 ﻿using ECaterer.Contracts.Meals;
 using ECaterer.Core;
 using ECaterer.Core.Models;
+using ECaterer.WebApi.Common.Builders;
 using ECaterer.WebApi.Common.Exceptions;
+using ECaterer.WebApi.Common.Filters;
+using ECaterer.WebApi.Common.Filters.Meals;
 using ECaterer.WebApi.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,7 +54,7 @@ namespace ECaterer.WebApi.Services
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
             var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
@@ -70,7 +73,7 @@ namespace ECaterer.WebApi.Services
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
             if (meal is null)
-                throw new UnexistingMealException(mealId);
+                return null;
 
             var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i})
@@ -103,49 +106,25 @@ namespace ECaterer.WebApi.Services
         {
             var meals = _context.Meals.Include(m => m.AllergentList).Include(m => m.IngredientList);
             var meal = await meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
-            if (meal is null)
-                throw new UnexistingMealException(mealId);
+
             return meal;
         }
 
-        public async Task<IEnumerable<Meal>> GetMeals(int? offset, int? limit, string sort, string name, string name_with, bool? vegan, int? calories, int? colories_lt, int? colories_ht)
+        public async Task<IEnumerable<Meal>> GetMeals(GetMealsQueryModel query)
         {
-            var meals = await _context.Meals.ToListAsync();
-            if (sort is not null)
-                switch(sort)
-                {
-                    case "title(asc)":
-                        meals = meals.OrderBy(m => m.Name).ToList();
-                        break;
-                    case "title(desc)":
-                        meals = meals.OrderByDescending(m => m.Name).ToList();
-                        break;
-                    case "calories(asc)":
-                        meals = meals.OrderBy(m => m.Calories).ToList();
-                        break;
-                    case "calories(desc)":
-                        meals = meals.OrderByDescending(m => m.Calories).ToList();
-                        break;
-                    default:
-                        throw new Exception("Unexpected sort type");
-                }
-            if (name is not null)
-                meals = meals.Where(m => m.Name.Equals(name)).ToList();
-            if (name_with is not null)
-                meals = meals.Where(m => m.Name.Contains(name_with)).ToList();
-            if (vegan is not null)
-                meals = meals.Where(m => m.Vegan == vegan).ToList();
-            if (calories is not null)
-                meals = meals.Where(m => m.Calories == calories).ToList();
-            if (colories_lt is not null)
-                meals = meals.Where(m => m.Calories <= colories_lt).ToList();
-            if (colories_ht is not null)
-                meals = meals.Where(m => m.Calories >= colories_ht).ToList();
-            if (offset is not null)
-                meals = meals.Skip((int)offset).ToList();
-            if (limit is not null)
-                meals = meals.Take((int)limit).ToList();
-            return meals;
+            IQueryable<Meal> meals =  _context.Meals;
+            var builder = new QueryBuilder<Meal>(meals);
+            builder = builder
+                .PerformAction(new MealNameFilter(query.Name))
+                .PerformAction(new MealNameWithFilter(query.Name_with))
+                .PerformAction(new MealCaloriesLowerThanFilter(query.Calories_lt))
+                .PerformAction(new MealCaloriesHigherThanFilter(query.Calories_ht))
+                .PerformAction(new MealVeganFilter(query.Vegan))
+                .PerformAction(new MealSort(query.Sort))
+                .PerformAction(new Offset<Meal>(query.Offset))
+                .PerformAction(new Limit<Meal>(query.Limit));
+                
+            return builder.GetQuery();
         }
 
         public void Dispose()

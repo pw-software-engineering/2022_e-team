@@ -75,9 +75,6 @@ h1 {
     }
 
     button {
-      text-transform: uppercase;
-      font-weight: 700;
-      border-radius: 20px;
       padding: 10px 30px;
     }
 
@@ -95,4 +92,15 @@ h1 {
       align-self: flex-start;
     }
   }
+}
+
+button {
+  text-transform: uppercase;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 10px 10px;
+}
+
+.k-pager-info {
+    visibility: hidden !important;
 }

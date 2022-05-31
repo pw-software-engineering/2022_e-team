@@ -24,9 +24,6 @@ namespace ECaterer.Core
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Ingredient> Ingredients { get; set; }
         public virtual DbSet<Allergent> Allergents { get; set; }
-        public virtual DbSet<ComplaintStatusEnum> ComplaintStatusEnum { get; set; }
-
-        public virtual DbSet<OrderStatusEnum> OrderStatusEnum { get; set; }
 
     }
 }

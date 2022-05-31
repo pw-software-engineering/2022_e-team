@@ -13,11 +13,16 @@ using ECaterer.Core;
 using ECaterer.Contracts;
 using System.Net;
 using ECaterer.Contracts.Client;
+using ECaterer.Contracts.Orders;
+using ECaterer.WebApi.Common.Interfaces;
 using System.Security.Claims;
+using ECaterer.Contracts.Meals;
+using ECaterer.Core.Models.Enums;
+using AutoMapper;
 
 namespace ECaterer.WebApi.Controllers
 {
-    [Route("api/client")]
+    [Route("client")]
     [ApiController]
     public class ClientController : ControllerBase
     {
@@ -26,12 +31,28 @@ namespace ECaterer.WebApi.Controllers
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
 
-        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context)
+        private readonly IOrderService _orderService;
+        private readonly Mapper _mapper;
+
+        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrderService ordersService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
+            _orderService = ordersService;
+
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Address, AddressModel>();
+                cfg.CreateMap<DeliveryDetails, DeliveryDetailsModel>();
+                cfg.CreateMap<Complaint, ComplaintModel>()
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
+                cfg.CreateMap<Order, OrderClientModel>()
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId));
+            });
+            _mapper = new Mapper(mappingConfig);
         }
 
         [Route("login")]
@@ -41,8 +62,8 @@ namespace ECaterer.WebApi.Controllers
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
             if (user == null)
-                return Unauthorized();
-
+                return BadRequest();
+            var Token = _tokenService.CreateToken(user);
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
             
             if (result.Succeeded)
@@ -57,7 +78,7 @@ namespace ECaterer.WebApi.Controllers
                 return Ok(authModel);
             }
 
-            return Unauthorized();
+            return BadRequest();
         }
 
         [HttpPost("register")]
@@ -98,13 +119,8 @@ namespace ECaterer.WebApi.Controllers
                 _context.SaveChanges();
                 var Token = _tokenService.CreateToken(user);
 
-                var authModel = new AuthenticatedUserModel
-                {
-                    Token = Token
-                };
-
                 Response.Headers.Add("api-key", Token);
-                return Ok(authModel);
+                return Ok(new AuthenticatedUserModel() { Token = Token });
             }
 
             return BadRequest("Problem registering user");
@@ -141,14 +157,14 @@ namespace ECaterer.WebApi.Controllers
                 // Update - children separately
                 if (old != null)
                 {
-                    if(client.Address == null)
+                    if (client.Address == null)
                     {
                         old.Address = null;
                     }
                     else if (oldAddress != null)
                     {
                         _context.Entry(oldAddress).CurrentValues.SetValues(client.Address);
-                        
+
                     }
                     else if (client.Address != null)
                     {
@@ -167,6 +183,70 @@ namespace ECaterer.WebApi.Controllers
                 return StatusCode(400);
             }
             return Unauthorized();
+        }
+
+        [HttpGet("orders")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<ActionResult<OrderClientModel[]>> GetOrders([FromQuery] GetOrdersClientQueryModel getOrdersQuery)
+        {
+            try
+            {
+                var orders = (await _orderService.GetOrders(getOrdersQuery));
+                if (orders == null)
+                    return BadRequest("Pobranie nie powiodło się");
+
+                var ordersModel = orders
+                    .Select(order => _mapper.Map<OrderClientModel>(order))
+                    .ToArray();
+
+                return Ok(ordersModel);
+            }
+            catch
+            {
+                return BadRequest("Pobranie nie powiodło się");
+            }
+        }
+
+        [HttpPost("orders")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<IActionResult> AddOrder(AddOrderModel model)
+        {
+            try
+            {
+                var email = this.User.FindFirstValue(ClaimTypes.Email);
+                var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
+
+                var order = await _orderService.AddOrder(userId, model);
+
+                return CreatedAtAction(nameof(AddOrder), order.OrderId);
+            }
+            catch
+            {
+                return BadRequest("Zapisanie nie powiodło się");
+            }
+            
+        }
+
+        [HttpPost("orders/{orderId}/pay")]
+        [Authorize/*(Roles = "client")*/]
+        public async Task<IActionResult> PayOrder(string orderId)
+        {
+            try
+            {
+                var (exist, paid) = await _orderService.PayOrder(orderId);
+
+                if (!exist)
+                    return NotFound("Podane zamówienie nie istnieje");
+
+                if (!paid)
+                    return BadRequest("Opłacenie zamówienia nie powiodło się");
+
+                return Ok("Opłacono zamówienie");
+            }
+            catch
+            {
+                return BadRequest("Opłacenie zamówienia nie powiodło się");
+            }
         }
     }
 }

@@ -1,0 +1,127 @@
+
+<main id="editDiet">
+  <div>
+    <h1>Edycja diety</h1>
+    <form class="k-form">
+      <fieldset class="k-form-fieldset">
+        <h2>Lista posiłków w diecie</h2>
+        <ul>
+          <li *ngFor="let meal of mealsInDiet">
+            <span>{{meal.name}}</span> <span><button kendoButton themeColor="primary" (click)="previewMeal(meal.id)">Podgląd</button> <button kendoButton themeColor="secondary" (click)="removeFromDiet(meal.id)">Usuń</button></span>
+          </li>
+        </ul>
+        <div class="wrapper">
+          <button (click)="openMealDialog()" id="addMealBtn" kendoButton themeColor="primary">Dodaj posiłek</button>
+        </div>
+      </fieldset>
+      <fieldset class="k-form-fieldset">
+        <h2>Informacja</h2>
+        <kendo-formfield>
+          <kendo-label text="Opis"></kendo-label>
+          <kendo-textbox [(ngModel)]="editModel.description"
+                         [value]="editModel.description"
+                         [ngModelOptions]="{standalone: true}"
+                         #description></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield class="shortInput">
+          <kendo-label text="Wartość energetyczna"></kendo-label>
+          <kendo-textbox [(ngModel)]="editModel.calories"
+                         [value]="editModel.calories"
+                         [ngModelOptions]="{standalone: true}"
+                         #calories
+                         [disabled]="true"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield class="shortInput">
+          <kendo-label text="Czy jest wegańska"></kendo-label>
+          <kendo-textbox [(ngModel)]="editModel.veganString"
+                         [value]="editModel.veganString"
+                         [ngModelOptions]="{standalone: true}"
+                         #vegan
+                         [disabled]="true"></kendo-textbox>
+        </kendo-formfield>
+      </fieldset>
+    </form>
+    <button kendoButton themeColor="primary" id="saveDietBtn" (click)="saveDiet()">Zapisz</button>
+  </div>
+</main>
+
+<kendo-dialog title="Dodaj posiłek"
+              *ngIf="addMealDialog"
+              (close)="close()"
+              [minWidth]="250"
+              [width]="450">
+
+  <form>
+
+    <fieldset class="k-form-fieldset">
+      <p style="margin: 30px; text-align: center;">
+        <kendo-formfield>
+          <kendo-label text="Nazwa posiłku"></kendo-label>
+          <kendo-textbox [(ngModel)]="newMealData.name"
+                         [value]="newMealData.name"
+                         [ngModelOptions]="{standalone: true}"
+                         #mealName
+                         required></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label text="Składniki (rozdzielone średnikiem)"></kendo-label>
+          <kendo-textbox [(ngModel)]="newMealData.ingredientString"
+                         [value]="newMealData.ingredientString"
+                         [ngModelOptions]="{standalone: true}"
+                         #ingredientString></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label text="Alergeny (rozdzielone średnikiem)"></kendo-label>
+          <kendo-textbox [(ngModel)]="newMealData.allergentString"
+                         [value]="newMealData.allergentString"
+                         [ngModelOptions]="{standalone: true}"
+                         #allergentString></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label text="Wartość energetyczna (kcal)"></kendo-label>
+          <kendo-numerictextbox [(ngModel)]="newMealData.calories"
+                                [value]="newMealData.calories"
+                                [ngModelOptions]="{standalone: true}"
+                                #calories></kendo-numerictextbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label text="Czy jest wegańska"></kendo-label>
+          <input type="checkbox" #vegan kendoCheckBox [(ngModel)]="newMealData.vegan"
+                          [value]="newMealData.vegan"
+                          [ngModelOptions]="{standalone: true}"/>
+        </kendo-formfield>
+      </p>
+    </fieldset>
+
+  </form>
+
+  <kendo-dialog-actions>
+    <button kendoButton (click)="close()" themeColor="secondary">Anuluj</button>
+    <button kendoButton id="saveDietBtn" (click)="saveNewMeal()" themeColor="primary">
+      Zapisz
+    </button>
+  </kendo-dialog-actions>
+</kendo-dialog>
+
+<kendo-dialog tile="Podgląd posiłku"
+              *ngIf="previewMealDialog"
+              (close)="closePreview()"
+              [minWidth]="250"
+              [width]="450">
+
+  <p>Lista składników</p>
+  <ul>
+    <li *ngFor="let ingredient of selectedMeal.ingredientList">
+      <span>{{ingredient}}</span>
+    </li>
+  </ul>
+  <p>Lista alergenów</p>
+  <ul>
+    <li *ngFor="let allergent of selectedMeal.allergentList">
+      <span>{{allergent}}</span>
+    </li>
+  </ul>
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closePreview()" themeColor="secondary">Zamknij</button>
+  </kendo-dialog-actions>
+</kendo-dialog>

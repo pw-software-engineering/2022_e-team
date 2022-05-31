@@ -1,0 +1,156 @@
+
+<main id="cart">
+  <div id="wrapper">
+    <h2>Koszyk</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid
+                      [kendoGridBinding]="diets"
+                      [sortable]="true"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="name" title="Nazwa">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton (click)="goToDiet(dataItem.id)" fillMode="link" themeColor="primary">{{ dataItem.name }}</button>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="price" title="Cena" filter="numeric">
+            </kendo-grid-column>
+            <kendo-grid-column field="calories" title="Wartość energetyczna [kcal]" filter="numeric">
+            </kendo-grid-column>
+            <kendo-grid-column field="vegan" title="Czy jest wegańska" filter="boolean">
+              <kendo-grid-messages filterIsTrue="Tak"
+                                   filterIsFalse="Nie"
+                                   filterBooleanAll="---">
+              </kendo-grid-messages>
+
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.vegan ? "Tak" : "Nie"}}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column>
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton themeColor="primary" (click)="clearDietFromOrder(dataItem.id)">Usuń</button>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div id="deliveryDetails">
+    <h2>Adres dostawy</h2>
+    <form>
+      <fieldset class="k-form-fieldset">
+        <div>
+          <input type="checkbox" #defaultAddress kendoCheckBox
+                 [(ngModel)]="isDefaultAdressChecked"
+                 [checked]="isDefaultAdressChecked"
+                 [ngModelOptions]="{standalone: true}"
+                 (change)="switchToDefaultAddress()" />
+          <kendo-label style="margin-left: 10px;" text="Domyślny adres"></kendo-label>
+        </div>
+        <div>
+          <input type="checkbox" #customAddress kendoCheckBox
+                 [(ngModel)]="isCustomAdressChecked"
+                 [checked]="isCustomAdressChecked"
+                 [ngModelOptions]="{standalone: true}"
+                 (change)="switchToCustomAddress()" />
+          <kendo-label style="margin-left: 10px;" text="Inny adres"></kendo-label>
+        </div>
+      </fieldset>
+    </form>
+    <div *ngIf="isCustomAdressChecked" style="margin-top: 20px;">
+      <form class="k-form" [formGroup]="addressForm" id="addressDetails">
+        <fieldset class="k-form-fieldset">
+          <kendo-formfield>
+            <kendo-label [for]="Street" text="Ulica"></kendo-label>
+            <kendo-textbox [(ngModel)]="addressData.street"
+                           formControlName="street"
+                           #street
+                           required
+                           placeholder="Wpisz nazwę ulicy"></kendo-textbox>
+          </kendo-formfield>
+          <kendo-formfield>
+            <kendo-label [for]="buildingNumber" text="Nr budynku"></kendo-label>
+            <kendo-textbox [(ngModel)]="addressData.buildingNumber"
+                           formControlName="buildingNumber"
+                           #buildingNumber
+                           required
+                           placeholder="Wpisz nr budynku"></kendo-textbox>
+          </kendo-formfield>
+          <kendo-formfield>
+            <kendo-label [for]="apartmentNumber" text="Nr mieszkania"></kendo-label>
+            <kendo-textbox [(ngModel)]="addressData.apartmentNumber"
+                           formControlName="apartmentNumber"
+                           #apartmentNumber
+                           placeholder="Wpisz nr mieszkania"></kendo-textbox>
+          </kendo-formfield>
+          <kendo-formfield>
+            <kendo-label [for]="postCode" text="Kod pocztowy"></kendo-label>
+            <kendo-maskedtextbox [(ngModel)]="addressData.postCode"
+                                 formControlName="postCode"
+                                 #postCode
+                                 required
+                                 [mask]="postCodeMask"
+                                 placeholder="Wpisz kod pocztowy">
+            </kendo-maskedtextbox>
+          </kendo-formfield>
+          <kendo-formfield>
+            <kendo-label [for]="city" text="Miasto"></kendo-label>
+            <kendo-textbox [(ngModel)]="addressData.city"
+                           formControlName="city"
+                           #city
+                           required
+                           placeholder="Wpisz miasto"></kendo-textbox>
+          </kendo-formfield>
+        </fieldset>
+      </form>
+    </div>
+
+    <form id="dateDetails">
+      <fieldset class="k-form-fieldset">
+        <div>
+          <span>
+            <kendo-formfield>
+              <kendo-label text="Początek zamówienia"></kendo-label>
+              <kendo-datepicker [(ngModel)]="order.startDate"
+                                [value]="order.startDate"
+                                [ngModelOptions]="{standalone: true}"
+                                #startDate
+                                required></kendo-datepicker>
+            </kendo-formfield>
+          </span>
+          <span>
+            <kendo-formfield>
+              <kendo-label text="Koniec zamówienia"></kendo-label>
+              <kendo-datepicker [(ngModel)]="order.endDate"
+                                [value]="order.endDate"
+                                [ngModelOptions]="{standalone: true}"
+                                #endDate
+                                required></kendo-datepicker>
+            </kendo-formfield>
+          </span>
+        </div>
+        <div>
+          <span>
+            <kendo-formfield>
+              <kendo-label text="Komentarz do zamówienia"></kendo-label>
+              <kendo-textbox [(ngModel)]="order.comment"
+                             [value]="order.comment"
+                             [ngModelOptions]="{standalone: true}"
+                             #comment></kendo-textbox>
+            </kendo-formfield>
+          </span>
+        </div>
+        <div>
+          <button kendoButton themeColor="primary" (click)="sendOrder()">Złóż zamówienie</button>
+        </div>
+      </fieldset>
+
+    </form>
+  </div>
+</main>

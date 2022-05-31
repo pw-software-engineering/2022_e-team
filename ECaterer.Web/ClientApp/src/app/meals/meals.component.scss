@@ -1,0 +1,33 @@
+
+main#mealsInDiets {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 10vh;
+
+  div {
+    width: 80vw;
+
+    .k-grid * {
+      overflow: hidden !important;
+    }
+
+    table {
+
+      thead {
+        background-color: rgb(128, 128, 128);
+
+        th {
+          outline-style: none;
+          color: white;
+          font-weight: bold;
+          padding: 30px 10px 10px 30px;
+        }
+
+        th, tr, td {
+          border-style: none;
+        }
+      }
+    }
+  }
+}
