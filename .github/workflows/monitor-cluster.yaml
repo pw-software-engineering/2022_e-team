@@ -43,4 +43,4 @@ jobs:
     - name: describe api
       run: kubectl logs eteam-api-6668745798-fvrbs -n ${NAMESPACE}
     - name: describe app
-      run: kubectl logs eteam-app-6fc99655f4-fdtcf -n ${NAMESPACE}
+      run: kubectl logs eteam-app-5856497757-nr6rc -n ${NAMESPACE}
