@@ -1,5 +1,6 @@
 using ECaterer.Core;
 using ECaterer.WebApi.Common.Interfaces;
+using ECaterer.WebApi.Controllers;
 using ECaterer.WebApi.Data;
 using ECaterer.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -86,12 +87,44 @@ namespace ECaterer.WebApi
                         ClockSkew = TimeSpan.FromMinutes(5)
                     };
 
+                    // Change "api-key" keyword to be treated as "bearer"
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            string authorization = context.Request.Headers["Authorization"];
+
+                            if (string.IsNullOrEmpty(authorization))
+                            {
+                                context.NoResult();
+                                return Task.CompletedTask;
+                            }
+
+                            if (authorization.StartsWith("api-key", StringComparison.OrdinalIgnoreCase))
+                            {
+                                context.Token = authorization.Substring("api-key".Length).Trim();
+                            }
+
+                            if (string.IsNullOrEmpty(context.Token))
+                            {
+                                context.NoResult();
+                                return Task.CompletedTask;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+
                 });
 
 
             services.AddScoped<IDietController, DietControllerService>();
             services.AddScoped<IMealRepository, MealRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<TokenService>();
+
+            services.AddTransient<ClientController>();
 
             //SWAGGER
             services.AddSwaggerGen(c =>
@@ -138,7 +171,7 @@ namespace ECaterer.WebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("OpenCorsPolicy");
 
             app.UseRouting();

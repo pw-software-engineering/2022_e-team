@@ -10,21 +10,39 @@ namespace ECaterer.WebApi.Integration.Test
 {
     public static class CredentialResolver
     {
+        public static LoginUserModel ResolveClient()
+        {
+            return new LoginUserModel()
+            {
+                Email = "klient@klient.pl",
+                Password = "Klient123!"
+                //Email = ConfigurationManager.AppSettings["clientLogin"],
+                //Password = ConfigurationManager.AppSettings["clientPassword"]
+            };
+        }
+
+        
+
         public static LoginUserModel ResolveProducer()
         {
             return new LoginUserModel()
             {
-                Email = "prodcer@login.com",
-                Password = "1234"
+                Email = "producent@producent.pl",
+                Password = "Producent123!"
+                //Email = ConfigurationManager.AppSettings["producerLogin"],
+                //Password = ConfigurationManager.AppSettings["producerPassword"]
             };
         }
+
 
         public static LoginUserModel ResolveDeliverer()
         {
             return new LoginUserModel()
             {
-                Email = ConfigurationManager.AppSettings["delivererLogin"],
-                Password = ConfigurationManager.AppSettings["delivererPassword"]
+                Email = "dostawca@dostawca.pl",
+                Password = "Dostawca123!"
+                //Email = ConfigurationManager.AppSettings["delivererLogin"],
+                //Password = ConfigurationManager.AppSettings["delivererPassword"]
             };
         }
     }

@@ -32,13 +32,13 @@ namespace ECaterer.WebApi.Integration.Test
         {
             var request = new
             {
-                Url = "/api/client/login",
+                Url = "/producer/login",
                 Body = CredentialResolver.ResolveProducer()
             };
 
-            var response = await Client.PostAsJsonAsync<LoginUserModel>(request.Url, request.Body);
+            var response = await Client.PostAsJsonAsync(request.Url, request.Body);
 
-            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var auth = response.Headers.GetValues("api-key").FirstOrDefault();
 
@@ -49,9 +49,9 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task BATestAddMeal()
+        public async Task BA_TestAddMeal_OK()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/api/meals");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/meals");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
@@ -63,13 +63,30 @@ namespace ECaterer.WebApi.Integration.Test
             });
 
             var response = await Client.SendAsync(requestMessage);
-            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
-        public async Task BBTestGetMeals()
+        public async Task BB_TestAddMeal_Unauthorized()
         {
-            var meals = await Client.GetFromJsonAsync<GetMealsResponseModel[]>("/api/meals");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/meals");
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Calories = 450,
+                AllergentList = new string[] { "Beaf", "Cheese" },
+                IngredientList = new string[] { "Beaf", "Salad", "Bread", "Cheese" },
+                Vegan = false
+            });
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task CA_TestGetMeals_OK()
+        {
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+            var meals = await Client.GetFromJsonAsync<GetMealsResponseModel[]>("/meals");
             meals.Should().NotBeNull();
             meals.Count().Should().NotBe(0);
 
@@ -78,12 +95,22 @@ namespace ECaterer.WebApi.Integration.Test
             addedMealId.Should().NotBeNull();
 
             mealId = addedMealId;
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
         }
 
         [Fact]
-        public async Task BCTestEditMeal()
+        public async Task CB_TestGetMeals_Unathorized()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/api/meals/{mealId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/meals/");
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task DA_TestEditMeal_OK()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/meals/{mealId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
             requestMessage.Content = JsonContent.Create(new MealModel()
             {
@@ -95,25 +122,116 @@ namespace ECaterer.WebApi.Integration.Test
             });
 
             var response = await Client.SendAsync(requestMessage);
-            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
-        public async Task BDTestGetMealById()
+        public async Task DB_TestEditMeal_Unauthorized()
         {
-            var meal = await Client.GetFromJsonAsync<MealModel>($"/api/meals/{mealId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/meals/{mealId}");
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Name = "Cheesecake",
+                Calories = 250,
+                AllergentList = new string[] { "Milk", "Egg", "Cheese" },
+                IngredientList = new string[] { "Milk", "Eggs", "Flour", "Cheese" },
+                Vegan = false
+            });
 
-            meal.Name.Should().Be("Cheesecake");
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         [Fact]
-        public async Task BETestDeleteMeal()
+        public async Task DC_TestEditMeal_BadRequest()
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/api/meals/{mealId}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/meals/{mealId}");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Calories = 250,
+                AllergentList = new string[] { "Milk", "Egg", "Cheese" },
+                IngredientList = new string[] { "Milk", "Eggs", "Flour", "Cheese" },
+                Vegan = false
+            });
 
-            var responseMessage = await Client.SendAsync(requestMessage);
-            
-            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task DD_TestEditMeal_NotFound()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, "/meals/unexisting-meal");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+            requestMessage.Content = JsonContent.Create(new MealModel()
+            {
+                Calories = 250,
+                AllergentList = new string[] { "Milk", "Egg", "Cheese" },
+                IngredientList = new string[] { "Milk", "Eggs", "Flour", "Cheese" },
+                Vegan = false
+            });
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task EA_TestGetMealById_OK()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/meals/{mealId}");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task EB_TestGetMealById_Unauthorized()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"/meals/{mealId}");
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task EC_TestGetMealById_NotFound()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/meals/unexisting-id");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task FA_TestDeleteMeal_NotFound()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "/meals/unexisting-meal");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task FB_TestDeleteMeal_Unauthorized()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/meals/{mealId}");
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task FC_TestDeleteMeal_OK()
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/meals/{mealId}");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
+
+            var response = await Client.SendAsync(requestMessage);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
     }
 }

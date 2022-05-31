@@ -9,11 +9,13 @@ export class LoginGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-    if (this.registrationService.getToken() === null) {
-      return true;
-    }
+    //if (this.registrationService.getToken() === null) {
+    //  return true;
+    //}
 
-    this.router.navigate(['/home']);
-    return false;
+    //this.router.navigate(['/diets']);
+    //return false;
+
+    return true;
   }
 }

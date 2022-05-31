@@ -1,0 +1,34 @@
+
+<main id="producerDiets">
+  <div>
+    <h2>Lista udostępnionych diet</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="diets"
+                      [sortable]="true"
+                      [filterable]="true"
+                      [height]="600"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="name" title="Nazwa" [width]="300">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button kendoButton themeColor="primary" (click)="goToDiet(dataItem.id)" fillMode="link">{{ dataItem.name }}</button>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="description" title="Opis">
+            </kendo-grid-column>
+            <kendo-grid-column [width]="100">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                  <button kendoButton (click)="deleteDiet(dataItem.id)" themeColor="primary">Usuń</button>
+        </ng-template>
+        </kendo-grid-column>
+        </kendo-grid>
+      </div>
+      </div>
+    </section>
+    <button kendoButton themeColor="secondary" id="addDietBtn" (click)="createDiet()">Dodaj</button>
+  </div>
+</main>

@@ -1,0 +1,69 @@
+name: DeployFrontendApp
+
+on:
+  workflow_dispatch:
+
+env:
+  ACR_URL: 'powoeuwacr.azurecr.io'
+  NAMESPACE: 'eteam'                         # Name of your team {b, j, n}
+  APP_NAME: 'eteam-app'                      # Name of your application {client, server, hotel}
+  DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
+  DEPLOYMENT_FILE_NAME: 'front-ecaterer.yaml'      # Name of deployment file for application in deployment location
+  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_front:5.0'
+  ACR_NAME: 'powoeuwcrossteamacr'
+  SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
+  SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull docker image
+      run: docker login ${ACR_NAME}.azurecr.io --username ${SP_APP_ID} --password ${SP_PASSWD} && docker pull ${{ env.IMAGE_ID_TEMP }}
+    - name: Login to ACR
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ env.ACR_URL }}
+        username: ${{ secrets.ACR_USER_ID }}
+        password: ${{ secrets.ACR_USER_PASSWORD }}
+    - name: Set IMAGE_ID as env variable
+      run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Tag image
+      run: docker tag ${{ env.IMAGE_ID_TEMP }} ${{ env.IMAGE_ID }} 
+    - name: Push image
+      run: docker push ${{ env.IMAGE_ID }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.18.8'
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AKS_NAME }}
+        resource-group: ${{ secrets.AKS_RG_NAME }}
+    - name: Set IMAGE_ID as env variable
+      run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+    - name: Set DOMAIN env variable
+      run: echo "DOMAIN=$(az aks show -g ${{ secrets.AKS_RG_NAME }} -n ${{ secrets.AKS_NAME }} --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)" >> $GITHUB_ENV
+    - name: Print DOMAIN and IMAGE_ID
+      run: |
+        echo "${{ env.DOMAIN }}"
+        echo "${{ env.IMAGE_ID }}"
+    - name: Substitute environment variables in app deployment file
+      run: envsubst < "${{ env.DEPLOYMENT_DIRECTORY }}/${{ env.DEPLOYMENT_FILE_NAME }}" > "${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }}"
+    - name: Deploy app to the cluster
+      run: kubectl apply -f ${{ env.DEPLOYMENT_DIRECTORY }}/out-${{ env.DEPLOYMENT_FILE_NAME }} --wait
+    - name: Get pods
+      run: kubectl get pods -n ${NAMESPACE} -o wide
+    - name: Get svc
+      run: kubectl get svc -n ${NAMESPACE}
+    - name: Get ingress
+      run: kubectl get ingress -n ${NAMESPACE}
