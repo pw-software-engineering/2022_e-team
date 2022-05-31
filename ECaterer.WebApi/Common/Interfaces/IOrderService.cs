@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Common.Interfaces
 {
-    public interface IOrdersService
+    public interface IOrderService
     {
         Task<IEnumerable<Order>> GetOrders(GetOrdersClientQueryModel getOrdersQuery);
         Task<IEnumerable<Order>> GetOrders(GetOrdersProducerQueryModel getOrdersQuery);

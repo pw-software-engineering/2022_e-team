@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Services
 {
-    public class OrdersService : IOrdersService
+    public class OrderService : IOrderService
     {
         private readonly DataContext _context;
 
-        public OrdersService(DataContext context)
+        public OrderService(DataContext context)
         {
             _context = context;
         }
@@ -119,17 +119,12 @@ namespace ECaterer.WebApi.Services
         public async Task<(bool exists, bool paid)> PayOrder(string orderId)
         {
             var order = await _context.Orders
-               .Where(o => o.Status == (int)OrderStatus.WaitingForPayment)
                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
             if (order == default)
-            {
-                var orderOnlyById = _context.Orders
-                    .FirstOrDefault(o => o.OrderId == orderId);
-                if (orderOnlyById == default)
-                    return (exists: false, paid: false);
-                else
+                return (exists: false, paid: false);
+            if (order.Status != (int)OrderStatus.WaitingForPayment)
                     return (exists: true, paid: false);
-            }
 
             //przekazanie do zewnętrznego serwisu platnosci
 
@@ -142,17 +137,12 @@ namespace ECaterer.WebApi.Services
         public async Task<(bool exists, bool completed)> CompleteOrder(string orderId)
         {
             var order = _context.Orders
-                .Where(o => o.Status == (int)OrderStatus.ToRealized)
                 .FirstOrDefault(o => o.OrderId == orderId);
+
             if (order == default)
-            {
-                var orderOnlyById= _context.Orders
-                    .FirstOrDefault(o => o.OrderId == orderId);
-                if (orderOnlyById == default)
-                    return (exists: false, completed: false);
-                else
-                    return (exists: true, completed: false);
-            }
+                return (exists: false, completed: false);
+            if (order.Status != (int)OrderStatus.ToRealized)
+                return (exists: true, completed: false);
 
             //przekazanie do deliverera
 

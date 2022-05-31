@@ -20,14 +20,17 @@ namespace ECaterer.WebApi.Controllers
     [ApiController]
     public class ProducerController : ControllerBase
     {
-        private readonly IOrdersService _ordersService;
+        private readonly IOrderService _orderService;
+        private readonly IComplaintService _complaintService;
         private readonly ClientController _clientController;
         private readonly Mapper _mapper;
 
-        public ProducerController(IOrdersService ordersService, ClientController clientController)
+        public ProducerController(IOrderService ordersService, IComplaintService complaintService, ClientController clientController)
         {
-            _ordersService = ordersService;
+            _orderService = ordersService;
             _clientController = clientController;
+            _complaintService = complaintService;
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Address, AddressModel>();
@@ -56,7 +59,7 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var (exist, completed) = await _ordersService.CompleteOrder(orderId);
+                var (exist, completed) = await _orderService.CompleteOrder(orderId);
 
                 if (!exist)
                     return NotFound("Podane zamówienie nie istnieje");
@@ -72,18 +75,48 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
-        [HttpPost("orders/{complaintId}/answer-complaint")]
+        [HttpPost("orders/{orderId}/answer-complaint")]
         [Authorize/*(Roles = "producer")*/]
-        public async Task<IActionResult> AnswerComplaint([FromRoute] Guid complaintId/*, [FromBody] AnswerComplaintModel model*/)
+        public async Task<IActionResult> AnswerComplaint([FromRoute] string orderId, [FromBody] AnswerComplaintModel model)
         {
-            return BadRequest("Zapisanie nie powiodło się");
+            try
+            {
+                var (exist, answered) = await _complaintService.AnswerComplaint(orderId, model.Compalint_answer);
+
+                if (!exist)
+                    return NotFound("Podane zamówienie nie istnieje albo nie posiada reklamacji");
+
+                if (!answered)
+                    return BadRequest("Zapisanie nie powiodło się");
+
+                return Ok("Zapisano odpowiedź do reklamacji");
+            }
+            catch
+            {
+                return BadRequest("Zapisanie nie powiodło się");
+            }
         }
 
         [HttpGet("orders/complaints")]
         [Authorize/*(Roles = "producer")*/]
-        public async Task<IActionResult> GetOrdersComplaints()
+        public async Task<ActionResult<ComplaintModel[]>> GetOrdersComplaints()
         {
-            return BadRequest();
+            try
+            {
+                var complaints = (await _complaintService.GetOrdersComplaints());
+                if (complaints is null)
+                    return BadRequest("Pobieranie nie powiodło się");
+
+                var complaintsModel = complaints
+                    .Select(complaint => _mapper.Map<ComplaintModel>(complaint))
+                    .ToArray();
+
+                return Ok(complaintsModel);
+            }
+            catch
+            {
+                return BadRequest("Pobieranie nie powiodło się");
+            }
         }
 
         [HttpGet("orders")]
@@ -92,8 +125,8 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var orders = (await _ordersService.GetOrders(getOrdersQuery));
-                if (orders == null)
+                var orders = (await _orderService.GetOrders(getOrdersQuery));
+                if (orders is null)
                     return BadRequest("Pobranie nie powiodło się");
 
                 var ordersModel = orders

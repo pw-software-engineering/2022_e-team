@@ -31,16 +31,16 @@ namespace ECaterer.WebApi.Controllers
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
 
-        private readonly IOrdersService _ordersService;
+        private readonly IOrderService _orderService;
         private readonly Mapper _mapper;
 
-        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrdersService ordersService)
+        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrderService ordersService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
-            _ordersService = ordersService;
+            _orderService = ordersService;
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {
@@ -191,7 +191,7 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var orders = (await _ordersService.GetOrders(getOrdersQuery));
+                var orders = (await _orderService.GetOrders(getOrdersQuery));
                 if (orders == null)
                     return BadRequest("Pobranie nie powiodło się");
 
@@ -216,7 +216,7 @@ namespace ECaterer.WebApi.Controllers
                 var email = this.User.FindFirstValue(ClaimTypes.Email);
                 var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
 
-                var order = await _ordersService.AddOrder(userId, model);
+                var order = await _orderService.AddOrder(userId, model);
 
                 return CreatedAtAction(nameof(AddOrder), order.OrderId);
             }
@@ -233,7 +233,7 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var (exist, paid) = await _ordersService.PayOrder(orderId);
+                var (exist, paid) = await _orderService.PayOrder(orderId);
 
                 if (!exist)
                     return NotFound("Podane zamówienie nie istnieje");
