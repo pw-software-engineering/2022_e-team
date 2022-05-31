@@ -54,7 +54,7 @@ namespace ECaterer.WebApi.Controllers
 
                 Response.Headers.Add("api-key", authModel.Token);
 
-                return Ok();
+                return Ok(authModel);
             }
 
             return Unauthorized();
@@ -98,8 +98,13 @@ namespace ECaterer.WebApi.Controllers
                 _context.SaveChanges();
                 var Token = _tokenService.CreateToken(user);
 
+                var authModel = new AuthenticatedUserModel
+                {
+                    Token = Token
+                };
+
                 Response.Headers.Add("api-key", Token);
-                return Ok();
+                return Ok(authModel);
             }
 
             return BadRequest("Problem registering user");
