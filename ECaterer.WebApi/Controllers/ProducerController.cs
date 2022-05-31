@@ -81,7 +81,7 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var (exist, answered) = await _complaintService.AnswerComplaint(orderId, model.Compalint_answer);
+                var (exist, answered) = await _complaintService.AnswerComplaint(orderId, model.Complaint_answer);
 
                 if (!exist)
                     return NotFound("Podane zamówienie nie istnieje albo nie posiada reklamacji");

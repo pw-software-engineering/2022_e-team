@@ -6,6 +6,6 @@ namespace ECaterer.Contracts.Producer
 {
     public class AnswerComplaintModel
     {
-        public string Compalint_answer { get; set; }
+        public string Complaint_answer { get; set; }
     }
 }
