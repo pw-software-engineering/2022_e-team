@@ -198,5 +198,17 @@ namespace ECaterer.WebApi.Services
                 a.City == model.City
             );
         }
+
+        public async Task<IEnumerable<Order>> GetOrders(GetOrdersDelivererQueryModel getOrdersQuery)
+        {
+            var orders = _context
+                .Orders
+                .Include(o => o.DeliveryDetails)
+                .Include(o => o.DeliveryDetails.Address);
+
+            var builder = new OrdersQueryBuilder(orders).SetStatusFilter(OrderStatus.Prepared.ToString());
+
+            return builder.GetQuery();
+        }
     }
 }

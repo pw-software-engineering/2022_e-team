@@ -103,7 +103,7 @@ namespace ECaterer.WebApi.Integration.Test
             response.EnsureSuccessStatusCode();
 
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
 
@@ -126,10 +126,10 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
-            int id = order.Id;
+            var id = order.Id;
 
             // Fulfill
             var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
@@ -148,10 +148,10 @@ namespace ECaterer.WebApi.Integration.Test
 
             var response = await Client.SendAsync(requestMessage);
             string jsonContent = response.Content.ReadAsStringAsync().Result;
-            ICollection<DeliveryItemModel> orders = JsonConvert.DeserializeObject<ICollection<DeliveryItemModel>>(jsonContent);
+            ICollection<OrderDelivererModel> orders = JsonConvert.DeserializeObject<ICollection<OrderDelivererModel>>(jsonContent);
 
             var order = orders.Where(o => o.DeliveryDetails.PhoneNumber == "010101999").FirstOrDefault();
-            int id = order.Id;
+            var id = order.Id;
 
             // Fulfill
             var fulfillMessage = new HttpRequestMessage(HttpMethod.Post, $"/deliverer/orders/{id}/deliver");
