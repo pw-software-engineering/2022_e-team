@@ -19,7 +19,7 @@ namespace ECaterer.WebApi.Common.Filters
         {
             if (limit is null)
                 return data;
-            return data.Skip((int)limit);
+            return data.Take((int)limit);
         }
     }
 }

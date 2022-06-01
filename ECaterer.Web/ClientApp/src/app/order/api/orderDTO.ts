@@ -24,6 +24,7 @@ export interface ProducerOrderDTO {
 export interface PreviewOrderDTO {
   orderNumber: string;
   dietNames: string[];
+  mealsConcatenated: string[]
   cost: number;
   status: string;
   address: string;

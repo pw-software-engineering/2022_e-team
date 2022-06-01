@@ -101,6 +101,7 @@ namespace ECaterer.Web.Controllers
         [HttpGet("previewOrder/{orderNumber}")]
         public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
         {
+            // meals concatenated should be all meals from diets, concatenated into single string array
             if (orderNumber == "1")
                 return Ok(new PreviewOrderDTO()
                 {
@@ -113,7 +114,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = true
+                    HasComplaint = true,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else if (orderNumber == "2")
                 return Ok(new PreviewOrderDTO()
@@ -127,7 +129,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = true
+                    HasComplaint = true,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else if(orderNumber == "3")
                 return Ok(new PreviewOrderDTO()
@@ -141,7 +144,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = false
+                    HasComplaint = false,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else
                 return Ok(new PreviewOrderDTO()
@@ -155,7 +159,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = false
+                    HasComplaint = false,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
         }
 

@@ -18,6 +18,7 @@ export class PreviewOrderComponent implements OnInit {
     this.TitleService.setTitle("Podgląd zamówienia");
   }
 
+  public mealsInOrderShown: boolean = false;
 
   private orderNumber: string;
 
@@ -31,7 +32,8 @@ export class PreviewOrderComponent implements OnInit {
     comment: "",
     hasComplaint: false,
     phone: "",
-    status: ""
+    status: "",
+    mealsConcatenated: []
   };
 
   public isReadyToDeliver: boolean = false;
@@ -62,5 +64,13 @@ export class PreviewOrderComponent implements OnInit {
 
   showComplaint() {
     this.router.navigate([`producer/orders/${this.orderNumber}/complaint`]);
+  }
+
+  showMealsInOrder() {
+    this.mealsInOrderShown = true;
+  }
+
+  closeMealsInOrder() {
+    this.mealsInOrderShown = false;
   }
 }
