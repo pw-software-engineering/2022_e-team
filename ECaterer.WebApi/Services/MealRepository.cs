@@ -121,6 +121,7 @@ namespace ECaterer.WebApi.Services
             builder = builder
                 .PerformAction(new MealNameFilter(query.Name))
                 .PerformAction(new MealNameWithFilter(query.Name_with))
+                .PerformAction(new MealCaloriesFilter(query.Calories))
                 .PerformAction(new MealCaloriesLowerThanFilter(query.Calories_lt))
                 .PerformAction(new MealCaloriesHigherThanFilter(query.Calories_ht))
                 .PerformAction(new MealVeganFilter(query.Vegan))

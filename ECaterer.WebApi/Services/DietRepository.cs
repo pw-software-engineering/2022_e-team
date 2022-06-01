@@ -3,7 +3,10 @@ using ECaterer.Contracts.Diets;
 using ECaterer.Core;
 using ECaterer.Core.Models;
 using ECaterer.Core.Models.Enums;
+using ECaterer.WebApi.Common.Builders;
 using ECaterer.WebApi.Common.Exceptions;
+using ECaterer.WebApi.Common.Filters;
+using ECaterer.WebApi.Common.Filters.Diets;
 using ECaterer.WebApi.Common.Interfaces;
 using ECaterer.WebApi.Common.Queries;
 using ECaterer.WebApi.Controllers;
@@ -37,7 +40,23 @@ namespace ECaterer.WebApi.Services
 
         public async Task<IEnumerable<Diet>> GetDiets(GetDietsQueryModel query)
         {
-            return await _context.Diets.Include(d => d.Meals).ToListAsync();
+            IQueryable<Diet> diets = _context.Diets;
+            var builder = new QueryBuilder<Diet>(diets);
+            builder = builder
+                .PerformAction(new DietNameFilter(query.Name))
+                .PerformAction(new DietNameWithFilter(query.Name_with))
+                .PerformAction(new DietCaloriesFilter(query.Calories))
+                .PerformAction(new DietCaloriesLowerThanFilter(query.Calories_lt))
+                .PerformAction(new DietCaloriesHigherThanFilter(query.Calories_ht))
+                .PerformAction(new DietPriceFilter(query.Price))
+                .PerformAction(new DietPriceLowerThanFilter(query.Price_lt))
+                .PerformAction(new DietPriceHigherThanFilter(query.Price_ht))
+                .PerformAction(new DietVeganFilter(query.Vegan))
+                .PerformAction(new DietSort(query.Sort))
+                .PerformAction(new Offset<Diet>(query.Offset))
+                .PerformAction(new Limit<Diet>(query.Limit));
+
+            return builder.GetQuery();
         }
 
 

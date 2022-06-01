@@ -11,13 +11,13 @@ namespace ECaterer.WebApi.Common.Queries
         public int? Limit { get; set; }
         public string Sort { get; set; }
         public string Name { get; set; }
-        public string NameWith { get; set; }
+        public string Name_with { get; set; }
         public bool? Vegan { get; set; }
         public int? Calories { get; set; }
-        public int? CaloriesLt { get; set; }
-        public int? CaloriesHt { get; set; }
+        public int? Calories_lt { get; set; }
+        public int? Calories_ht { get; set; }
         public int? Price { get; set; }
-        public int? PriceLt { get; set; }
-        public int? PriceHt { get; set; }
+        public int? Price_lt { get; set; }
+        public int? Price_ht { get; set; }
     }
 }
