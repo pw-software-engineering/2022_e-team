@@ -124,7 +124,7 @@ namespace ECaterer.WebApi.Controllers
                 var Token = _tokenService.CreateToken(user);
 
                 Response.Headers.Add("api-key", Token);
-                return Ok(new AuthenticatedUserModel() { Token = Token });
+                return Ok();
             }
 
             return BadRequest("Problem registering user");
