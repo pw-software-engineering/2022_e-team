@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ECaterer.Web.DTO
 {
-    public class ComplaintDTO
+    public class ComplaintOrderDTO
     {
         public string ClientName { get; set; }
         public string Status { get; set; }

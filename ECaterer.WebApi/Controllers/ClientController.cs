@@ -99,22 +99,26 @@ namespace ECaterer.WebApi.Controllers
 
             if (result.Succeeded)
             {
+                var newAddress = new Address()
+                {
+                    Street = registerUser.Address.Street,
+                    BuildingNumber = registerUser.Address.BuildingNumber,
+                    ApartmentNumber = registerUser.Address.ApartmentNumber,
+                    PostCode = registerUser.Address.PostCode,
+                    City = registerUser.Address.City
+                };
+
+                _context.Addresses.Add(newAddress);
+
                 _context.Clients.Add(new Client()
                 {
                     Name = registerUser.Name,
                     LastName = registerUser.LastName,
                     Email = registerUser.Email,
                     PhoneNumber = registerUser.PhoneNumber,
+                    Address = newAddress
+                });
 
-                    Address = new Address()
-                    {
-                        Street = registerUser.Address.Street,
-                        BuildingNumber = registerUser.Address.BuildingNumber,
-                        ApartmentNumber = registerUser.Address.ApartmentNumber,
-                        PostCode = registerUser.Address.PostCode,
-                        City = registerUser.Address.City
-                    }
-                }) ;
 
                 _context.SaveChanges();
                 var Token = _tokenService.CreateToken(user);

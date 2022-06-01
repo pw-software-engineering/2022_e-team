@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using ECaterer.Web.Converters;
 using ECaterer.Contracts;
+using ECaterer.Contracts.Client;
 
 namespace ECaterer.Web.Controllers
 {
@@ -32,7 +33,7 @@ namespace ECaterer.Web.Controllers
         [HttpPost("loginuser")]
         public async Task<ActionResult<AuthDTO>> Login([FromBody] LoginDTO authData)
         {
-            var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/api/Client/Login", LoginConverter.Convert(authData));
+            var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/Client/Login", LoginConverter.Convert(authData));
             var content = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
 
             if (response.IsSuccessStatusCode)
@@ -54,7 +55,7 @@ namespace ECaterer.Web.Controllers
         [HttpPost("registeruser")]
         public async Task<ActionResult<AuthDTO>> Register ([FromBody] RegisterDTO clientData)
         {
-            var response = await _apiClient.PostAsJsonAsync<RegisterUserModel>("/api/Client/Register", RegisterConverter.Convert(clientData));
+            var response = await _apiClient.PostAsJsonAsync<ClientModel>("/Client/Register", RegisterConverter.Convert(clientData));
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadFromJsonAsync<AuthenticatedUserModel>();
