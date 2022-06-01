@@ -27,7 +27,6 @@ namespace ECaterer.Web.Converters
                     Street = input.Address.Street
                 },
                 Password = input.Password
-
             };
         }
     }

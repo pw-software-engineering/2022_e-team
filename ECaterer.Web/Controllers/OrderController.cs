@@ -167,9 +167,9 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpGet("{orderNumber}/complaint")]
-        public async Task<ActionResult<ComplaintDTO>> GetComplaint()
+        public async Task<ActionResult<ComplaintOrderDTO>> GetComplaint()
         {
-            return Ok(new ComplaintDTO
+            return Ok(new ComplaintOrderDTO
             {
                 Description = "opis reklamacji",
                 Status = "Do rozpatrzenia",
