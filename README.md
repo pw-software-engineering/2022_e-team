@@ -13,6 +13,9 @@ Aplikacja dostępna jest pod adresem: http://eteam.06c45401340e40f5913f.westeuro
 
 ## Budowanie bazy i migracje
 
+## Odpalenie docker composa
+W głównym folderze projektu wywołać komendę `docker-compose up`
+
 ### Local development
 
 Aktualizacja bazy do ostatniej migracji:
