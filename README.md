@@ -8,6 +8,9 @@
 * Stworzony project do testowania ECaterer.Web.Test z testami do api klienta (do tego zostały stworzone niezaimplementowane funkcje kontrolera klienta i klasy DTO)
 * Stworzony bazowy pipeline
 
+## Dostęp do aplikacji
+Aplikacja dostępna jest pod adresem: http://eteam.06c45401340e40f5913f.westeurope.aksapp.io/
+
 ## Budowanie bazy i migracje
 
 ### Local development
