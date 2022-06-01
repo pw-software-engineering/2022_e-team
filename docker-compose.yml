@@ -6,12 +6,36 @@ services:
     environment:
       SA_PASSWORD: "Test_Password123"
       ACCEPT_EULA: "Y"
+    ports:
+    - "1440:1433"
+
+  front-app:
+    image: powoeuwcrossteamacr.azurecr.io/e_frontend:latest
+    #build:
+    #  context: .
+    #  dockerfile: ECaterer.Web/Dockerfile
+    depends_on:
+    - ecaterer.webapi
+    - db
+    environment:
+    - APIUrl=http://ecaterer.webapi
+    - ConnectionStrings__Default=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;TrustServerCertificate=true;
+    - ASPNETCORE_URLS=http://+:80
+    ports:
+    - "44330:80"
+    - "44331:443"
 
   ecaterer.webapi:
-    build:
-      context: .
-      dockerfile: ECaterer.WebApi/Dockerfile
-    ports:
-    - "8000:443"
+    image: powoeuwcrossteamacr.azurecr.io/e_backend:latest
+    #build:
+    #  context: .
+    #  dockerfile: ECaterer.WebApi/Dockerfile
+    environment:
+    - ConnectionStrings__DefaultConnection=Server=db;Database=aspnet-ECaterer.WebApi-Authentication;User=sa;Password=Test_Password123;TrustServerCertificate=true;
+    - ConnectionStrings__CoreDbConnection=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;TrustServerCertificate=true;
+    - ASPNETCORE_URLS=http://+:80
     depends_on:
     - db
+    ports:
+    - "8080:80"
+    - "8081:443"
