@@ -41,6 +41,6 @@ jobs:
     - name: Get all svcs
       run: kubectl get svc -A
     - name: describe api
-      run: kubectl logs eteam-api-56fcddb77c-bhk9p -n ${NAMESPACE}
+      run: kubectl logs eteam-api-5f6f7df688-j8mqr -n ${NAMESPACE}
     - name: describe app
-      run: kubectl logs eteam-app-6df55d47f6-6sp4n -n ${NAMESPACE}
+      run: kubectl logs eteam-app-86b889647-fgfcw -n ${NAMESPACE}
