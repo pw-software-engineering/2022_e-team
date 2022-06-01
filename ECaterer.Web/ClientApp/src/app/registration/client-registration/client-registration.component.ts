@@ -93,7 +93,7 @@ export class ClientRegistration implements OnInit {
     if (this.addressForm.valid) {
       this.registrationService.registerUser(this.registrationData, this.addressData)
         .then(() => {
-          this.router.navigate(['/diets']);
+          this.router.navigate(['client/diets']);
         })
         .catch((err) => {
           this.showError("Wystąpił błąd serwera. Spróbuj później.");

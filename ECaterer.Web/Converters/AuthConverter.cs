@@ -9,11 +9,11 @@ namespace ECaterer.Web.Converters
 {
     public static class AuthConverter
     {
-        public static AuthDTO ConvertBack(AuthenticatedUserModel input)
+        public static AuthDTO ConvertBack(string token)
         {
             return new AuthDTO()
             {
-                TokenJWT = input.Token
+                TokenJWT = token
             };
         }
     }
