@@ -181,7 +181,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CATestAddDietAndGetId()
+        public async Task DATestAddDietAndGetId()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -204,7 +204,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CBTestEditDietUnexistingMeal()
+        public async Task DBTestEditDietUnexistingMeal()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -220,7 +220,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CCTestDeleteDiet()
+        public async Task DCTestDeleteDiet()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -230,7 +230,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CDTestDeleteUnexistingDiet()
+        public async Task DDTestDeleteUnexistingDiet()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/some_invalid_id");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -240,7 +240,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task DATestAddDietAndGetId()
+        public async Task EATestAddDietAndGetId()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -266,7 +266,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task DBTestEditDietUnauthorized()
+        public async Task EBTestEditDietUnauthorized()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"/diets/{dietId}");
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
@@ -281,7 +281,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task EATestGetDietsUnauthorized()
+        public async Task FATestGetDietsUnauthorized()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/diets");
 
@@ -290,7 +290,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task EBTestAddDietUnauthorized()
+        public async Task FBTestAddDietUnauthorized()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Content = JsonContent.Create(new Contracts.Diets.DietModel()
@@ -305,7 +305,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task FATestDeleteDiet()
+        public async Task GATestDeleteDiet()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"/diets/{dietId}");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
@@ -315,7 +315,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task FBTestEnsureDeleteMeals()
+        public async Task GBTestEnsureDeleteMeals()
         {
             foreach (var mealId in mealsIds)
             {
