@@ -11,6 +11,7 @@
           </li>
         </ul>
       </fieldset>
+      <button kendoButton themeColor="primary" id="showMealsInOrder" (click)="showMealsInOrder()">Lista posiłków</button>
       <fieldset class="k-form-fieldset">
         <h2>Informacja</h2>
         <kendo-formfield>
@@ -48,18 +49,18 @@
         <kendo-formfield class="shortInput">
           <kendo-label text="Data złożenia zamówienia"></kendo-label>
           <kendo-datepicker [(ngModel)]="editModel.orderDate"
-                         [value]="editModel.orderDate"
-                         [ngModelOptions]="{standalone: true}"
-                         #orderDate
-                         [disabled]="true"></kendo-datepicker>
+                            [value]="editModel.orderDate"
+                            [ngModelOptions]="{standalone: true}"
+                            #orderDate
+                            [disabled]="true"></kendo-datepicker>
         </kendo-formfield>
         <kendo-formfield class="shortInput">
           <kendo-label text="Data dostarczenia zamówienia"></kendo-label>
           <kendo-datepicker [(ngModel)]="editModel.deliverDate"
-                         [value]="editModel.deliverDate"
-                         [ngModelOptions]="{standalone: true}"
-                         #deliverDate
-                         [disabled]="true"></kendo-datepicker>
+                            [value]="editModel.deliverDate"
+                            [ngModelOptions]="{standalone: true}"
+                            #deliverDate
+                            [disabled]="true"></kendo-datepicker>
         </kendo-formfield>
         <kendo-formfield class="shortInput">
           <kendo-label text="Komentarz"></kendo-label>
@@ -75,5 +76,23 @@
       <button [disabled]="!editModel.hasComplaint" kendoButton themeColor="primary" id="showComplaintBtn" (click)="showComplaint()">Otwórz reklamację</button>
       <button [disabled]="!isReadyToDeliver" kendoButton themeColor="primary" id="redierectDelivererBtn" (click)="redirectDeliverer()">Przekieruj do dostawcy</button>
     </div>
-    </div>
+  </div>
 </main>
+
+<kendo-dialog tile="Podgląd posiłków"
+              *ngIf="mealsInOrderShown"
+              (close)="closeMealsInOrder()"
+              [minWidth]="250"
+              [width]="450">
+
+  <p>Lista posiłków</p>
+  <ul>
+    <li *ngFor="let meal of editModel.mealsConcatenated">
+      <span>{{meal}}</span>
+    </li>
+  </ul>
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closeMealsInOrder()" themeColor="secondary">Zamknij</button>
+  </kendo-dialog-actions>
+</kendo-dialog>
+

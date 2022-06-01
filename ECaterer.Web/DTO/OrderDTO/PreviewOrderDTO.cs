@@ -8,6 +8,8 @@ namespace ECaterer.Web.DTO
     {
         public string OrderNumber { get; set; }
         public IEnumerable<string> DietNames { get; set; }
+
+        public IEnumerable<string> MealsConcatenated { get; set; }
         public decimal Cost { get; set; }
         public string Status { get; set; }
         public string Address { get; set; }
