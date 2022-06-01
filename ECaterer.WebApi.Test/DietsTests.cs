@@ -181,7 +181,7 @@ namespace ECaterer.WebApi.Integration.Test
         }
 
         [Fact]
-        public async Task CATestAddDietAndGetId()
+        public async Task CCTestAddDietAndGetId()
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/diets");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
