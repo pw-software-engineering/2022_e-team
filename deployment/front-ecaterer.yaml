@@ -28,6 +28,8 @@ spec:
         env:
         - name: "APIUrl"
           value: "http://eteam-api"
+        - name: "ConnectionStrings__Default"
+          value: "Server=tcp:e-team.database.windows.net,1433;Initial Catalog=ETeamData;Persist Security Info=False;User ID=${A_LOGIN};Password=${A_PASSWORD};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         - name: ASPNETCORE_URLS
           value: http://+:80
         imagePullPolicy: "IfNotPresent"

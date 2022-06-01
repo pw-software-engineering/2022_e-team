@@ -44,7 +44,7 @@ export class ClientLogin implements OnInit {
     if (this.form.valid) {
       this.registrationService.loginUser(this.loginData)
         .then(() => {
-          this.router.navigate(['/diets']);
+          this.router.navigate(['client/diets']);
         })
         .catch((err) => {
           if (err.status == 401)
@@ -59,7 +59,7 @@ export class ClientLogin implements OnInit {
   }
 
   redirectToRegister(): void {
-    this.router.navigate(['/client/register']);
+    this.router.navigate(['client/register']);
   }
 
   clearError() {

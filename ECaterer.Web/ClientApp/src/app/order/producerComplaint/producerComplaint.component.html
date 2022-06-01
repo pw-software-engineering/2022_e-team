@@ -1,0 +1,45 @@
+
+<main id="producerComplaint">
+  <div>
+    <h1>Reklamacja</h1>
+    <form class="k-form">
+      <fieldset class="k-form-fieldset">
+        <kendo-formfield>
+          <kendo-label text="Dane klienta" class="shortInput"></kendo-label>
+          <kendo-textbox [(ngModel)]="complaintModel.clientName"
+                         [value]="complaintModel.clientName"
+                         [ngModelOptions]="{standalone: true}"
+                         #clientName
+                         [disabled]="true"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label text="Opis"></kendo-label>
+          <kendo-textbox [(ngModel)]="complaintModel.description"
+                         [value]="complaintModel.description"
+                         [ngModelOptions]="{standalone: true}"
+                         #description
+                         [disabled]="true"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield class="shortInput">
+          <kendo-label text="Data"></kendo-label>
+          <kendo-datepicker [(ngModel)]="complaintModel.complaintDate"
+                         [value]="complaintModel.complaintDate"
+                         [ngModelOptions]="{standalone: true}"
+                         #complaintDate
+                         [disabled]="true"></kendo-datepicker>
+        </kendo-formfield>
+        <kendo-formfield class="shortInput">
+          <kendo-label text="Status"></kendo-label>
+          <kendo-textbox [(ngModel)]="complaintModel.status"
+                         [value]="complaintModel.status"
+                         [ngModelOptions]="{standalone: true}"
+                         #status
+                         [disabled]="true"></kendo-textbox>
+        </kendo-formfield>
+      </fieldset>
+    </form>
+    <div class="parallel-wrapper">
+      <button [disabled]="true" kendoButton themeColor="primary" id="answerBtn">Odpowiedz</button>
+    </div>
+    </div>
+</main>

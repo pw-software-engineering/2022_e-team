@@ -1,0 +1,46 @@
+name: MonitorCluster
+
+on:
+  workflow_dispatch:
+
+env:
+  ACR_URL: 'powoeuwacr.azurecr.io'
+  NAMESPACE: 'eteam'                         # Name of your team {b, j, n}
+  APP_NAME: 'eteam-api'                      # Name of your application {client, server, hotel}
+  DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
+  DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location
+  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_backend:5.0'
+  ACR_NAME: 'powoeuwcrossteamacr'
+  SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
+  SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
+
+jobs:
+   monitor:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.18.8'
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AKS_NAME }}
+        resource-group: ${{ secrets.AKS_RG_NAME }}    
+    - name: Get pods
+      run: kubectl get pods -n ${NAMESPACE} -o wide
+    - name: Get svc
+      run: kubectl get svc -n ${NAMESPACE}
+    - name: Get ingress
+      run: kubectl get ingress -n ${NAMESPACE}
+    - name: Get all ingresses
+      run: kubectl get ingress -A
+    - name: Get all svcs
+      run: kubectl get svc -A
+    - name: describe api
+      run: kubectl logs eteam-api-5f6f7df688-j8mqr -n ${NAMESPACE}
+    - name: describe app
+      run: kubectl logs eteam-app-86b889647-fgfcw -n ${NAMESPACE}
