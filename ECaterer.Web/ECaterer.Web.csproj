@@ -55,6 +55,8 @@
     <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\navigation\navigation.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\api\order.service.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\client\clientOrders.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\client\clientOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.spec.ts" />

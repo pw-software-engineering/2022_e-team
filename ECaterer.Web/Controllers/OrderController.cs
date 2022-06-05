@@ -182,5 +182,17 @@ namespace ECaterer.Web.Controllers
                 ComplaintDate = DateTime.Now
             });
         }
+
+        [HttpPost("makeComplaint")]
+        public async Task<ActionResult> MakeComplaint([FromBody] MakeComplaintDTO model)
+        {
+            return Ok();
+        }
+
+        [HttpPatch("cancelComplaint/{orderNumber}")]
+        public async Task<ActionResult> CancelComplaint(string orderNumber)
+        {
+            return Ok();
+        }
     }
 }
