@@ -55,3 +55,8 @@ export interface MakeComplaintDTO {
   orderNumber: string;
   description: string;
 }
+
+export interface AnswerComplaintDTO {
+  orderNumber: string;
+  answer: string;
+}

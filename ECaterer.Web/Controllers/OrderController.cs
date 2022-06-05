@@ -194,5 +194,11 @@ namespace ECaterer.Web.Controllers
         {
             return Ok();
         }
+
+        [HttpPost("answerComplaint")]
+        public async Task<ActionResult> AnswerComplaint([FromBody] AnswerComplaintDTO model)
+        {
+            return Ok();
+        }
     }
 }

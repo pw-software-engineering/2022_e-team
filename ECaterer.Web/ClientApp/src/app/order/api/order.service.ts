@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DietDTO } from '../../diets/api/dietDTO';
-import { ClientOrderDTO, ComplaintDTO, DelivererOrderDTO, MakeComplaintDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
+import { AnswerComplaintDTO, ClientOrderDTO, ComplaintDTO, DelivererOrderDTO, MakeComplaintDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
 import { CookieOptions, CookieService } from 'ngx-cookie';
 
 @Injectable({
@@ -104,5 +104,9 @@ export class OrderService {
 
   public cancelComplaint(orderNumber: string): Promise<void> {
     return this.http.patch<void>(this.orderUrl + `cancelComplaint/${orderNumber}`, {}, { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public answerComplaint(model: AnswerComplaintDTO): Promise<void> {
+    return this.http.post<void>(this.orderUrl + "answerComplaint", model, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 }
