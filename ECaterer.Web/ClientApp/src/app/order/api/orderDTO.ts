@@ -21,6 +21,15 @@ export interface ProducerOrderDTO {
   status: string;
 }
 
+export interface ClientOrderDTO {
+  orderNumber: string;
+  startDate: Date;
+  endDate: Date;
+  status: string;
+  price: number;
+  complaintStatus: string;
+}
+
 export interface PreviewOrderDTO {
   orderNumber: string;
   dietNames: string[];
@@ -40,4 +49,9 @@ export interface ComplaintDTO {
   description: string;
   complaintDate: Date;
   status: string;
+}
+
+export interface MakeComplaintDTO {
+  orderNumber: string;
+  description: string;
 }

@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DietDTO } from '../../diets/api/dietDTO';
-import { ComplaintDTO, DelivererOrderDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
+import { ClientOrderDTO, ComplaintDTO, DelivererOrderDTO, MakeComplaintDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
 import { CookieOptions, CookieService } from 'ngx-cookie';
 
 @Injectable({
@@ -12,6 +12,7 @@ export class OrderService {
   private commonHeaders = new HttpHeaders();
   private dietUrl: string;
   private orderUrl: string;
+  private clientUrl: string;
 
   private cartDietsCookie: string = "CART_DIETS";
 
@@ -22,6 +23,7 @@ export class OrderService {
   ) {
     this.dietUrl = baseUrl + "Diet/";
     this.orderUrl = baseUrl + "Order/";
+    this.clientUrl = baseUrl + "Client/";
     this.commonHeaders.set("Content-Type", "application/json");
     this.getOrCreateCart();
   }
@@ -90,5 +92,17 @@ export class OrderService {
 
   public getComplaint(orderNumber: string): Promise<ComplaintDTO> {
     return this.http.get<ComplaintDTO>(this.orderUrl + orderNumber + "/complaint", { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public getClientOrders(): Promise<ClientOrderDTO[]> {
+    return this.http.get<ClientOrderDTO[]>(this.clientUrl + "getClientOrders", { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public makeComplaint(model: MakeComplaintDTO): Promise<void> {
+    return this.http.post<void>(this.orderUrl + "makeComplaint", model, { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public cancelComplaint(orderNumber: string): Promise<void> {
+    return this.http.patch<void>(this.orderUrl + `cancelComplaint/${orderNumber}`, {}, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 }
