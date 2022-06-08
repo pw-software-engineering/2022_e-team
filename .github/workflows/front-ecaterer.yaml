@@ -6,7 +6,7 @@ on:
   push:
     branches: [develop]
     paths:
-    - 'ECaterer.WebApi/**'
+    - 'ECaterer.Web/**'
     - 'deployment/front-ecaterer.yaml'
 
 env:
@@ -16,7 +16,7 @@ env:
   DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
   DEPLOYMENT_FILE_NAME: 'front-ecaterer.yaml'      # Name of deployment file for application in deployment location
   ACR_NAME: 'powoeuwcrossteamacr'
-  PATH_TO_DOCKERFILE: 'ECaterer.WebApp/Dockerfile'
+  PATH_TO_DOCKERFILE: 'ECaterer.Web/Dockerfile'
   A_LOGIN: ${{ secrets.A_LOGIN }}
   A_PASSWORD: ${{ secrets.A_PASSWORD }}
 
