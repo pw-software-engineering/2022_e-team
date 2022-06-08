@@ -34,7 +34,7 @@ jobs:
     - name: Set IMAGE_ID as env variable
       run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
     - name: Install npm
-      run: apt update && curl -sL https://deb.nodesource.com/setup_14.x | bash - && apt -y install nodejs
+      run: apt update && curl -sL https://deb.nodesource.com/setup_14.x | sudo bash - && apt -y install nodejs
     - name: Build image
       run: docker build -t ${{ env.IMAGE_ID }} -f ${{ env.PATH_TO_DOCKERFILE }} .
     - name: Push image
