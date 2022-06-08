@@ -51,8 +51,6 @@ namespace ECaterer.Web.Controllers
             {
                 return BadRequest();
             }
-
-
         }
 
         [HttpPost("registeruser")]

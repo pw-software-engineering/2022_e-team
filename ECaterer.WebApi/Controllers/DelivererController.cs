@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -57,11 +59,27 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpGet("orders")]
         [Authorize/*(Roles = "deliverer")*/]
-        public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersToDeliver()
+        public async Task<ActionResult<HistoryDelivererModel[]>> GetOrdersToDeliver()
         {
             try
             {
                 var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetOrdersDelivererQueryModel());
+                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<HistoryDelivererModel>(o)).ToArray();
+                return Ok(deliveryDetailsDTO);
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie pobierania");
+            }
+        }
+
+        [HttpGet("history")]
+        [Authorize/*(Roles = "deliverer")*/]
+        public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersHistory()
+        {
+            try
+            {
+                var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetHistoryDelivererQueryModel());
                 var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<OrderDelivererModel>(o)).ToArray();
                 return Ok(deliveryDetailsDTO);
             }
@@ -77,13 +95,15 @@ namespace ECaterer.WebApi.Controllers
         {
             try
             {
-                var order = _context.Orders.FirstOrDefault(order => order.OrderId == orderID);
+                var order = _context.Orders.Include(o => o.DeliveryDetails).FirstOrDefault(order => order.OrderId == orderID);
                 if (order is null)
                     return NotFound("Podane zamówienie nie istnieje");
                 if (order.Status != (int)OrderStatus.Prepared)
                     return BadRequest("Niepowodzenie potwierdzenia dostawy");
                 order.Status = (int)OrderStatus.Delivered;
+                order.DeliveryDetails.DeliveryDate = DateTime.Now;
                 _context.Orders.Update(order);
+                _context.DeliveryDetails.Update(order.DeliveryDetails);
                 await _context.SaveChangesAsync();
                 return Ok("Powodzenie potwierdzenia dostawy");
             }
