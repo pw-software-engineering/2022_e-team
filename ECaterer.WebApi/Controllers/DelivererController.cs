@@ -59,27 +59,11 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpGet("orders")]
         [Authorize/*(Roles = "deliverer")*/]
-        public async Task<ActionResult<HistoryDelivererModel[]>> GetOrdersToDeliver()
+        public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersToDeliver()
         {
             try
             {
                 var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetOrdersDelivererQueryModel());
-                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<HistoryDelivererModel>(o)).ToArray();
-                return Ok(deliveryDetailsDTO);
-            }
-            catch
-            {
-                return BadRequest("Niepowodzenie pobierania");
-            }
-        }
-
-        [HttpGet("history")]
-        [Authorize/*(Roles = "deliverer")*/]
-        public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersHistory()
-        {
-            try
-            {
-                var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetHistoryDelivererQueryModel());
                 var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<OrderDelivererModel>(o)).ToArray();
                 return Ok(deliveryDetailsDTO);
             }
@@ -89,8 +73,24 @@ namespace ECaterer.WebApi.Controllers
             }
         }
 
+        [HttpGet("history")]
+        //[Authorize/*(Roles = "deliverer")*/]
+        public async Task<ActionResult<HistoryDelivererModel[]>> GetOrdersHistory()
+        {
+            try
+            {
+                var ordersWithStatusPrepared = (await _ordersService.GetOrders(new GetHistoryDelivererQueryModel())).ToList();
+                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<HistoryDelivererModel>(o)).ToArray();
+                return Ok(deliveryDetailsDTO);
+            }
+            catch
+            {
+                return BadRequest("Niepowodzenie pobierania");
+            }
+        }
+
         [HttpPost("orders/{orderID}/deliver")]
-        [Authorize/*(Roles = "deliverer")*/]
+        //[Authorize(Roles = "deliverer")]
         public async Task<ActionResult> FinishDelivery([FromQuery] string orderID)
         {
             try
