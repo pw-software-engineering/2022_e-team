@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DietDTO } from '../../diets/api/dietDTO';
-import { AnswerComplaintDTO, ClientOrderDTO, ComplaintDTO, DelivererOrderDTO, MakeComplaintDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
+import { AnswerComplaintDTO, ClientOrderDTO, ComplaintDTO, DelivererHistoryDTO, DelivererOrderDTO, MakeComplaintDTO, OrderDTO, PreviewOrderDTO, ProducerOrderDTO } from './orderDTO';
 import { CookieOptions, CookieService } from 'ngx-cookie';
 
 @Injectable({
@@ -72,6 +72,10 @@ export class OrderService {
 
   public getDelivererOrders(): Promise<DelivererOrderDTO[]> {
     return this.http.get<DelivererOrderDTO[]>(this.orderUrl + "getDelivererOrders", { headers: this.commonHeaders, params: {} }).toPromise();
+  }
+
+  public getDelivererHistory(): Promise<DelivererHistoryDTO[]> {
+    return this.http.get<DelivererHistoryDTO[]>(this.orderUrl + "getDelivererHistory", { headers: this.commonHeaders, params: {} }).toPromise();
   }
 
   public deliverOrder(orderNumber: string): Promise<void> {

@@ -15,6 +15,14 @@ export interface DelivererOrderDTO {
   comment: string;
 }
 
+export interface DelivererHistoryDTO {
+  orderNumber: string;
+  address: string;
+  phone: string;
+  comment: string;
+  deliveryDate: Date;
+}
+
 export interface ProducerOrderDTO {
   orderNumber: string;
   orderDate: Date;

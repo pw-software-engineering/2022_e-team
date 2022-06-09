@@ -34,6 +34,7 @@ import { ProducerOrdersComponent } from './order/producer/producerOrders.compone
 import { PreviewOrderComponent } from './order/previewOrder/previewOrder.component';
 import { ProducerComplaintComponent } from './order/producerComplaint/producerComplaint.component';
 import { ClientOrdersComponent } from './order/client/clientOrders.component';
+import { DelivererHistoryComponent } from './order/delivererHistory/delivererHistory.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { ClientOrdersComponent } from './order/client/clientOrders.component';
     ProducerOrdersComponent,
     PreviewOrderComponent,
     ProducerComplaintComponent,
-    ClientOrdersComponent
+    ClientOrdersComponent,
+    DelivererHistoryComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -73,7 +75,8 @@ import { ClientOrdersComponent } from './order/client/clientOrders.component';
       { path: 'producer/orders', component: ProducerOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/orders/:id', component: PreviewOrderComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/orders/:id/complaint', component: ProducerComplaintComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'client/orders', component: ClientOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] }
+      { path: 'client/orders', component: ClientOrdersComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: 'deliverer/history', component: DelivererHistoryComponent, pathMatch: 'full', canActivate: [AuthGuard] },
     ]),
     GridModule,
     BrowserAnimationsModule,
