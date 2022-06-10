@@ -19,19 +19,22 @@ import { HomeComponent } from '../../home/home.component';
 import { ClientRegistration } from '../client-registration/client-registration.component';
 import { ClientLogin } from '../client-login/client-login.component';
 import { RegistrationService } from '../api/registration.service';
-import { WorkerLogin, ILoginData } from './worker-login.component';
+import { DelivererLogin } from './deliverer-login.component';
+import { ILoginData } from '../api/registrationDtos';
 
 describe('WorkerLogin', () => {
-  let component: WorkerLogin;
-  let fixture: ComponentFixture<WorkerLogin>;
+  let component: DelivererLogin;
+  let fixture: ComponentFixture<DelivererLogin>;
 
   let validLoginData: ILoginData = {
-    login: "root",
-    password: "toor"
+    email: "root@gmail.com",
+    password: "toor",
+    userType: 2
   };
   let invalidLoginData: ILoginData = {
-    login: "",
-    password: "toor"
+    email: "",
+    password: "toor",
+    userType: 2
   };
 
   beforeAll(function () {
@@ -47,7 +50,7 @@ describe('WorkerLogin', () => {
         HomeComponent,
         ClientRegistration,
         ClientLogin,
-        WorkerLogin
+        DelivererLogin
       ],
       imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -57,7 +60,7 @@ describe('WorkerLogin', () => {
           { path: '', component: HomeComponent, pathMatch: 'full' },
           { path: 'client/register', component: ClientRegistration, pathMatch: 'full' },
           { path: 'client/login', component: ClientLogin, pathMatch: 'full' },
-          { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' }
+          { path: 'worker/login', component: DelivererLogin, pathMatch: 'full' }
         ]),
         GridModule,
         BrowserAnimationsModule,
@@ -79,7 +82,7 @@ describe('WorkerLogin', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WorkerLogin);
+    fixture = TestBed.createComponent(DelivererLogin);
     component = fixture.componentInstance;
     registrationServiceMock.loginWorker.calls.reset();
     fixture.detectChanges();

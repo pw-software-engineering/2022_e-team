@@ -1,16 +1,16 @@
 
-<main id="worker-login">
+<main id="deliverer-login">
   <h1>Zaloguj się</h1>
   <div id="registrationForm">
     <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
     <form class="k-form" [formGroup]="form">
       <fieldset class="k-form-fieldset">
         <kendo-formfield>
-          <kendo-label [for]="login" text="Login pracownika"></kendo-label>
-          <kendo-textbox formControlName="login"
-                         #login
+          <kendo-label [for]="email" text="Email pracownika"></kendo-label>
+          <kendo-textbox formControlName="email"
+                         #email
                          required
-                         placeholder="Wpisz swój login"></kendo-textbox>
+                         placeholder="Wpisz swój email"></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield>
           <kendo-label [for]="password" text="Hasło pracownika"></kendo-label>

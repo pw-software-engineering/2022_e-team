@@ -6,18 +6,18 @@ import { Router } from "@angular/router";
 import { ILoginData } from '../api/registrationDtos';
 
 @Component({
-  selector: 'app-client-login',
-  templateUrl: './client-login.component.html',
-  styleUrls: ['./client-login.component.scss'],
+  selector: 'app-deliverer-login',
+  templateUrl: './deliverer-login.component.html',
+  styleUrls: ['./deliverer-login.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 
-export class ClientLogin implements OnInit {
+export class DelivererLogin implements OnInit {
 
   public loginData: ILoginData = {
     email: "",
     password: "",
-    userType: 1
+    userType: 2
   }
 
   public errorMessage = '';
@@ -29,7 +29,7 @@ export class ClientLogin implements OnInit {
     this.TitleService.setTitle("Logowanie");
 
     this.form = new FormGroup({
-      email: new FormControl(this.loginData.email, [Validators.required, Validators.email, Validators.maxLength(250)]),
+      email: new FormControl(this.loginData.email, [Validators.required, Validators.minLength(1), Validators.maxLength(250), Validators.email]),
       password: new FormControl(this.loginData.password, [
         Validators.required, Validators.minLength(1), Validators.maxLength(25)])
     });
@@ -46,7 +46,7 @@ export class ClientLogin implements OnInit {
     if (this.form.valid) {
       this.registrationService.login(this.loginData)
         .then(() => {
-          this.router.navigate(['client/diets']);
+          this.router.navigate(['deliverer/orders']);
         })
         .catch((err) => {
           if (err.status == 401)
@@ -56,12 +56,8 @@ export class ClientLogin implements OnInit {
         });
     }
     else {
-      this.showError("Niepoprawny adres email lub hasło.");
+      this.showError("Niepoprawny login lub hasło.");
     }
-  }
-
-  redirectToRegister(): void {
-    this.router.navigate(['client/register']);
   }
 
   clearError() {

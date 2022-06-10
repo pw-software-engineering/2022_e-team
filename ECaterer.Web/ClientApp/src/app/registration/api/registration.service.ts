@@ -2,9 +2,8 @@
 
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { loginDto, registerDto, authDto } from './registrationDtos';
+import { loginDto, registerDto, authDto, ILoginData } from './registrationDtos';
 import { CookieOptions, CookieService } from 'ngx-cookie';
-import { ILoginData } from '../client-login/client-login.component';
 import { IAddressData, IRegistrationData } from '../client-registration/client-registration.component';
 
 @Injectable({
@@ -55,35 +54,20 @@ export class RegistrationService {
     );
   }
 
-  public loginUser(loginData: ILoginData): Promise<void | authDto> {
+  public login(loginData: ILoginData): Promise<void | authDto> {
 
     var loginData: loginDto = {
       email: loginData.email,
-      password: loginData.password
+      password: loginData.password,
+      userType: loginData.userType
     };
 
-    return this.http.post<authDto>(this.clientUrl + "loginuser", loginData, { headers: this.commonHeaders }).toPromise()
+    return this.http.post<authDto>(this.clientUrl + "loginall", loginData, { headers: this.commonHeaders }).toPromise()
       .then(
         (data) => {
           this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
         }
       );
-  }
-
-  public loginWorker(): Promise<object> {
-    return new Promise<object>((resolve, reject) => {
-      $.get("someinvalidurl")
-        .then((data) => resolve(data))
-        .catch((err: any) => {
-          switch (err.status) {
-            case "501":
-              reject(err.responseText);
-              break;
-            default:      
-              reject("Wystąpił błąd serwera. Spróbuj później.");
-          }
-        });
-    });
   }
 
   public getToken(): string | null {
