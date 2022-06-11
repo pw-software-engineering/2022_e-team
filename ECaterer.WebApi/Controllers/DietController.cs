@@ -2,7 +2,7 @@
 using ECaterer.Contracts.Diets;
 using ECaterer.Contracts.Meals;
 using ECaterer.Core;
-using ECaterer.Core.Models; 
+using ECaterer.Core.Models;
 using ECaterer.WebApi.Common.Exceptions;
 using ECaterer.WebApi.Common.Interfaces;
 using ECaterer.WebApi.Common.Queries;
@@ -41,86 +41,70 @@ namespace ECaterer.WebApi.Controllers
 
 
         [HttpGet("diets")]
+        [Authorize(Roles = "producer,client")]
         public async Task<ActionResult<GetDietsModel[]>> GetDiets([FromQuery] GetDietsQueryModel query)
         {
-            try
-            {
-                var diets = await _diets.GetDiets(query);
-                if (diets is null)
-                    return BadRequest("Niepowodzenie pobrania diet");
-                var dietsDTO = diets.Select(diet => _mapper.Map<GetDietsModel>(diet)).ToList();
-                return Ok(dietsDTO);
-            }
-            catch
-            {
+            var diets = await _diets.GetDiets(query);
+            if (diets is null)
                 return BadRequest("Niepowodzenie pobrania diet");
-            }
+            var dietsDTO = diets.Select(diet => _mapper.Map<GetDietsModel>(diet)).ToList();
+            return Ok(dietsDTO);
         }
 
         [HttpGet("diets/{dietId}")]
-        [Authorize/*(Roles = "producer, client")*/]
+        [Authorize(Roles = "producer,client")]
         public async Task<ActionResult<DietModel>> GetDietByID(string dietId)
         {
+            Diet diet;
             try
             {
-                var diet = await _diets.GetDietById(dietId);
-                if (diet is null)
-                    return NotFound("Podana dieta nie istnieje");
-                return Ok(_mapper.Map<DietModel>(diet));
+                diet = await _diets.GetDietById(dietId);
             }
             catch
             {
                 return BadRequest("Niepowodzenie pobrania diety");
             }
+            if (diet is null)
+                return NotFound("Podana dieta nie istnieje");
+            return Ok(_mapper.Map<DietModel>(diet));
         }
 
         [HttpPost("diets")]
-        //[Authorize(Roles = "producer")]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult> AddDiet([FromBody] DietModel dietModel)
         {
-            try
-            {
-                var diet = await _diets.AddDiet(dietModel);
-                if (diet is null)
-                    return BadRequest("Niepowodzenie dodania diety"); ;
-                return Ok("Powodzenie dodania diety");
-            }
-            catch(Exception e)
-            {
-                return BadRequest("Niepowodzenie dodania diety");
-            }
+            var diet = await _diets.AddDiet(dietModel);
+            if (diet is null)
+                return BadRequest("Niepowodzenie dodania diety"); ;
+            return Ok("Powodzenie dodania diety");
         }
 
         [HttpPut("diets/{dietId}")]
-        //[Authorize(Roles = "producer")]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult> EditDiet(string dietId, [FromBody] DietModel dietModel)
         {
-            try
-            {
-                await _diets.EditDiet(dietId, dietModel);
-                return Ok("Powodzenie edycji diety");
-            }
-            catch
-            {
+            var diet = await _diets.EditDiet(dietId, dietModel);
+            if (diet is null)
                 return BadRequest("Niepowodzenie edycji diety");
-            }
+            return Ok("Powodzenie edycji diety");
         }
 
         [HttpDelete("diets/{dietId}")]
-        [Authorize/*(Roles = "producer")*/]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult> DeleteDiet(string dietId)
         {
+            Diet diet;
             try
             {
-                var diet = await _diets.DeleteDiet(dietId);
-                if (diet is null)
-                    return NotFound("Podana dieta nie istnieje");
-                return Ok("Powodzenie usunięcia diety");
+                diet = await _diets.DeleteDiet(dietId);
             }
             catch
             {
                 return BadRequest("Niepowodzenie usunięcia diety");
             }
+            if (diet is null)
+                return NotFound("Podana dieta nie istnieje");
+            return Ok("Powodzenie usunięcia diety");
         }
     }
 }

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Services
 {
-    public class DietRepository: IDietRepository
+    public class DietRepository : IDietRepository
     {
         DataContext _context;
         private bool disposed;
@@ -90,7 +90,11 @@ namespace ECaterer.WebApi.Services
             diet.Title = dietModel.Name;
             diet.Price = dietModel.Price;
 
-            var meals = _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId.ToString())).ToArray();
+            var meals = _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToArray();
+
+            if (meals.Length != dietModel.MealIds.Length)
+                return null;
+
             diet.Vegan = IsVegan(meals);
             diet.Calories = CalculateCalories(meals);
             diet.Meals = meals;
@@ -110,9 +114,16 @@ namespace ECaterer.WebApi.Services
 
             var ordersWithDiet = _context.Orders.Include(d => d.Diets).Where(o => o.Diets.Any(d => d.DietId == dietId));
             await ordersWithDiet.ForEachAsync(o => o.Status = (int)OrderStatus.Canceled);
-           
+
+            var mealsWithDiet = _context.Meals.Where(m => m.DietId== dietId);
+            await mealsWithDiet.ForEachAsync(m => m.DietId = null);
+
             _context.Diets.Remove(diet);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception e) { }
 
             return diet;
         }

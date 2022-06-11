@@ -30,7 +30,7 @@ namespace ECaterer.WebApi.Services
             if (model.EndDate <= model.StartDate || model.StartDate <= DateTime.Now)
                 return null;
 
-            if (ValidateDietsIDs(model.DietIDs))
+            if (!ValidateDietsIDs(model.DietIDs))
                 return null;
 
             var address = await GetDeliveryAddress(userId, model);
