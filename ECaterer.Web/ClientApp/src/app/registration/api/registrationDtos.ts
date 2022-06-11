@@ -40,6 +40,8 @@ export interface loginDto {
 
   password: string;
 
+  userType: number;
+
 };
 
 export interface authDto {
@@ -47,5 +49,11 @@ export interface authDto {
   tokenJWT: string;
 
 };
+
+export interface ILoginData {
+  email: string,
+  password: string,
+  userType: number;
+}
 
 

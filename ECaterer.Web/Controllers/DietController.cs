@@ -12,6 +12,7 @@ using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
 using System.Web;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace ECaterer.Web.Controllers
 {
@@ -47,53 +48,57 @@ namespace ECaterer.Web.Controllers
             query["price_lt"] = price_lt.ToString();
             query["price_ht"] = price_ht.ToString();
 
-            return Ok(new DietDTO[]
-            {
-                new DietDTO()
-                {
-                   Id = "1",
-                    Name = "meatballs",
-                     Price = 10,
-                   Calories = 1234,
-                     Vegan = false
-                },
-                new DietDTO()
-                {
-                   Id = "1",
-                    Name = "meatballs2",
-                     Price = 10,
-                   Calories = 1234,
-                     Vegan = false
-                },
-                new DietDTO()
-                {
-                   Id = "1",
-                    Name = "meatballs3",
-                     Price = 10,
-                   Calories = 1234,
-                     Vegan = false
-                }
-            });
-            //var response = await _apiClient.GetAsync("api/diets" + query.ToString());
-
-            //if (response.IsSuccessStatusCode)
+            //return Ok(new DietDTO[]
             //{
-            //    var content = await response.Content.ReadFromJsonAsync<DietModel[]>();
-            //    var diets = new DietDTO[content.Length];
-            //    for (int i = 0; i < content.Length; i++)
+            //    new DietDTO()
             //    {
-            //        diets[i] = DietConverter.ConvertBack(content[i]);
+            //       Id = "1",
+            //        Name = "meatballs",
+            //         Price = 10,
+            //       Calories = 1234,
+            //         Vegan = false
+            //    },
+            //    new DietDTO()
+            //    {
+            //       Id = "1",
+            //        Name = "meatballs2",
+            //         Price = 10,
+            //       Calories = 1234,
+            //         Vegan = false
+            //    },
+            //    new DietDTO()
+            //    {
+            //       Id = "1",
+            //        Name = "meatballs3",
+            //         Price = 10,
+            //       Calories = 1234,
+            //         Vegan = false
             //    }
-            //    return Ok(diets);
-            //}
-            //else if (response.StatusCode == HttpStatusCode.Unauthorized)
-            //{
-            //    return Unauthorized();
-            //}
-            //else
-            //{
-            //    return BadRequest();
-            //}
+            //});
+
+            var message = new HttpRequestMessage(HttpMethod.Get, "api/diets");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadFromJsonAsync<DietModel[]>();
+                var diets = new DietDTO[content.Length];
+                for (int i = 0; i < content.Length; i++)
+                {
+                    diets[i] = DietConverter.ConvertBack(content[i]);
+                }
+                return Ok(diets);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("getProducerDiets")]

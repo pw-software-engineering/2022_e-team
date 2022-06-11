@@ -33,10 +33,26 @@ namespace ECaterer.Web.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPost("loginuser")]
+        [HttpPost("loginall")]
         public async Task<ActionResult<AuthDTO>> Login([FromBody] LoginDTO authData)
         {
-            var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/Client/Login", LoginConverter.Convert(authData));
+            HttpResponseMessage response;
+
+            switch (authData.UserType)
+            {
+                case UserType.Common:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/client/login", LoginConverter.Convert(authData));
+                    break;
+                case UserType.Deliverer:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/deliverer/login", LoginConverter.Convert(authData));
+                    break;
+                case UserType.Producer:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/producer/login", LoginConverter.Convert(authData));
+                    break;
+                default:
+                    return BadRequest();
+            }
+            
 
             if (response.IsSuccessStatusCode)
             {

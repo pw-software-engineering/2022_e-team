@@ -1,7 +1,7 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,7 +20,6 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ClientRegistration } from './registration/client-registration/client-registration.component';
 import { ClientLogin } from './registration/client-login/client-login.component';
-import { WorkerLogin } from './registration/worker-login/worker-login.component';
 import { AuthGuard } from './authGuard/authGuard';
 import { LoginGuard } from './authGuard/loginGuard';
 import { DietsComponent } from './diets/client/diets.component';
@@ -35,6 +34,9 @@ import { PreviewOrderComponent } from './order/previewOrder/previewOrder.compone
 import { ProducerComplaintComponent } from './order/producerComplaint/producerComplaint.component';
 import { ClientOrdersComponent } from './order/client/clientOrders.component';
 import { DelivererHistoryComponent } from './order/delivererHistory/delivererHistory.component';
+import { ProducerLogin } from './registration/producer-login/producer-login.component';
+import { DelivererLogin } from './registration/deliverer-login/deliverer-login.component';
+import { AuthInterceptor } from './registration/api/authInterceptor.service';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,6 @@ import { DelivererHistoryComponent } from './order/delivererHistory/delivererHis
     HomeComponent,
     ClientRegistration,
     ClientLogin,
-    WorkerLogin,
     Navigation,
     DietsComponent,
     MealsComponent,
@@ -54,7 +55,9 @@ import { DelivererHistoryComponent } from './order/delivererHistory/delivererHis
     PreviewOrderComponent,
     ProducerComplaintComponent,
     ClientOrdersComponent,
-    DelivererHistoryComponent
+    DelivererHistoryComponent,
+    ProducerLogin,
+    DelivererLogin
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -65,7 +68,8 @@ import { DelivererHistoryComponent } from './order/delivererHistory/delivererHis
       { path: 'home', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'client/register', component: ClientRegistration, pathMatch: 'full', canActivate: [LoginGuard] },
       { path: 'client/login', component: ClientLogin, pathMatch: 'full', canActivate: [LoginGuard] },
-      { path: 'worker/login', component: WorkerLogin, pathMatch: 'full' },
+      { path: 'producer/login', component: ProducerLogin, pathMatch: 'full' },
+      { path: 'deliverer/login', component: DelivererLogin, pathMatch: 'full' },
       { path: 'client/diets', component: DietsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'client/diets/:id', component: MealsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
       { path: 'producer/diets', component: ProducerDietsComponent, pathMatch: 'full', canActivate: [AuthGuard] },
@@ -92,7 +96,10 @@ import { DelivererHistoryComponent } from './order/delivererHistory/delivererHis
     IndicatorsModule,
     DialogsModule
   ],
-  providers: [Title],
+  providers: [
+    Title,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
