@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { loginDto, registerDto, authDto, ILoginData } from './registrationDtos';
 import { CookieOptions, CookieService } from 'ngx-cookie';
 import { IAddressData, IRegistrationData } from '../client-registration/client-registration.component';
+import { User } from 'oidc-client';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,7 @@ export class RegistrationService {
   private commonHeaders = new HttpHeaders();
 
   private TOKEN_KEY = "SESSIONID";
+  private USER_TYPE = "USER_TYPE";
   private clientUrl: string;
 
   // in seconds
@@ -50,6 +52,7 @@ export class RegistrationService {
       .then(
         (data: authDto) => {
           this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
+          this.cookieService.put(this.USER_TYPE, "CommonUser", this.getNewJWTOptions());
         }
     );
   }
@@ -66,6 +69,20 @@ export class RegistrationService {
       .then(
         (data) => {
           this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
+          var userType: string;
+          switch (loginData.userType)
+            {
+            case 1:
+              userType = "CommonUser";
+              break;
+            case 2:
+              userType = "Deliverer";
+              break;
+            case 3:
+              userType = "Producer";
+              break;
+          }
+          this.cookieService.put(this.USER_TYPE, userType, this.getNewJWTOptions());
         }
       );
   }
@@ -77,6 +94,7 @@ export class RegistrationService {
 
   public logout() {
     this.cookieService.remove(this.TOKEN_KEY);
+    this.cookieService.remove(this.USER_TYPE);
 }
 
   private getNewJWTOptions() {
@@ -89,6 +107,18 @@ export class RegistrationService {
     };
 
     return jwtOptions;
+  }
+
+  public isCommonUser() {
+    return this.cookieService.get(this.USER_TYPE) === "CommonUser";
+  }
+
+  public isDeliverer() {
+    return this.cookieService.get(this.USER_TYPE) === "Deliverer";
+  }
+
+  public isProducer() {
+    return this.cookieService.get(this.USER_TYPE) === "Producer";
   }
 }
 
