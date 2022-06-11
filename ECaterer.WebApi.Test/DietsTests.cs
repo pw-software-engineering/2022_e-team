@@ -200,8 +200,7 @@ namespace ECaterer.WebApi.Integration.Test
 
             var diets = await response.Content.ReadFromJsonAsync<GetDietsModel[]>();
 
-            var newDietId = diets.Where(diet => diet.Name == "Diet 1" && diet.Price == 1200).Select(diet => diet.Id).FirstOrDefault();
-            dietId = newDietId;
+            dietId = diets.Where(diet => diet.Name == "Diet 1").Select(diet => diet.Id).FirstOrDefault();
         }
 
         [Fact]

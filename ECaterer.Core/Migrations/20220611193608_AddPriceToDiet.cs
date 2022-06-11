@@ -2,7 +2,7 @@
 
 namespace ECaterer.Core.Migrations
 {
-    public partial class AddedPriceToDiet : Migration
+    public partial class AddPriceToDiet : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

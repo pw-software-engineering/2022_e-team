@@ -334,9 +334,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Meal", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.Diet", null)
+                    b.HasOne("ECaterer.Core.Models.Diet", "Diet")
                         .WithMany("Meals")
                         .HasForeignKey("DietId");
+
+                    b.Navigation("Diet");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>
