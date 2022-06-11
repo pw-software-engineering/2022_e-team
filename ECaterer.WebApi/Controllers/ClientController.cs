@@ -28,7 +28,6 @@ namespace ECaterer.WebApi.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
 
@@ -98,7 +97,7 @@ namespace ECaterer.WebApi.Controllers
             var user = new IdentityUser
             {
                 Email = registerUser.Email,
-                UserName = registerUser.Email,
+                UserName = registerUser.Email
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
