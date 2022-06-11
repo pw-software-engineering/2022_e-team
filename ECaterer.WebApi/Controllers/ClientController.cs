@@ -65,7 +65,7 @@ namespace ECaterer.WebApi.Controllers
                 return BadRequest();
             var Token = _tokenService.CreateToken(user);
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginUser.Password, false);
-            
+
             if (result.Succeeded)
             {
                 var authModel = new AuthenticatedUserModel
@@ -190,67 +190,49 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("orders")]
-        [Authorize/*(Roles = "client")*/]
+        [Authorize]
         public async Task<ActionResult<OrderClientModel[]>> GetOrders([FromQuery] GetOrdersClientQueryModel getOrdersQuery)
         {
-            try
-            {
-                var orders = (await _orderService.GetOrders(getOrdersQuery));
-                if (orders == null)
-                    return BadRequest("Pobranie nie powiodło się");
-
-                var ordersModel = orders
-                    .Select(order => _mapper.Map<OrderClientModel>(order))
-                    .ToArray();
-
-                return Ok(ordersModel);
-            }
-            catch
-            {
+            var orders = (await _orderService.GetOrders(getOrdersQuery));
+            if (orders == null)
                 return BadRequest("Pobranie nie powiodło się");
-            }
+
+            var ordersModel = orders
+                .Select(order => _mapper.Map<OrderClientModel>(order))
+                .ToArray();
+
+            return Ok(ordersModel);
         }
 
         [HttpPost("orders")]
-        [Authorize/*(Roles = "client")*/]
+        [Authorize]
         public async Task<IActionResult> AddOrder(AddOrderModel model)
         {
-            try
-            {
-                var email = this.User.FindFirstValue(ClaimTypes.Email);
-                var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
+            var email = this.User.FindFirstValue(ClaimTypes.Email);
+            var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
 
-                var order = await _orderService.AddOrder(userId, model);
+            var order = await _orderService.AddOrder(userId, model);
 
-                return CreatedAtAction(nameof(AddOrder), order.OrderId);
-            }
-            catch
-            {
+            if (order is null)
                 return BadRequest("Zapisanie nie powiodło się");
-            }
-            
+
+            return CreatedAtAction(nameof(AddOrder), order.OrderId);
+
         }
 
         [HttpPost("orders/{orderId}/pay")]
-        [Authorize/*(Roles = "client")*/]
+        [Authorize]
         public async Task<IActionResult> PayOrder(string orderId)
         {
-            try
-            {
-                var (exist, paid) = await _orderService.PayOrder(orderId);
+            var (exist, paid) = await _orderService.PayOrder(orderId);
 
-                if (!exist)
-                    return NotFound("Podane zamówienie nie istnieje");
+            if (!exist)
+                return NotFound("Podane zamówienie nie istnieje");
 
-                if (!paid)
-                    return BadRequest("Opłacenie zamówienia nie powiodło się");
-
-                return Ok("Opłacono zamówienie");
-            }
-            catch
-            {
+            if (!paid)
                 return BadRequest("Opłacenie zamówienia nie powiodło się");
-            }
+
+            return Ok("Opłacono zamówienie");
         }
     }
 }

@@ -39,7 +39,8 @@ namespace ECaterer.WebApi.Services
                 Calories = mealModel.Calories,
                 IngredientList = ingredients,
                 AllergentList = allergents,
-                Vegan = mealModel.Vegan
+                Vegan = mealModel.Vegan,
+                DietId = null
             };
 
             _context.Meals.Add(meal);
@@ -56,8 +57,7 @@ namespace ECaterer.WebApi.Services
 
             if (meal is null)
                 return null;
-
-            var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
+            var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(m => m.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
             

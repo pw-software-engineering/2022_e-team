@@ -12,6 +12,8 @@ using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
 using System.Web;
 using System.Collections.Generic;
+using System.Linq;
+using ECaterer.Contracts.Deliverer;
 
 namespace ECaterer.Web.Controllers
 {
@@ -64,6 +66,51 @@ namespace ECaterer.Web.Controllers
                     Comment = ""
                 }
             });
+        }
+
+        [HttpGet("getDelivererHistory")]
+        public async Task<ActionResult<IEnumerable<DelivererHistoryDTO>>> GetDelivererHistory()
+        {
+            var response = await _apiClient.GetAsync("/deliverer/history");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadFromJsonAsync<HistoryDelivererModel[]>();
+
+                return Ok(content.Select(d => HistoryDelivererConverter.Convert(d)));
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            //return Ok(new DelivererHistoryDTO[]
+            //{
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "",
+            //        DeliveryDate = DateTime.Now
+            //    },
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "nie dzwonić",
+            //        DeliveryDate = DateTime.Now
+            //    },
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "",
+            //        DeliveryDate = DateTime.Now
+            //    }
+            //});
         }
 
         [HttpPatch("deliverOrder/{orderNumber}")]
@@ -181,6 +228,24 @@ namespace ECaterer.Web.Controllers
                 ClientName = "120231",
                 ComplaintDate = DateTime.Now
             });
+        }
+
+        [HttpPost("makeComplaint")]
+        public async Task<ActionResult> MakeComplaint([FromBody] MakeComplaintDTO model)
+        {
+            return Ok();
+        }
+
+        [HttpPatch("cancelComplaint/{orderNumber}")]
+        public async Task<ActionResult> CancelComplaint(string orderNumber)
+        {
+            return Ok();
+        }
+
+        [HttpPost("answerComplaint")]
+        public async Task<ActionResult> AnswerComplaint([FromBody] AnswerComplaintDTO model)
+        {
+            return Ok();
         }
     }
 }

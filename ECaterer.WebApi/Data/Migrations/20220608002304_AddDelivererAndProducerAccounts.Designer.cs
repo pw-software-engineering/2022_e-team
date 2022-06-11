@@ -4,14 +4,16 @@ using ECaterer.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ECaterer.WebApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220608002304_AddDelivererAndProducerAccounts")]
+    partial class AddDelivererAndProducerAccounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,14 +51,14 @@ namespace ECaterer.WebApi.Data.Migrations
                         new
                         {
                             Id = "2c5e174e-3b0e-446f-86af-483d56fd7210",
-                            ConcurrencyStamp = "835113bc-b484-4cfd-bda6-5d2172c844e1",
+                            ConcurrencyStamp = "511af912-e61b-4742-821b-103441ba6a70",
                             Name = "producer",
                             NormalizedName = "PRODUCER"
                         },
                         new
                         {
                             Id = "1cf47549-bf5a-49b4-805a-48cad29cdea8",
-                            ConcurrencyStamp = "be49a562-de83-4580-ab14-0606653f9733",
+                            ConcurrencyStamp = "b09cfee5-afb3-45ea-82ed-ea709b568171",
                             Name = "deliverer",
                             NormalizedName = "DELIVERER"
                         });
@@ -155,15 +157,14 @@ namespace ECaterer.WebApi.Data.Migrations
                         {
                             Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "045922f1-b687-4c94-a048-24062d5013a7",
+                            ConcurrencyStamp = "663a5e56-8696-4e58-b2fe-dd2f8cb9843b",
                             Email = "producent@producent.pl",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "PRODUCENT@PRODUCENT.PL",
                             NormalizedUserName = "PRODUCENT@PRODUCENT.PL",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGkWGhVJa/bby48YaqBV6yK/wjITS5l9Acaiq0Ji1mMW9ScYFvNm7B6EJeb6M34Oew==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPooy7th8kDj/+w0OUgSrukwOHmSJ6SW0Ua1p6wQD7Dzz6+nG4OZ8mtIUpYoyT411g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3890ea32-8c54-4323-99c1-5e9568b5b205",
+                            SecurityStamp = "20c97c8a-97b8-465e-a034-1c6b20e2d9bb",
                             TwoFactorEnabled = false,
                             UserName = "producent@producent.pl"
                         },
@@ -171,15 +172,14 @@ namespace ECaterer.WebApi.Data.Migrations
                         {
                             Id = "d645ed4d-8474-4ead-a3b3-0b42f63d35a4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5c1c2d53-2307-4f86-8678-95c413440ae0",
+                            ConcurrencyStamp = "cf638481-fdc2-4323-be2a-ccb6da1baae0",
                             Email = "dostawca@dostawca.pl",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "DOSTAWCA@DOSTAWCA.PL",
                             NormalizedUserName = "DOSTAWCA@DOSTAWCA.PL",
-                            PasswordHash = "AQAAAAEAACcQAAAAEF1OGfXE2V4qM1eHXJulozDd3eWbUYl/nLn8nZ0iPRTlip1+SLkRnj9oBHTK8YQcXA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAyJPUY34ZEqpM7muMRcak7RbNFcJPXjPyxO/XN/8Il3ULM/UzSZzhz/Li8U1Svsag==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ba6d81a4-01db-4c04-95fb-1967f1a9635b",
+                            SecurityStamp = "339ede5a-fab7-4068-8282-57d49c0fc654",
                             TwoFactorEnabled = false,
                             UserName = "dostawca@dostawca.pl"
                         });

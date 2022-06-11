@@ -25,5 +25,8 @@ namespace ECaterer.Core.Models
         public virtual int Calories { get; set; }
         [Required]
         public virtual bool Vegan { get; set; }
+        [ForeignKey("Diet")]
+        public string DietId { get; set; }
+        public virtual Diet Diet { get; set; }
     }
 }

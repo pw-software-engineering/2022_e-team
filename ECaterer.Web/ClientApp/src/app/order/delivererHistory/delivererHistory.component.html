@@ -1,0 +1,33 @@
+
+<main id="delivererHistory">
+  <div>
+    <h2>Historia zamówień</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="orders"
+                      [height]="600"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [filterable]="true"
+                      [skip]="0">
+            <kendo-grid-column field="orderNumber" title="Numer zamówienia">
+            </kendo-grid-column>
+            <kendo-grid-column field="address" title="Adres">
+            </kendo-grid-column>
+            <kendo-grid-column field="phone" title="Numer telefonu">
+            </kendo-grid-column>
+            <kendo-grid-column field="comment" title="Komentarz od klienta">
+            </kendo-grid-column>
+            <kendo-grid-column field="deliveryDate" title="Data dostarczenia" filter="date">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.deliveryDate | date: 'dd.MM.yyyy'}}
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

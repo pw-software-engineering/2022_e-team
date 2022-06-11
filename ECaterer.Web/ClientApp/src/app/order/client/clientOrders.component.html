@@ -1,0 +1,58 @@
+
+<main id="clientOrders">
+  <div>
+    <h2>Lista zamówień</h2>
+    <section>
+      <div>
+        <div>
+          <kendo-grid [kendoGridBinding]="orders"
+                      [height]="600"
+                      [scrollable]="false"
+                      [pageable]="true"
+                      [pageSize]="6"
+                      [skip]="0">
+            <kendo-grid-column field="orderNumber" title="Numer zamówienia">
+            </kendo-grid-column>
+            <kendo-grid-column field="startDate" title="Początek zamówienia" filter="date">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.startDate | date: 'dd.MM.yyyy'}}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="endDate" title="Koniec zamówienia" filter="date">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.endDate | date: 'dd.MM.yyyy'}}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="price" title="Cena">
+            </kendo-grid-column>
+            <kendo-grid-column field="status" title="Status">
+            </kendo-grid-column>
+            <kendo-grid-column [width]="200">
+              <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button *ngIf="dataItem.complaintStatus == ''" kendoButton (click)="openComplaint(dataItem.orderNumber)" themeColor="primary">Złóż reklamację</button>
+                <span *ngIf="dataItem.complaintStatus == 'Opened'">Reklamacja złożona</span><button *ngIf="dataItem.complaintStatus == 'Opened'" kendoButton (click)="cancelComplaint(dataItem.orderNumber)" themeColor="primary">Anuluj</button>
+                <div *ngIf="dataItem.complaintStatus == 'Closed'"><span>Reklamacja zakończona</span></div>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<kendo-dialog tile="Nowa reklamacja"
+              *ngIf="newComplaintShown"
+              (close)="closeNewComplaint()"
+              [minWidth]="250"
+              [width]="450">
+  <p>Powód reklamacji</p>
+  <kendo-textarea [style.width.px]="400"
+                  resizable="auto"
+                  [(ngModel)]="complaintModel.description">
+  </kendo-textarea>
+    <kendo-dialog-actions>
+      <button kendoButton (click)="closeNewComplaint()" themeColor="secondary">Anuluj</button>
+      <button kendoButton (click)="makeComplaint()" themeColor="primary">Potwierdź</button>
+    </kendo-dialog-actions>
+</kendo-dialog>

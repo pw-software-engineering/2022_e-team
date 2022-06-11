@@ -212,5 +212,17 @@ namespace ECaterer.WebApi.Services
 
             return builder.GetQuery();
         }
+
+        public async Task<IEnumerable<Order>> GetOrders(GetHistoryDelivererQueryModel getOrdersQuery)
+        {
+            var orders = _context
+                .Orders
+                .Include(o => o.DeliveryDetails)
+                .Include(o => o.DeliveryDetails.Address);
+
+            var builder = new QueryBuilder<Order>(orders).PerformAction(new OrderMultiStatusFilter(new List<string>() { OrderStatus.Delivered.ToString(), OrderStatus.Finished.ToString() }));
+
+            return builder.GetQuery();
+        }
     }
 }
