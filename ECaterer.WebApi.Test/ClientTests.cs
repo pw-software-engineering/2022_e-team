@@ -168,6 +168,7 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task BB_AddOrder_Unauthorized()
         {
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("api-key", "");
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"/client/orders");
             requestMessage.Content = JsonContent.Create(new AddOrderModel()
             {
@@ -258,7 +259,6 @@ namespace ECaterer.WebApi.Integration.Test
         [Fact]
         public async Task DB_PayOrder_NotFound()
         {
-
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/client/orders/unexisting-meal/pay");
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("api-key", TokenHandler.GetToken());
 
