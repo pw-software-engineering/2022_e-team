@@ -49,96 +49,68 @@ namespace ECaterer.WebApi.Controllers
             _clientController.ControllerContext = new ControllerContext(ControllerContext);
             var response = await _clientController.Login(loginUser);
             ControllerContext = new ControllerContext(_clientController.ControllerContext);
-            
+
             return response;
         }
 
         [HttpPost("orders/{orderId}/complete")]
-        [Authorize/*(Roles = "producer")*/]
+        [Authorize(Roles = "producer")]
         public async Task<IActionResult> CompleteOrder([FromRoute] string orderId)
         {
-            try
-            {
-                var (exist, completed) = await _orderService.CompleteOrder(orderId);
+            var (exist, completed) = await _orderService.CompleteOrder(orderId);
 
-                if (!exist)
-                    return NotFound("Podane zamówienie nie istnieje");
+            if (!exist)
+                return NotFound("Podane zamówienie nie istnieje");
 
-                if (!completed)
-                    return BadRequest("Niepowodzenie potwierdzenia wykoniania zamówienia");
-
-                return Ok("Potwierdzenie wykonania zamówienia");
-            }
-            catch
-            {
+            if (!completed)
                 return BadRequest("Niepowodzenie potwierdzenia wykoniania zamówienia");
-            }
+
+            return Ok("Potwierdzenie wykonania zamówienia");
         }
 
         [HttpPost("orders/{orderId}/answer-complaint")]
-        [Authorize/*(Roles = "producer")*/]
+        [Authorize(Roles = "producer")]
         public async Task<IActionResult> AnswerComplaint([FromRoute] string orderId, [FromBody] AnswerComplaintModel model)
         {
-            try
-            {
-                var (exist, answered) = await _complaintService.AnswerComplaint(orderId, model.Complaint_answer);
+            var (exist, answered) = await _complaintService.AnswerComplaint(orderId, model.Complaint_answer);
 
-                if (!exist)
-                    return NotFound("Podane zamówienie nie istnieje albo nie posiada reklamacji");
+            if (!exist)
+                return NotFound("Podane zamówienie nie istnieje albo nie posiada reklamacji");
 
-                if (!answered)
-                    return BadRequest("Zapisanie nie powiodło się");
-
-                return Ok("Zapisano odpowiedź do reklamacji");
-            }
-            catch
-            {
+            if (!answered)
                 return BadRequest("Zapisanie nie powiodło się");
-            }
+
+            return Ok("Zapisano odpowiedź do reklamacji");
         }
 
         [HttpGet("orders/complaints")]
-        [Authorize/*(Roles = "producer")*/]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult<ComplaintModel[]>> GetOrdersComplaints()
         {
-            try
-            {
-                var complaints = (await _complaintService.GetOrdersComplaints());
-                if (complaints is null)
-                    return BadRequest("Pobieranie nie powiodło się");
-
-                var complaintsModel = complaints
-                    .Select(complaint => _mapper.Map<ComplaintModel>(complaint))
-                    .ToArray();
-
-                return Ok(complaintsModel);
-            }
-            catch
-            {
+            var complaints = (await _complaintService.GetOrdersComplaints());
+            if (complaints is null)
                 return BadRequest("Pobieranie nie powiodło się");
-            }
+
+            var complaintsModel = complaints
+                .Select(complaint => _mapper.Map<ComplaintModel>(complaint))
+                .ToArray();
+
+            return Ok(complaintsModel);
         }
 
         [HttpGet("orders")]
-        [Authorize/*(Roles = "producer")*/]
+        [Authorize(Roles = "producer")]
         public async Task<ActionResult<OrderProducerModel[]>> GetOrders([FromQuery] GetOrdersProducerQueryModel getOrdersQuery)
         {
-            try
-            {
-                var orders = (await _orderService.GetOrders(getOrdersQuery));
-                if (orders is null)
-                    return BadRequest("Pobranie nie powiodło się");
-
-                var ordersModel = orders
-                    .Select(order => _mapper.Map<OrderProducerModel>(order))
-                    .ToArray();
-
-                return Ok(ordersModel);
-            }
-            catch
-            {
+            var orders = (await _orderService.GetOrders(getOrdersQuery));
+            if (orders is null)
                 return BadRequest("Pobranie nie powiodło się");
-            }
+
+            var ordersModel = orders
+                .Select(order => _mapper.Map<OrderProducerModel>(order))
+                .ToArray();
+
+            return Ok(ordersModel);
         }
     }
 }
