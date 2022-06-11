@@ -1,5 +1,4 @@
-﻿using ECaterer.Contracts.Converters.Orders;
-using ECaterer.Contracts.Diets;
+﻿using ECaterer.Contracts.Diets;
 using ECaterer.Core;
 using ECaterer.Core.Models;
 using ECaterer.Core.Models.Enums;
