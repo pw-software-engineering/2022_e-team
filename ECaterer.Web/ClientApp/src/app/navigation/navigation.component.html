@@ -1,9 +1,24 @@
-<kendo-appbar position="top" id="navigation">
-  <kendo-appbar-section>
+<kendo-appbar position="top" id="navigation" *ngIf="isCommon || isProducer || isDeliverer">
+  <kendo-appbar-section *ngIf="isCommon">
     <ul>
-      <li><span><button kendoButton fillMode="link" (click)="goToDiets()">Lista dostępnych diet</button></span></li>
-      <li><span><button kendoButton fillMode="link" (click)="goToCart()">Koszyk <span id="cartCount">0</span></button></span></li>
-      <li><span><button kendoButton fillMode="link" (click)="logout()">Wyloguj się</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="goToClientDiets()">Lista dostępnych diet</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="goToClientOrders()">Lista zamówień</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="goToClientCart()">Koszyk <span id="cartCount">0</span></button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="logoutCommon()">Wyloguj się</button></span></li>
+    </ul>
+  </kendo-appbar-section>
+  <kendo-appbar-section *ngIf="isDeliverer">
+    <ul>
+      <li><span><button kendoButton fillMode="link" (click)="goToDelivererHistory()">Historia zamówień</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="goToDelivererOrders()">Lista zamówień</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="logoutDeliverer()">Wyloguj się</button></span></li>
+    </ul>
+  </kendo-appbar-section>
+  <kendo-appbar-section *ngIf="isProducer">
+    <ul>
+      <li><span><button kendoButton fillMode="link" (click)="goToProducerDiets()">Lista diet</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="goToProducerOrders()">Lista zamówień</button></span></li>
+      <li><span><button kendoButton fillMode="link" (click)="logoutProducer()">Wyloguj się</button></span></li>
     </ul>
   </kendo-appbar-section>
 </kendo-appbar>
