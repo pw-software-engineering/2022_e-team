@@ -224,6 +224,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost("orders/{orderId}/pay")]
         [Authorize(Roles = "client")]
+
         public async Task<IActionResult> PayOrder(string orderId)
         {
             var (exist, paid) = await _orderService.PayOrder(orderId);

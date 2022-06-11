@@ -112,6 +112,10 @@ namespace ECaterer.WebApi.Controllers
                     return NotFound("Podany posiłek nie istnieje");
                 return Ok("Powodzenie usunięcia posiłku");
             }
+            catch(MealToRemoveIsContainedByDietException)
+            {
+                return BadRequest("Posiłek jest zawarty przez dietę");
+            }
             catch
             {
                 return BadRequest("Niepowodzenie usunięcia posiłku");
