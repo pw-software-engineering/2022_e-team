@@ -58,59 +58,46 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("orders")]
-        [Authorize/*(Roles = "deliverer")*/]
+        [Authorize(Roles = "deliverer")]
         public async Task<ActionResult<OrderDelivererModel[]>> GetOrdersToDeliver()
         {
-            try
-            {
-                var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetOrdersDelivererQueryModel());
-                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<OrderDelivererModel>(o)).ToArray();
-                return Ok(deliveryDetailsDTO);
-            }
-            catch
-            {
+            var ordersWithStatusPrepared = await _ordersService.GetOrders(new GetOrdersDelivererQueryModel());
+
+            if (ordersWithStatusPrepared is null)
                 return BadRequest("Niepowodzenie pobierania");
-            }
+
+            var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<OrderDelivererModel>(o)).ToArray();
+            return Ok(deliveryDetailsDTO);
         }
 
         [HttpGet("history")]
-        //[Authorize/*(Roles = "deliverer")*/]
+        [Authorize(Roles = "deliverer")]
         public async Task<ActionResult<HistoryDelivererModel[]>> GetOrdersHistory()
         {
-            try
-            {
-                var ordersWithStatusPrepared = (await _ordersService.GetOrders(new GetHistoryDelivererQueryModel())).ToList();
-                var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<HistoryDelivererModel>(o)).ToArray();
-                return Ok(deliveryDetailsDTO);
-            }
-            catch
-            {
+            var ordersWithStatusPrepared = (await _ordersService.GetOrders(new GetHistoryDelivererQueryModel())).ToList();
+
+            if (ordersWithStatusPrepared is null)
                 return BadRequest("Niepowodzenie pobierania");
-            }
+
+            var deliveryDetailsDTO = ordersWithStatusPrepared.Select(o => _mapper.Map<HistoryDelivererModel>(o)).ToArray();
+            return Ok(deliveryDetailsDTO);
         }
 
         [HttpPost("orders/{orderID}/deliver")]
-        //[Authorize(Roles = "deliverer")]
+        [Authorize(Roles = "deliverer")]
         public async Task<ActionResult> FinishDelivery([FromQuery] string orderID)
         {
-            try
-            {
-                var order = _context.Orders.Include(o => o.DeliveryDetails).FirstOrDefault(order => order.OrderId == orderID);
-                if (order is null)
-                    return NotFound("Podane zamówienie nie istnieje");
-                if (order.Status != (int)OrderStatus.Prepared)
-                    return BadRequest("Niepowodzenie potwierdzenia dostawy");
-                order.Status = (int)OrderStatus.Delivered;
-                order.DeliveryDetails.DeliveryDate = DateTime.Now;
-                _context.Orders.Update(order);
-                _context.DeliveryDetails.Update(order.DeliveryDetails);
-                await _context.SaveChangesAsync();
-                return Ok("Powodzenie potwierdzenia dostawy");
-            }
-            catch
-            {
+            var order = _context.Orders.Include(o => o.DeliveryDetails).FirstOrDefault(order => order.OrderId == orderID);
+            if (order is null)
+                return NotFound("Podane zamówienie nie istnieje");
+            if (order.Status != (int)OrderStatus.Prepared)
                 return BadRequest("Niepowodzenie potwierdzenia dostawy");
-            }
+            order.Status = (int)OrderStatus.Delivered;
+            order.DeliveryDetails.DeliveryDate = DateTime.Now;
+            _context.Orders.Update(order);
+            _context.DeliveryDetails.Update(order.DeliveryDetails);
+            await _context.SaveChangesAsync();
+            return Ok("Powodzenie potwierdzenia dostawy");
         }
     }
 }
