@@ -132,6 +132,7 @@ namespace ECaterer.WebApi.Controllers
 
         [Route("account")]
         [HttpGet]
+        [Authorize(Roles = "client")]
         public ActionResult<ClientModel> GetAccount()
         {
             var email = this.User.FindFirstValue(ClaimTypes.Email);
@@ -146,6 +147,7 @@ namespace ECaterer.WebApi.Controllers
 
         [Route("account")]
         [HttpPut]
+        [Authorize(Roles = "client")]
         public ActionResult UpdateAccount(ClientModel client)
         {
             var email = this.User.FindFirstValue(ClaimTypes.Email);
@@ -190,7 +192,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("orders")]
-        [Authorize]
+        [Authorize(Roles = "client")]
         public async Task<ActionResult<OrderClientModel[]>> GetOrders([FromQuery] GetOrdersClientQueryModel getOrdersQuery)
         {
             var orders = (await _orderService.GetOrders(getOrdersQuery));
@@ -205,7 +207,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPost("orders")]
-        [Authorize]
+        [Authorize(Roles = "client")]
         public async Task<IActionResult> AddOrder(AddOrderModel model)
         {
             var email = this.User.FindFirstValue(ClaimTypes.Email);
@@ -221,7 +223,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpPost("orders/{orderId}/pay")]
-        [Authorize]
+        [Authorize(Roles = "client")]
         public async Task<IActionResult> PayOrder(string orderId)
         {
             var (exist, paid) = await _orderService.PayOrder(orderId);

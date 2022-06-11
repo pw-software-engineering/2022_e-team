@@ -37,7 +37,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize/*(Roles = "producer, client")*/]
+        [Authorize(Roles = "producer,client")]
         public async Task<ActionResult<GetMealsResponseModel[]>> GetMeals([FromQuery] GetMealsQueryModel query)
         {
             try
@@ -68,7 +68,7 @@ namespace ECaterer.WebApi.Controllers
         }
 
         [HttpGet("{mealId}")]
-        [Authorize/*(Roles = "producer, client")*/]
+        [Authorize(Roles = "producer,client")]
         public async Task<ActionResult<MealModel>> GetMealById(string mealId)
         {
             try

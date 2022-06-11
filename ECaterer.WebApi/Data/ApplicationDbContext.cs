@@ -21,6 +21,7 @@ namespace ECaterer.WebApi.Data
             //Seeding a  'Administrator' role to AspNetRoles table
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "2c5e174e-3b0e-446f-86af-483d56fd7210", Name = "producer", NormalizedName = "PRODUCER".ToUpper() });
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "1cf47549-bf5a-49b4-805a-48cad29cdea8", Name = "deliverer", NormalizedName = "DELIVERER".ToUpper() });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "ff096afe-2daa-4157-b7ad-8f053443f516", Name = "client", NormalizedName = "CLIENT".ToUpper() });
 
             //a hasher to hash the password before seeding the user to the db
             var hasher = new PasswordHasher<IdentityUser>();
@@ -47,7 +48,19 @@ namespace ECaterer.WebApi.Data
                   NormalizedEmail = "DOSTAWCA@DOSTAWCA.PL",
                   PasswordHash = hasher.HashPassword(null, "Dostawca123!")
               }
-          );
+            );
+
+            modelBuilder.Entity<IdentityUser>().HasData(
+              new IdentityUser
+              {
+                  Id = "ffa4ebd8-39fb-46bd-a7bd-c2466c53030c", // primary key
+                  UserName = "klient@klient.pl",
+                  NormalizedUserName = "KLIENT@KLIENT.PL",
+                  Email = "klient@klient.pl",
+                  NormalizedEmail = "KLIENT@KLIENT.PL",
+                  PasswordHash = hasher.HashPassword(null, "Klient123!")
+              }
+            );
 
 
             //Seeding the relation between our user and role to AspNetUserRoles table
@@ -62,6 +75,12 @@ namespace ECaterer.WebApi.Data
                {
                    RoleId = "1cf47549-bf5a-49b4-805a-48cad29cdea8",
                    UserId = "d645ed4d-8474-4ead-a3b3-0b42f63d35a4"
+               });
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+               new IdentityUserRole<string>
+               {
+                   RoleId = "ff096afe-2daa-4157-b7ad-8f053443f516",
+                   UserId = "ffa4ebd8-39fb-46bd-a7bd-c2466c53030c"
                });
         }
     }
