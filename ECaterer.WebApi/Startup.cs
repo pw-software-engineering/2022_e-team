@@ -52,6 +52,7 @@ namespace ECaterer.WebApi
                     Configuration.GetConnectionString("CoreDbConnection")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllers();
