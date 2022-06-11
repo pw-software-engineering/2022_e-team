@@ -28,13 +28,19 @@ namespace ECaterer.WebApi.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly TokenService _tokenService;
         private readonly DataContext _context;
 
         private readonly IOrderService _orderService;
         private readonly Mapper _mapper;
 
-        public ClientController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TokenService tokenService, DataContext context, IOrderService ordersService)
+        public ClientController(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            TokenService tokenService,
+            DataContext context,
+            IOrderService ordersService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -92,13 +98,15 @@ namespace ECaterer.WebApi.Controllers
             var user = new IdentityUser
             {
                 Email = registerUser.Email,
-                UserName = registerUser.Email
+                UserName = registerUser.Email,
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "client");
+
                 var newAddress = new Address()
                 {
                     Street = registerUser.Address.Street,
