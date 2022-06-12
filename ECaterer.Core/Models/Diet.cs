@@ -27,5 +27,6 @@ namespace ECaterer.Core.Models
         public virtual bool Vegan { get; set; }
         [Required]
         public virtual int Price { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

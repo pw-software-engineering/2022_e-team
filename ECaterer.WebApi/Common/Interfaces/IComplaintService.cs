@@ -10,5 +10,6 @@ namespace ECaterer.WebApi.Common.Interfaces
     {
         Task<(bool exists, bool answered)> AnswerComplaint(string complaintId, string answer);
         Task<IEnumerable<Complaint>> GetOrdersComplaints();
+        Task<(bool exists, bool added)> AddComplaint(string orderId, string complaintDescription);
     }
 }
