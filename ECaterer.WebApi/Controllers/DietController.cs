@@ -29,12 +29,20 @@ namespace ECaterer.WebApi.Controllers
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Diet, DietModel>()
+                cfg.CreateMap<Diet, AddEditDietModel>()
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(col => col.Title))
                     .ForMember(dest => dest.MealIds, opt => opt.MapFrom(col => col.Meals.Select(m => m.MealId).ToArray()));
                 cfg.CreateMap<Diet, GetDietsModel>()
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(col => col.Title))
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.DietId));
+                cfg.CreateMap<Meal, MealModel>()
+                   .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToArray()))
+                   .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToArray()));
+                cfg.CreateMap<Diet, DietModel>()
+                    .ForMember(dest => dest.Name, opt => opt.MapFrom(col => col.Title))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.DietId))
+                    .ForMember(dest => dest.Meals, opt => opt.MapFrom(col => col.Meals));
+
             });
             _mapper = new Mapper(mappingConfig);
         }
@@ -71,7 +79,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost("diets")]
         [Authorize(Roles = "producer")]
-        public async Task<ActionResult> AddDiet([FromBody] DietModel dietModel)
+        public async Task<ActionResult> AddDiet([FromBody] AddEditDietModel dietModel)
         {
             var diet = await _diets.AddDiet(dietModel);
             if (diet is null)
@@ -81,7 +89,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPut("diets/{dietId}")]
         [Authorize(Roles = "producer")]
-        public async Task<ActionResult> EditDiet(string dietId, [FromBody] DietModel dietModel)
+        public async Task<ActionResult> EditDiet(string dietId, [FromBody] AddEditDietModel dietModel)
         {
             var diet = await _diets.EditDiet(dietId, dietModel);
             if (diet is null)
