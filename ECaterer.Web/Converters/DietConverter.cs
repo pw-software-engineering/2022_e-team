@@ -1,5 +1,6 @@
 ﻿using ECaterer.Contracts.Orders;
 using ECaterer.Web.DTO;
+using System.Linq;
 
 namespace ECaterer.Web.Converters
 {
@@ -12,7 +13,7 @@ namespace ECaterer.Web.Converters
                 Id = input.DietId,
                 Name = input.Name,
                 Price = input.Price,
-                Calories = input.Meals.Calories,
+                Calories = input.Meals.Sum(m => m.Calories),
                 Vegan = input.Vegan,
             };
         }

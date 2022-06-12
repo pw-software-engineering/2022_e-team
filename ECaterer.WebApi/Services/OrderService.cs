@@ -30,7 +30,7 @@ namespace ECaterer.WebApi.Services
             if (model.EndDate <= model.StartDate || model.StartDate <= DateTime.Now)
                 return null;
 
-            if (ValidateDietsIDs(model.DietIDs))
+            if (!ValidateDietsIDs(model.DietIDs))
                 return null;
 
             var address = await GetDeliveryAddress(userId, model);
@@ -155,7 +155,7 @@ namespace ECaterer.WebApi.Services
 
         private bool ValidateDietsIDs(string[] dietIDs)
         {
-            return dietIDs.Any(id => _context.Diets.Any(d => d.DietId == id)) /*|| dietIDs.Length == 0*/;
+            return dietIDs.All(id => _context.Diets.Any(d => d.DietId == id));
         }
 
         private async Task<Address> GetDeliveryAddress(string userId, AddOrderModel model)

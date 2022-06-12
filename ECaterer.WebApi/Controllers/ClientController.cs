@@ -97,7 +97,7 @@ namespace ECaterer.WebApi.Controllers
             var user = new IdentityUser
             {
                 Email = registerUser.Email,
-                UserName = registerUser.Email
+                UserName = registerUser.Email,
             };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
@@ -231,7 +231,6 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost("orders/{orderId}/pay")]
         [Authorize(Roles = "client")]
-
         public async Task<IActionResult> PayOrder(string orderId)
         {
             var (exist, paid) = await _orderService.PayOrder(orderId);

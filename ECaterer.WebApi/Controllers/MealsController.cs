@@ -25,13 +25,14 @@ namespace ECaterer.WebApi.Controllers
         public MealsController(IMealRepository meals)
         {
             _meals = meals;
+
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Meal, MealModel>()
-                    .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToList()))
-                    .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToList()));
+                    .ForMember(dest => dest.AllergentList, opt => opt.MapFrom(col => col.AllergentList.Select(al => al.Name).ToArray()))
+                    .ForMember(dest => dest.IngredientList, opt => opt.MapFrom(col => col.IngredientList.Select(ing => ing.Name).ToArray()));
                 cfg.CreateMap<Meal, GetMealsResponseModel>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.MealId)); ;
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.MealId));
             });
             _mapper = new Mapper(mappingConfig);
         }

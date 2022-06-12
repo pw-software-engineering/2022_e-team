@@ -8,6 +8,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["ECaterer.WebApi/ECaterer.WebApi.csproj", "ECaterer.WebApi/"]
+COPY ["ECaterer.Contracts/ECaterer.Contracts.csproj", "ECaterer.Contracts/"]
+COPY ["ECaterer.Web/ECaterer.Web.csproj", "ECaterer.Web/"]
 COPY ["ECaterer.Core/ECaterer.Core.csproj", "ECaterer.Core/"]
 RUN dotnet restore "ECaterer.WebApi/ECaterer.WebApi.csproj"
 COPY . .

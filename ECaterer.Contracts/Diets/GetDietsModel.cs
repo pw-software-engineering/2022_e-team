@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ECaterer.Contracts.Diets
 {
-    public class GetDietModel
+    public class GetDietsModel
     {
         public string Id { get; set; }
         public string Name { get; set; }
