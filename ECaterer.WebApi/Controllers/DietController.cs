@@ -93,17 +93,13 @@ namespace ECaterer.WebApi.Controllers
         [Authorize(Roles = "producer")]
         public async Task<ActionResult> DeleteDiet(string dietId)
         {
-            Diet diet;
-            try
-            {
-                diet = await _diets.DeleteDiet(dietId);
-            }
-            catch
-            {
-                return BadRequest("Niepowodzenie usunięcia diety");
-            }
-            if (diet is null)
+            (bool exists, bool deleted) = await _diets.DeleteDiet(dietId);
+            if (!exists)
                 return NotFound("Podana dieta nie istnieje");
+
+            if (!deleted)
+                return BadRequest("Niepowodzenie usunięcia diety");
+ 
             return Ok("Powodzenie usunięcia diety");
         }
     }

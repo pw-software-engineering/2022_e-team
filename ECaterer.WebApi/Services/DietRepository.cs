@@ -104,23 +104,26 @@ namespace ECaterer.WebApi.Services
             return diet;
         }
 
-        public async Task<Diet> DeleteDiet(string dietId)
+        public async Task<(bool exists, bool deleted)> DeleteDiet(string dietId)
         {
             var diet = await _context.Diets.FirstOrDefaultAsync(diet => diet.DietId == dietId);
 
             if (diet is null)
-                return null;
+                return (false, false);
 
             var ordersWithDiet = _context.Orders.Include(d => d.Diets).Where(o => o.Diets.Any(d => d.DietId == dietId));
-            await ordersWithDiet.ForEachAsync(o => o.Status = (int)OrderStatus.Canceled);
+            var allowedStatuses = new List<OrderStatus>() { OrderStatus.Canceled, OrderStatus.Finished };
+            if (await ordersWithDiet.AllAsync(order => allowedStatuses.Contains((OrderStatus)order.Status))) {
+                var mealsWithDiet = _context.Meals.Where(m => m.DietId == dietId);
+                await mealsWithDiet.ForEachAsync(m => m.DietId = null);
+                _context.Diets.Remove(diet);
+                await _context.SaveChangesAsync();
+            }
+            else
+                return (true, false);
 
-            var mealsWithDiet = _context.Meals.Where(m => m.DietId== dietId);
-            await mealsWithDiet.ForEachAsync(m => m.DietId = null);
 
-            _context.Diets.Remove(diet);
-            await _context.SaveChangesAsync();
-
-            return diet;
+            return (true, true);
         }
 
         private IEnumerable<Meal> GetMeals(DietModel dietModel) => _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToList();

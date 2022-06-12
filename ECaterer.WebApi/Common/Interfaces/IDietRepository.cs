@@ -14,6 +14,6 @@ namespace ECaterer.WebApi.Common.Interfaces
         Task<IEnumerable<Diet>> GetDiets(GetDietsQueryModel query);
         Task<Diet> AddDiet(DietModel dietModel);
         Task<Diet> EditDiet(string dietId, DietModel dietModel);
-        Task<Diet> DeleteDiet(string dietId);
+        Task<(bool exists, bool deleted)> DeleteDiet(string dietId);
     }
 }
