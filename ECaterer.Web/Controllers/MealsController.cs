@@ -1,13 +1,14 @@
-﻿using ECaterer.Contracts;
-using ECaterer.Core;
-using ECaterer.Core.Models;
+﻿using ECaterer.Contracts.Diets;
+using ECaterer.Contracts.Meals;
+using ECaterer.Web.Converters;
 using ECaterer.Web.DTO.MealsDTO;
 using ECaterer.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -17,30 +18,29 @@ namespace ECaterer.Web.Controllers
     [Route("[controller]")]
     public class MealsController : Controller
     {
-        private readonly DataContext _context;
-        private readonly IConfiguration _configuration;
         private readonly ApiClient _apiClient;
 
-        public MealsController(DataContext context, IConfiguration configuration, ApiClient apiClient)
+        public MealsController(ApiClient apiClient)
         {
-            _context = context;
-            _configuration = configuration;
             _apiClient = apiClient;
         }
 
         [HttpGet("GetMeals")]
         public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals()
         {
-            string token = Request.Cookies["SESSIONID"];
-            _apiClient.DefaultRequestHeaders.Add("Authorization", "bearer " + token);
-            var response = await _apiClient.GetAsync("/api/Meals");
-            var content = await response.Content.ReadFromJsonAsync<IEnumerable<MealDTO>>();
+            // TODO: You want get AllergentList and IngredientList, but there are no such fields in GetMealsResponseModel
+
+            var message = new HttpRequestMessage(HttpMethod.Get, "meals");
+            TokenPropagator.Propagate(Request, message);
+            var response = await _apiClient.SendAsync(message);
 
             if (response.IsSuccessStatusCode)
             {
+                var content = await response.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
+                var meals = content.Select(meal => MealConverter.ConvertBack(meal)).AsEnumerable();
                 return Ok(content);
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 return Unauthorized();
             }
@@ -51,60 +51,50 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpGet("GetMealsInDiet/{dietId}")]
-        public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(int dietId)
+        public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(string dietId)
         {
-            if (dietId == 0)
+            // TODO: API returns wrong object
+
+            if (dietId == "0")
             {
                 return Ok(new List<MealDTO>());
             }
-            return Ok(new List<MealDTO>()
+
+            var message = new HttpRequestMessage(HttpMethod.Get, $"diets/{dietId}");
+            TokenPropagator.Propagate(Request, message);
+            var response = await _apiClient.SendAsync(message);
+
+            switch (response.StatusCode)
             {
-                new MealDTO()
-                {
-                    Id = "1",
-                    Name = "Tort orzechowy",
-                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
-                    AllergentList = new string[]{"orzechy", "laktoza" },
-                    Calories = 1000,
-                    Vegan = true
-                },
-                new MealDTO()
-                {
-                    Id = "2",
-                    Name = "Tort orzechowy3",
-                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
-                    AllergentList = new string[]{"orzechy", "laktoza" },
-                    Calories = 1000,
-                    Vegan = true
-                },
-                new MealDTO()
-                {
-                    Id = "3",
-                    Name = "Tort orzechowy4",
-                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
-                    AllergentList = new string[]{"orzechy", "laktoza" },
-                    Calories = 1500,
-                    Vegan = true
-                },
-                new MealDTO()
-                {
-                    Id = "4",
-                    Name = "Tort orzechowy5",
-                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
-                    AllergentList = new string[]{"orzechy", "laktoza" },
-                    Calories = 1300,
-                    Vegan = false
-                },
-                new MealDTO()
-                {
-                    Id = "5",
-                    Name = "Tort orzechowy6",
-                    IngredientList = new string[]{"cukier", "mąka", "orzechy" },
-                    AllergentList = new string[]{"orzechy", "laktoza" },
-                    Calories = 1400,
-                    Vegan = false
-                }
-            });
+                case HttpStatusCode.OK:
+                    // TODO: get meals from correct object
+
+                    //var diet = await response.Content.ReadFromJsonAsync<DietModel>();
+                    //message = new HttpRequestMessage(HttpMethod.Get, "meals");
+                    //TokenPropagator.Propagate(Request, message);
+                    //response = await _apiClient.SendAsync(message);
+
+                    //switch (response.StatusCode)
+                    //{
+                    //    case HttpStatusCode.OK:
+                    //        var meals = await response.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
+                    //        return Ok(meals.Where(meal => diet.MealIds.Contains(meal.Id)).Select(meal => MealConverter.ConvertBack(meal)).AsEnumerable());
+                    //    case HttpStatusCode.Unauthorized:
+                    //        return Unauthorized();
+                    //    case HttpStatusCode.BadRequest:
+                    //        return BadRequest();
+                    //    default:
+                    //        return BadRequest();
+                    //}
+                case HttpStatusCode.Unauthorized:
+                    return Unauthorized();
+                case HttpStatusCode.BadRequest:
+                    return BadRequest();
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                default:
+                    return BadRequest();
+            }
         }
     }
 }
