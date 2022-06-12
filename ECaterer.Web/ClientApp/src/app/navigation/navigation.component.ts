@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, NavigationError, Router, Event } from '@angular/router';
 import { OrderService } from '../order/api/order.service';
 import { RegistrationService } from '../registration/api/registration.service';
 
@@ -20,6 +20,20 @@ export class Navigation implements OnInit {
   }
 
   ngOnInit(): void {
+    
+
+    this.router.events.subscribe((event: Event) => {
+
+      if (event instanceof NavigationEnd) {
+        this.handleRouteChange();
+      }
+    });
+  }
+
+  private handleRouteChange() {
+    this.isCommon = false;
+    this.isDeliverer = false;
+    this.isProducer = false;
     if (this.registrationService.isCommonUser()) {
       this.isCommon = true;
       this.orderService.refreshCartCount();
@@ -30,9 +44,8 @@ export class Navigation implements OnInit {
     else if (this.registrationService.isProducer()) {
       this.isProducer = true;
     }
-
-    
   }
+
 
   public goToClientDiets() {
     this.router.navigate(['/client/diets']);

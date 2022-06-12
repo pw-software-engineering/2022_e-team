@@ -3,18 +3,18 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 import { RegistrationService } from '../registration/api/registration.service';
 
 @Injectable({ providedIn: "root" })
-export class AuthGuard implements CanActivate {
+export class DelivererGuard implements CanActivate {
 
   constructor(private router: Router, private registrationService: RegistrationService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-    //if (this.registrationService.getToken() !== null) {
-    //  return true;
-    //}
+    if (this.registrationService.isDeliverer()) {
+      return true;
+    }
 
-    //this.router.navigate(['/client/login']);
-    //return false;
-    return true;
+    this.router.navigate(['/deliverer/login']);
+    return false;
+
   }
 }
