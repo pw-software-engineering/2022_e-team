@@ -118,11 +118,7 @@ namespace ECaterer.WebApi.Services
             await mealsWithDiet.ForEachAsync(m => m.DietId = null);
 
             _context.Diets.Remove(diet);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception e) { }
+            await _context.SaveChangesAsync();
 
             return diet;
         }
