@@ -113,15 +113,16 @@ namespace ECaterer.WebApi.Services
 
             var ordersWithDiet = _context.Orders.Include(d => d.Diets).Where(o => o.Diets.Any(d => d.DietId == dietId));
             var allowedStatuses = new List<OrderStatus>() { OrderStatus.Canceled, OrderStatus.Finished };
-            if (await ordersWithDiet.AllAsync(order => allowedStatuses.Contains((OrderStatus)order.Status))) {
-                var mealsWithDiet = _context.Meals.Where(m => m.DietId == dietId);
-                await mealsWithDiet.ForEachAsync(m => m.DietId = null);
-                _context.Diets.Remove(diet);
-                await _context.SaveChangesAsync();
-            }
-            else
-                return (true, false);
 
+            await ordersWithDiet.ForEachAsync(o =>
+            {
+                o.Price -= diet.Price;
+                o.Diets.Remove(diet);
+            });
+            var mealsWithDiet = _context.Meals.Where(m => m.DietId == dietId);
+            await mealsWithDiet.ForEachAsync(m => m.DietId = null);
+            _context.Diets.Remove(diet);
+            await _context.SaveChangesAsync();
 
             return (true, true);
         }
