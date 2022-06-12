@@ -29,8 +29,12 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\app.component.spec.ts" />
-    <None Remove="ClientApp\src\app\authGuard\authGuard.ts" />
-    <None Remove="ClientApp\src\app\authGuard\loginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\clientGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\clientLoginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\delivererGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\delivererLoginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\producerGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\producerLoginGuard.ts" />
     <None Remove="ClientApp\src\app\diets\api\editDietDTOs.ts" />
     <None Remove="ClientApp\src\app\diets\api\producerDietDTO.ts" />
     <None Remove="ClientApp\src\app\meals\api\meals.service.ts" />
@@ -82,7 +86,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Update="ClientApp\src\app\authGuard\loginGuard.ts">
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\clientLoginGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\delivererGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\delivererLoginGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\producerGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\producerLoginGuard.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
