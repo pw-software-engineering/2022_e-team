@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECaterer.Contracts", "ECate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECaterer.WebApi.Integration.Test", "ECaterer.WebApi.Test\ECaterer.WebApi.Integration.Test.csproj", "{8154F0A1-5E53-48F6-AA4E-7D92C8FE896E}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C4AA8852-9D0A-415D-B152-B9A30756DC71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{8154F0A1-5E53-48F6-AA4E-7D92C8FE896E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8154F0A1-5E53-48F6-AA4E-7D92C8FE896E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8154F0A1-5E53-48F6-AA4E-7D92C8FE896E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AA8852-9D0A-415D-B152-B9A30756DC71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AA8852-9D0A-415D-B152-B9A30756DC71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AA8852-9D0A-415D-B152-B9A30756DC71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AA8852-9D0A-415D-B152-B9A30756DC71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
