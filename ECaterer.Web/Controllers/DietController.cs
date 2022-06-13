@@ -162,8 +162,6 @@ namespace ECaterer.Web.Controllers
         [HttpPost("editDiet")]
         public async Task<ActionResult> EditDiet([FromBody]SaveDietDTO model)
         {
-            // TODO: To add/edit diet, I need name of one
-            
             var mealIds = new List<string>();
 
             // create diet
