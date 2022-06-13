@@ -29,10 +29,19 @@ namespace ECaterer.WebApi.Services
 
         public async Task<Diet> GetDietById(string dietId)
         {
-            var diet = await _context.Diets.Include(d => d.Meals).FirstOrDefaultAsync(diet => diet.DietId == dietId);
+            var diet = await _context.Diets
+                .Include(d => d.Meals)
+                .FirstOrDefaultAsync(diet => diet.DietId == dietId);
 
             if (diet == default)
                 return null;
+
+            var meals = diet.Meals.ToArray();
+            for (int i = 0; i < meals.Length; i++)
+                meals[i] = await _context.Meals
+                    .Include(m => m.IngredientList)
+                    .Include(m => m.AllergentList)
+                    .FirstOrDefaultAsync(m => m.MealId == meals[i].MealId);
 
             return diet;
         }
@@ -59,7 +68,7 @@ namespace ECaterer.WebApi.Services
         }
 
 
-        public async Task<Diet> AddDiet(DietModel dietModel)
+        public async Task<Diet> AddDiet(AddEditDietModel dietModel)
         {
             var meals = GetMeals(dietModel);
 
@@ -79,7 +88,7 @@ namespace ECaterer.WebApi.Services
             return diet;
         }
 
-        public async Task<Diet> EditDiet(string dietId, DietModel dietModel)
+        public async Task<Diet> EditDiet(string dietId, AddEditDietModel dietModel)
         {
             var diet = await _context.Diets.FirstOrDefaultAsync(diet => diet.DietId == dietId);
 
@@ -127,7 +136,7 @@ namespace ECaterer.WebApi.Services
             return (true, true);
         }
 
-        private IEnumerable<Meal> GetMeals(DietModel dietModel) => _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToList();
+        private IEnumerable<Meal> GetMeals(AddEditDietModel dietModel) => _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToList();
 
         private bool IsVegan(IEnumerable<Meal> meals) => meals.All(m => m.Vegan);
 
