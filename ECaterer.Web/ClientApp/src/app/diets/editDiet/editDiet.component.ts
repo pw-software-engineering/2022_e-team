@@ -24,7 +24,7 @@ export class EditDietComponent implements OnInit {
   }
 
 
-  private dietId: number;
+  private dietId: string;
 
   public addMealDialog: boolean = false;
   
@@ -33,9 +33,11 @@ export class EditDietComponent implements OnInit {
   public mealsInDiet: mealDto[] = [];
 
   public editModel: EditDietDTO = {
+    id: "",
+    price: 0,
+    name: "",
     calories: 0,
     description: "",
-    id: "",
     vegan: true,
     veganString: ""
   };

@@ -242,80 +242,80 @@ namespace ECareter.Web.Test.ApiUnitTests
             notFoundResult.Should().NotBeNull();
         }
 
-        [Fact]
-        public async void AddMeal_ShouldAddMealAndNewAllergentsAndIngredientsToDatabaseAndReturnOk()
-        {
-            var allergents = new List<Allergent>()
-            {
-                new Allergent() { Name = "Milk"}
-            };
-            var ingredients = new List<Ingredient>()
-            {
-                new Ingredient() { Name = "Milk"},
-                new Ingredient() { Name = "Oatmeals"}
-            };
-            var meals = new List<Meal>()
-            {
-                new Meal()
-                {
-                    MealId = "meal_1",
-                    Name = "Cereals",
-                    Calories = 100,
-                    AllergentList = allergents,
-                    IngredientList = ingredients,
-                    Vegan = true
-                }
-            };
-            var addMealModel = new MealModel()
-            {
-                Name = "Pancake",
-                Calories = 130,
-                AllergentList = new string[] { "Milk", "Egg" },
-                IngredientList = new string[] { "Milk", "Egg", "Flour" },
-                Vegan = false
-            };
+        //[Fact]
+        //public async void AddMeal_ShouldAddMealAndNewAllergentsAndIngredientsToDatabaseAndReturnOk()
+        //{
+        //    var allergents = new List<Allergent>()
+        //    {
+        //        new Allergent() { Name = "Milk"}
+        //    };
+        //    var ingredients = new List<Ingredient>()
+        //    {
+        //        new Ingredient() { Name = "Milk"},
+        //        new Ingredient() { Name = "Oatmeals"}
+        //    };
+        //    var meals = new List<Meal>()
+        //    {
+        //        new Meal()
+        //        {
+        //            MealId = "meal_1",
+        //            Name = "Cereals",
+        //            Calories = 100,
+        //            AllergentList = allergents,
+        //            IngredientList = ingredients,
+        //            Vegan = true
+        //        }
+        //    };
+        //    var addMealModel = new MealModel()
+        //    {
+        //        Name = "Pancake",
+        //        Calories = 130,
+        //        AllergentList = new string[] { "Milk", "Egg" },
+        //        IngredientList = new string[] { "Milk", "Egg", "Flour" },
+        //        Vegan = false
+        //    };
 
-            var options = new DbContextOptions<DataContext>();
-            var contextMock = new Mock<DataContext>(options);
-            contextMock
-                .Setup(c => c.Meals)
-                .ReturnsDbSet(meals);
-            contextMock
-                .Setup(c => c.Ingredients)
-                .ReturnsDbSet(ingredients);
-            contextMock
-                .Setup(c => c.Allergents)
-                .ReturnsDbSet(allergents);
-            contextMock
-                .Setup(c => c.Meals.Add(It.Is<Meal>(m => m.Name == "Pancake")))
-                .Callback<Meal>((meal) => meals.Add(meal));
-            contextMock
-                .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 2)))
-                .Callback(() => allergents.AddRange(new List<Allergent>()
-                {
-                    new Allergent() { Name = "Milk" },
-                    new Allergent() { Name = "Egg" }
-                }));
-            contextMock
-                .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 3)))
-                .Callback(() => ingredients.AddRange(new List<Ingredient>()
-                {
-                    new Ingredient() { Name = "Milk" },
-                    new Ingredient() { Name = "Egg" },
-                    new Ingredient() { Name = "Flour" }
-                }));
+        //    var options = new DbContextOptions<DataContext>();
+        //    var contextMock = new Mock<DataContext>(options);
+        //    contextMock
+        //        .Setup(c => c.Meals)
+        //        .ReturnsDbSet(meals);
+        //    contextMock
+        //        .Setup(c => c.Ingredients)
+        //        .ReturnsDbSet(ingredients);
+        //    contextMock
+        //        .Setup(c => c.Allergents)
+        //        .ReturnsDbSet(allergents);
+        //    contextMock
+        //        .Setup(c => c.Meals.Add(It.Is<Meal>(m => m.Name == "Pancake")))
+        //        .Callback<Meal>((meal) => meals.Add(meal));
+        //    contextMock
+        //        .Setup(c => c.Allergents.AddRange(It.Is<IEnumerable<Allergent>>(al => al.Count() == 2)))
+        //        .Callback(() => allergents.AddRange(new List<Allergent>()
+        //        {
+        //            new Allergent() { Name = "Milk" },
+        //            new Allergent() { Name = "Egg" }
+        //        }));
+        //    contextMock
+        //        .Setup(c => c.Ingredients.AddRange(It.Is<IEnumerable<Ingredient>>(ing => ing.Count() == 3)))
+        //        .Callback(() => ingredients.AddRange(new List<Ingredient>()
+        //        {
+        //            new Ingredient() { Name = "Milk" },
+        //            new Ingredient() { Name = "Egg" },
+        //            new Ingredient() { Name = "Flour" }
+        //        }));
 
-            var controller = new MealsController(new MealRepository(contextMock.Object));
-            var result = await controller.AddMeal(addMealModel);
-            var okResult = result as OkObjectResult;
-            var addedMeal = meals.FirstOrDefault(meal => meal.Name == "Pancake");
+        //    var controller = new MealsController(new MealRepository(contextMock.Object));
+        //    var result = await controller.AddMeal(addMealModel);
+        //    var okResult = result as OkObjectResult;
+        //    var addedMeal = meals.FirstOrDefault(meal => meal.Name == "Pancake");
 
-            okResult.Should().NotBeNull();
-            addedMeal.Should().NotBeNull();
-            addedMeal.Name.Should().Be("Pancake");
-            ingredients.Count().Should().Be(5);
-            allergents.Count().Should().Be(3);
-        }
+        //    okResult.Should().NotBeNull();
+        //    addedMeal.Should().NotBeNull();
+        //    addedMeal.Name.Should().Be("Pancake");
+        //    ingredients.Count().Should().Be(5);
+        //    allergents.Count().Should().Be(3);
+        //}
         
         [Fact]
         public async void GetMeals_ShouldReturnAllMealsAndOk()

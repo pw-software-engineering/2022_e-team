@@ -1,6 +1,7 @@
 ﻿using ECaterer.Contracts.Diets;
 using ECaterer.Contracts.Orders;
 using ECaterer.Web.DTO;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ECaterer.Web.Converters
@@ -19,12 +20,13 @@ namespace ECaterer.Web.Converters
             };
         }
 
-        public static Contracts.Diets.DietModel Convert(SaveDietDTO input)
+        public static AddEditDietModel Convert(SaveDietDTO input, List<string> mealIds)
         {
-            return new Contracts.Diets.DietModel()
+            return new AddEditDietModel()
             {
-                // TODO: need to add name and price
-                MealIds = input.Meals.Select(meal => meal.Id).ToArray(),
+                Name = input.Name,
+                Price = input.Price,
+                MealIds = mealIds.ToArray(),
             };
         }
     }

@@ -25,30 +25,30 @@ namespace ECaterer.Web.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpGet("GetMeals")]
-        public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals()
-        {
-            // TODO: You want get AllergentList and IngredientList, but there are no such fields in GetMealsResponseModel
+        //[HttpGet("GetMeals")]
+        //public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals()
+        //{
+        //    // TODO: You want get AllergentList and IngredientList, but there are no such fields in GetMealsResponseModel
 
-            var message = new HttpRequestMessage(HttpMethod.Get, "meals");
-            TokenPropagator.Propagate(Request, message);
-            var response = await _apiClient.SendAsync(message);
+        //    var message = new HttpRequestMessage(HttpMethod.Get, "meals");
+        //    TokenPropagator.Propagate(Request, message);
+        //    var response = await _apiClient.SendAsync(message);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
-                var meals = content.Select(meal => MealConverter.ConvertBack(meal)).AsEnumerable();
-                return Ok(content);
-            }
-            else if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                return Unauthorized();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var content = await response.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
+        //        var meals = content.Select(meal => MealConverter.ConvertBack(meal)).AsEnumerable();
+        //        return Ok(content);
+        //    }
+        //    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+        //    {
+        //        return Unauthorized();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         [HttpGet("GetMealsInDiet/{dietId}")]
         public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(string dietId)
@@ -68,24 +68,8 @@ namespace ECaterer.Web.Controllers
             {
                 case HttpStatusCode.OK:
                     // TODO: get meals from correct object
-
-                    //var diet = await response.Content.ReadFromJsonAsync<DietModel>();
-                    //message = new HttpRequestMessage(HttpMethod.Get, "meals");
-                    //TokenPropagator.Propagate(Request, message);
-                    //response = await _apiClient.SendAsync(message);
-
-                    //switch (response.StatusCode)
-                    //{
-                    //    case HttpStatusCode.OK:
-                    //        var meals = await response.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
-                    //        return Ok(meals.Where(meal => diet.MealIds.Contains(meal.Id)).Select(meal => MealConverter.ConvertBack(meal)).AsEnumerable());
-                    //    case HttpStatusCode.Unauthorized:
-                    //        return Unauthorized();
-                    //    case HttpStatusCode.BadRequest:
-                    //        return BadRequest();
-                    //    default:
-                    //        return BadRequest();
-                    //}
+                    var diet = await response.Content.ReadFromJsonAsync<DietModel>();
+                    return Ok(diet.Meals.Select(meal => MealConverter.ConvertBack(meal)));
                 case HttpStatusCode.Unauthorized:
                     return Unauthorized();
                 case HttpStatusCode.BadRequest:

@@ -55,7 +55,7 @@ namespace ECaterer.WebApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "producer")]
-        public async Task<ActionResult> AddMeal([FromBody] MealModel mealDTO)
+        public async Task<ActionResult> AddMeal([FromBody] AddMealModel mealDTO)
         {
             try
             {

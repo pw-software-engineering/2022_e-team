@@ -1,4 +1,5 @@
 ﻿using ECaterer.Contracts.Diets;
+using ECaterer.Contracts.Meals;
 using ECaterer.Web.Converters;
 using ECaterer.Web.DTO;
 using ECaterer.Web.Infrastructure;
@@ -27,7 +28,6 @@ namespace ECaterer.Web.Controllers
         }
 
         [HttpGet("getDiets")]
-        // TODO: Do we really need all these arguments as we can filter data on frontend?
         public async Task<ActionResult<DietDTO[]>> GetDiets(
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 0,
@@ -48,7 +48,7 @@ namespace ECaterer.Web.Controllers
             query["price_lt"] = price_lt.ToString();
             query["price_ht"] = price_ht.ToString();
 
-            var message = new HttpRequestMessage(HttpMethod.Get, "diets" + query.ToString());
+            var message = new HttpRequestMessage(HttpMethod.Get, "diets");
             TokenPropagator.Propagate(Request, message);
 
             var response = await _apiClient.SendAsync(message);
@@ -76,8 +76,6 @@ namespace ECaterer.Web.Controllers
         [HttpGet("getProducerDiets")]
         public async Task<ActionResult<ProducerDietDTO[]>> GetProducerDiets()
         {
-            // TODO: You want get description, but there is no description in GetDietsModel
-
             var message = new HttpRequestMessage(HttpMethod.Get, "diets");
             TokenPropagator.Propagate(Request, message);
 
@@ -103,11 +101,9 @@ namespace ECaterer.Web.Controllers
             }
         }
 
-        [HttpGet("getEditDiets/{id}")]
+        [HttpGet("getEditDiets/{dietId}")]
         public async Task<ActionResult<EditDietDTO>> GetEditDietModel(string dietId)
         {
-            // TODO: API returns object different from specification
-
             if (dietId == "0")
             {
                 return Ok(new EditDietDTO()
@@ -140,7 +136,7 @@ namespace ECaterer.Web.Controllers
             }
         }
 
-        [HttpPut("deleteDiet/{id}")]
+        [HttpPut("deleteDiet/{dietId}")]
         public async Task<ActionResult> DeleteDiet(string dietId)
         {
             var message = new HttpRequestMessage(HttpMethod.Delete, $"diets/{dietId}");
@@ -168,12 +164,48 @@ namespace ECaterer.Web.Controllers
         {
             // TODO: To add/edit diet, I need name of one
             
+            var mealIds = new List<string>();
+
             // create diet
             if (model.Id == "0")
             {
+                // add all meals
+                foreach (var meal in model.Meals)
+                {
+                    var messageCreateMeal = new HttpRequestMessage(HttpMethod.Post, "meals");
+                    TokenPropagator.Propagate(Request, messageCreateMeal);
+                    messageCreateMeal.Content = JsonContent.Create(MealConverter.Convert(meal));
+
+                    var responseCreateMeal = await _apiClient.SendAsync(messageCreateMeal);
+
+                    if (responseCreateMeal.StatusCode != HttpStatusCode.OK)
+                        return BadRequest();
+
+                    var query = HttpUtility.ParseQueryString(string.Empty);
+                    query["name"] = meal.Name;
+                    query["vegan"] = meal.Vegan.ToString();
+                    query["calories"] = meal.Calories.ToString();
+
+                    var messageGetMeal = new HttpRequestMessage(HttpMethod.Get, "meals?" + query.ToString());
+                    TokenPropagator.Propagate(Request, messageGetMeal);
+
+                    var responseGetMeal = await _apiClient.SendAsync(messageGetMeal);
+
+                    if (responseGetMeal.StatusCode != HttpStatusCode.OK)
+                        return BadRequest();
+
+                    var content = await responseGetMeal.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
+
+                    if (content == null || content.Length == 0)
+                        return BadRequest();
+
+                    mealIds.Add(content.First().Id);
+                }
+
+                // add diet
                 var messageCreate = new HttpRequestMessage(HttpMethod.Post, "diets");
                 TokenPropagator.Propagate(Request, messageCreate);
-                messageCreate.Content = JsonContent.Create(DietConverter.Convert(model));
+                messageCreate.Content = JsonContent.Create(DietConverter.Convert(model, mealIds));
 
                 var responseCreate = await _apiClient.SendAsync(messageCreate);
 
@@ -191,9 +223,57 @@ namespace ECaterer.Web.Controllers
             }
 
             // edit diet
+            foreach (var meal in model.Meals)
+            {
+                if (int.TryParse(meal.Id, out _))
+                {
+                    var messageCreateMeal = new HttpRequestMessage(HttpMethod.Post, "meals");
+                    TokenPropagator.Propagate(Request, messageCreateMeal);
+                    messageCreateMeal.Content = JsonContent.Create(MealConverter.Convert(meal));
+
+                    var responseCreateMeal = await _apiClient.SendAsync(messageCreateMeal);
+
+                    if (responseCreateMeal.StatusCode != HttpStatusCode.OK)
+                        return BadRequest();
+
+                    var query = HttpUtility.ParseQueryString(string.Empty);
+                    query["name"] = meal.Name;
+                    query["vegan"] = meal.Vegan.ToString();
+                    query["calories"] = meal.Calories.ToString();
+
+                    var messageGetMeal = new HttpRequestMessage(HttpMethod.Get, "meals?" + query.ToString());
+                    TokenPropagator.Propagate(Request, messageGetMeal);
+
+                    var responseGetMeal = await _apiClient.SendAsync(messageGetMeal);
+
+                    if (responseGetMeal.StatusCode != HttpStatusCode.OK)
+                        return BadRequest();
+
+                    var content = await responseGetMeal.Content.ReadFromJsonAsync<GetMealsResponseModel[]>();
+
+                    if (content == null || content.Length == 0)
+                        return BadRequest();
+
+                    mealIds.Add(content.First().Id);
+                }
+                else
+                {
+                    var messageEditMeal = new HttpRequestMessage(HttpMethod.Put, $"meals/{meal.Id}");
+                    TokenPropagator.Propagate(Request, messageEditMeal);
+                    messageEditMeal.Content = JsonContent.Create(MealConverter.Convert(meal));
+
+                    var responseEditMeal = await _apiClient.SendAsync(messageEditMeal);
+
+                    if (responseEditMeal.StatusCode != HttpStatusCode.OK)
+                        return BadRequest();
+
+                    mealIds.Add(meal.Id);
+                }
+            }
+
             var message = new HttpRequestMessage(HttpMethod.Put, $"diets/{model.Id}");
             TokenPropagator.Propagate(Request, message);
-            message.Content = JsonContent.Create(DietConverter.Convert(model));
+            message.Content = JsonContent.Create(DietConverter.Convert(model, mealIds));
 
             var response = await _apiClient.SendAsync(message);
 

@@ -29,11 +29,11 @@ export class DietsService {
     return this.http.get<ProducerDietDTO[]>(this.dietUrl + "getProducerDiets", { headers: this.commonHeaders, params: {} }).toPromise();
   }
 
-  public getEditModelDiet(dietId: number): Promise<void | EditDietDTO> {
+  public getEditModelDiet(dietId: string): Promise<void | EditDietDTO> {
     return this.http.get<EditDietDTO>(this.dietUrl + "getEditDiets/" + dietId, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 
-  public deleteDiet(dietId: number): Promise<void> {
+  public deleteDiet(dietId: string): Promise<void> {
     return this.http.put<void>(this.dietUrl + "deleteDiet/" + dietId, { headers: this.commonHeaders, params: {} }).toPromise();
   }
 
@@ -41,7 +41,9 @@ export class DietsService {
     var saveDietData: SaveDietDTO = {
       meals: meals,
       id: dietModel.id,
+      name: dietModel.name,
       calories: dietModel.calories,
+      price: dietModel.price,
       vegan: dietModel.vegan,
       description: dietModel.description
     };

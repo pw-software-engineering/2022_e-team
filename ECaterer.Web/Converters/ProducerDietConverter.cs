@@ -12,7 +12,6 @@ namespace ECaterer.Web.Converters
             {
                 Id = input.Id,
                 Name = input.Name,
-                // Description = input.Description,
             };
         }
     }

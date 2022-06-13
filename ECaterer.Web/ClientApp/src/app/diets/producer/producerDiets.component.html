@@ -18,8 +18,6 @@
                 <button kendoButton themeColor="primary" (click)="goToDiet(dataItem.id)" fillMode="link">{{ dataItem.name }}</button>
               </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="description" title="Opis">
-            </kendo-grid-column>
             <kendo-grid-column [width]="100">
               <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                   <button kendoButton (click)="deleteDiet(dataItem.id)" themeColor="primary">Usuń</button>

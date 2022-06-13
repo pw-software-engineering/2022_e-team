@@ -17,11 +17,25 @@
       <fieldset class="k-form-fieldset">
         <h2>Informacja</h2>
         <kendo-formfield>
+          <kendo-label text="Nazwa"></kendo-label>
+          <kendo-textbox [(ngModel)]="editModel.name"
+                         [value]="editModel.name"
+                         [ngModelOptions]="{standalone: true}"
+                         #name></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
           <kendo-label text="Opis"></kendo-label>
           <kendo-textbox [(ngModel)]="editModel.description"
                          [value]="editModel.description"
                          [ngModelOptions]="{standalone: true}"
                          #description></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield class="shortInput">
+          <kendo-label text="Cena"></kendo-label>
+          <kendo-textbox [(ngModel)]="editModel.price"
+                         [value]="editModel.price"
+                         [ngModelOptions]="{standalone: true}"
+                         #price></kendo-textbox>
         </kendo-formfield>
         <kendo-formfield class="shortInput">
           <kendo-label text="Wartość energetyczna"></kendo-label>

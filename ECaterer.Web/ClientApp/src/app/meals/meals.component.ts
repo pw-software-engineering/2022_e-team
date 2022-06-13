@@ -19,7 +19,7 @@ export class MealsComponent implements OnInit {
     private inRoute: ActivatedRoute) {
   }
 
-  private dietId: number;
+  private dietId: string;
 
   public meals: mealDto[];
 

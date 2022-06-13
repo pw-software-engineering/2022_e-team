@@ -18,7 +18,7 @@ export class MealsService {
     this.commonHeaders.set("Content-Type", "application/json");
   }
 
-  public getMeals(dietId: number): Promise< void | Array<mealDto>> {
+  public getMeals(dietId: string): Promise< void | Array<mealDto>> {
     return this.http.get<Array<mealDto>>(this.mealsUrl + "GetMealsInDiet/" + dietId, { headers: this.commonHeaders }).toPromise();
   }
  
