@@ -31,13 +31,19 @@ jobs:
         registry: ${{ env.ACR_URL }}
         username: ${{ secrets.ACR_USER_ID }}
         password: ${{ secrets.ACR_USER_PASSWORD }}
+    - name: Set base image name as env variable
+      run: echo "BASE_IMAGE_NAME=${{ env.ACR_URL }}/${{ env.APP_NAME }}" >> $GITHUB_ENV
     - name: Set IMAGE_ID as env variable
-      run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
+      run: echo "IMAGE_ID=${{ env.BASE_IMAGE_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
     - run: ls
     - name: Build docker image
       run: docker build -t ${{ env.IMAGE_ID }} -f ${{ env.PATH_TO_DOCKERFILE }} .
     - name: Push image
       run: docker push ${{ env.IMAGE_ID }}
+    - name: Tag latest
+      run: docker tag ${{ env.IMAGE_ID }} ${{ env.BASE_IMAGE_NAME }}:latest
+    - name: Push latest
+      run: docker push ${{ env.BASE_IMAGE_NAME }}:latest
 
   deploy:
     runs-on: ubuntu-latest
