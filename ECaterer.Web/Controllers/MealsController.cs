@@ -53,8 +53,6 @@ namespace ECaterer.Web.Controllers
         [HttpGet("GetMealsInDiet/{dietId}")]
         public async Task<ActionResult<IEnumerable<MealDTO>>> GetMeals(string dietId)
         {
-            // TODO: API returns wrong object
-
             if (dietId == "0")
             {
                 return Ok(new List<MealDTO>());
@@ -67,7 +65,6 @@ namespace ECaterer.Web.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    // TODO: get meals from correct object
                     var diet = await response.Content.ReadFromJsonAsync<DietModel>();
                     return Ok(diet.Meals.Select(meal => MealConverter.ConvertBack(meal)));
                 case HttpStatusCode.Unauthorized:
