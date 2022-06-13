@@ -38,7 +38,8 @@ namespace ECaterer.WebApi.Controllers
                 cfg.CreateMap<Complaint, ComplaintModel>()
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
                 cfg.CreateMap<Order, OrderProducerModel>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId));
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId))
+                    .ForMember(dest => dest.DietIDs, opt => opt.MapFrom(col => col.Diets.Select(d => d.DietId).ToArray()));
             });
             _mapper = new Mapper(mappingConfig);
         }

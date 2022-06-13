@@ -33,6 +33,7 @@ namespace ECaterer.WebApi.Services
             if (!ValidateDietsIDs(model.DietIDs))
                 return null;
 
+            var user = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == userId);
             var address = await GetDeliveryAddress(userId, model);
             var containedDiets = _context.Diets.Where(d => model.DietIDs.Contains(d.DietId)).ToList();
             var deliveryDetails = new DeliveryDetails()
@@ -53,7 +54,8 @@ namespace ECaterer.WebApi.Services
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 Price = 0, //problem obliczenia ceny - dodac cene do Diet? - potrzebuje naprawienia /api/diets
-                Diets = new List<Diet>(containedDiets)
+                Diets = new List<Diet>(containedDiets),
+                Client = user
             };
 
             _context.DeliveryDetails.Add(deliveryDetails);
@@ -63,15 +65,17 @@ namespace ECaterer.WebApi.Services
             return order;
         }
 
-        public async Task<IEnumerable<Order>> GetOrders(GetOrdersClientQueryModel query)
+        public async Task<IEnumerable<Order>> GetOrders(string userId, GetOrdersClientQueryModel query)
         {
             IQueryable<Order> orders; 
             try 
             {
                 orders = _context.Orders
+                    .Include(o => o.Diets)
                     .Include(o => o.DeliveryDetails)
                     .Include(o => o.Complaint)
-                    .Include(o => o.DeliveryDetails.Address);
+                    .Include(o => o.DeliveryDetails.Address)
+                    .Where(o => o.Client.ClientId == userId);
 
                 var builder = new QueryBuilder<Order>(orders);
                 builder = builder
@@ -131,6 +135,7 @@ namespace ECaterer.WebApi.Services
             //przekazanie do zewnętrznego serwisu platnosci
 
             order.Status = (int)OrderStatus.Paid;
+            order.Status = (int)OrderStatus.ToRealized; //specyfikacja nie wskazuje, w jaki sposob odbywa sie to przejscie
             await _context.SaveChangesAsync();
 
             return (exists: true, paid: true);

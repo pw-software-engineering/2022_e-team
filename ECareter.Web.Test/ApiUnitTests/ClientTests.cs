@@ -55,7 +55,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     It.Is<string>(password => password == "12345678"),
                     false))
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>())), _fixture.context, ordersService.Object);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>())), _fixture.context, ordersService.Object, null);
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
             LoginUserModel loginUserModel = new LoginUserModel() 
@@ -101,7 +101,7 @@ namespace ECareter.Web.Test.ApiUnitTests
                     It.Is<IdentityUser>(user => user.Email == adambrown.Email),
                     It.Is<string>(password => password == "12345678")))
                 .ReturnsAsync(IdentityResult.Success);
-            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>())), _fixture.context, ordersService.Object);
+            var _controller = new ClientController(mockUserManager.Object, mockSignInManager.Object, new TokenService(new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>())), _fixture.context, ordersService.Object, null);
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
 
             var result = await _controller.Register(new ClientModel() 
