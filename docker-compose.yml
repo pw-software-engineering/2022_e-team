@@ -23,7 +23,7 @@ services:
     - "44331:443"
 
   ecaterer.webapi:
-    image: powoeuwcrossteamacr.azurecr.io/e_backend:latest
+    image: powoeuwacr.azurecr.io/eteam-api:latest
     environment:
     - ConnectionStrings__DefaultConnection=Server=db;Database=aspnet-ECaterer.WebApi-Authentication;User=sa;Password=Test_Password123;TrustServerCertificate=true;
     - ConnectionStrings__CoreDbConnection=Server=db;Database=ECaterer;User=sa;Password=Test_Password123;TrustServerCertificate=true;
