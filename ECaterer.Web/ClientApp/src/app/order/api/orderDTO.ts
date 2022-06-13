@@ -15,15 +15,33 @@ export interface DelivererOrderDTO {
   comment: string;
 }
 
+export interface DelivererHistoryDTO {
+  orderNumber: string;
+  address: string;
+  phone: string;
+  comment: string;
+  deliveryDate: Date;
+}
+
 export interface ProducerOrderDTO {
   orderNumber: string;
   orderDate: Date;
   status: string;
 }
 
+export interface ClientOrderDTO {
+  orderNumber: string;
+  startDate: Date;
+  endDate: Date;
+  status: string;
+  price: number;
+  complaintStatus: string;
+}
+
 export interface PreviewOrderDTO {
   orderNumber: string;
   dietNames: string[];
+  mealsConcatenated: string[]
   cost: number;
   status: string;
   address: string;
@@ -39,4 +57,14 @@ export interface ComplaintDTO {
   description: string;
   complaintDate: Date;
   status: string;
+}
+
+export interface MakeComplaintDTO {
+  orderNumber: string;
+  description: string;
+}
+
+export interface AnswerComplaintDTO {
+  orderNumber: string;
+  answer: string;
 }

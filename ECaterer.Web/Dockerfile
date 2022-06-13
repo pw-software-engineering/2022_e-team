@@ -16,6 +16,11 @@ WORKDIR "/src/ECaterer.Web"
 RUN dotnet build "ECaterer.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
+RUN apt-get update && \
+apt-get install -y wget && \
+apt-get install -y gnupg2 && \
+wget -qO- https://deb.nodesource.com/setup_14.x | bash - && \
+apt-get install -y build-essential nodejs
 RUN dotnet publish "ECaterer.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final

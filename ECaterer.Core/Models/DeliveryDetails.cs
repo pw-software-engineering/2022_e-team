@@ -21,5 +21,7 @@ namespace ECaterer.Core.Models
         public virtual String PhoneNumber { get; set; }
         [StringLength(250)]
         public virtual String CommentForDeliverer { get; set; }
+
+        public virtual DateTime DeliveryDate { get; set; }
     }
 }

@@ -39,7 +39,8 @@ namespace ECaterer.WebApi.Services
                 Calories = mealModel.Calories,
                 IngredientList = ingredients,
                 AllergentList = allergents,
-                Vegan = mealModel.Vegan
+                Vegan = mealModel.Vegan,
+                DietId = null
             };
 
             _context.Meals.Add(meal);
@@ -53,13 +54,16 @@ namespace ECaterer.WebApi.Services
         public async Task<Meal> DeleteMeal(string mealId)
         {
             var meal = await _context.Meals.FirstOrDefaultAsync(meal => meal.MealId == mealId);
+
             if (meal is null)
                 return null;
-            var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(meal => meal.MealId == mealId));
+            var containedByDiet = await _context.Diets.AnyAsync(diet => diet.Meals.Any(m => m.MealId == mealId));
             if (containedByDiet)
                 throw new MealToRemoveIsContainedByDietException(mealId);
+            
             var ingredientsToRemove = _context.Ingredients.Where(i => i.MealId == meal.MealId);
             var allergentsToRemove = _context.Allergents.Where(a => a.MealId == meal.MealId);
+            
             _context.Ingredients.RemoveRange(ingredientsToRemove);
             _context.Allergents.RemoveRange(allergentsToRemove);
             _context.Meals.Remove(meal);

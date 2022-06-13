@@ -1,0 +1,31 @@
+
+
+main#producer-login {
+  background: linear-gradient( rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) ), url("../../../assets/images/loginscreen2.jpg") no-repeat center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vw;
+  height: 1000px;
+  align-items: center;
+  overflow-x: hidden;
+
+  h1 {
+    color: white;
+    margin-bottom: 30px;
+  }
+
+  #registrationForm {
+    height: 500px;
+    padding: 90px 50px;
+  }
+
+  .notification {
+    position: absolute;
+    width: 400px;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

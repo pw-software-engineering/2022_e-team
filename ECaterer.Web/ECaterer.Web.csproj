@@ -30,8 +30,12 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\app.component.spec.ts" />
-    <None Remove="ClientApp\src\app\authGuard\authGuard.ts" />
-    <None Remove="ClientApp\src\app\authGuard\loginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\clientGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\clientLoginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\delivererGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\delivererLoginGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\producerGuard.ts" />
+    <None Remove="ClientApp\src\app\authGuard\producerLoginGuard.ts" />
     <None Remove="ClientApp\src\app\diets\api\editDietDTOs.ts" />
     <None Remove="ClientApp\src\app\diets\api\producerDietDTO.ts" />
     <None Remove="ClientApp\src\app\meals\api\meals.service.ts" />
@@ -39,6 +43,7 @@
     <None Remove="ClientApp\src\app\meals\meals.component.ts" />
     <None Remove="ClientApp\src\app\diets\api\dietDTO.ts" />
     <None Remove="ClientApp\src\app\order\api\orderDTO.ts" />
+    <None Remove="ClientApp\src\app\registration\api\authInterceptor.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registration.service.ts" />
     <None Remove="ClientApp\src\app\registration\api\registrationDtos.ts" />
   </ItemGroup>
@@ -56,6 +61,10 @@
     <TypeScriptCompile Remove="ClientApp\src\app\diets\producer\producerDiets.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\navigation\navigation.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\api\order.service.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\client\clientOrders.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\client\clientOrders.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\delivererHistory\delivererHistory.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\order\delivererHistory\delivererHistory.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\deliverer\delivererOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\order\previewOrder\editDiet.component.spec.ts" />
@@ -66,8 +75,10 @@
     <TypeScriptCompile Remove="ClientApp\src\app\order\producer\producerOrders.component.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.spec.ts" />
     <TypeScriptCompile Remove="ClientApp\src\app\registration\client-login\client-login.component.ts" />
-    <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.spec.ts" />
-    <TypeScriptCompile Remove="ClientApp\src\app\registration\worker-login\worker-login.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\deliverer-login\deliverer-login.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\deliverer-login\deliverer-login.component.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\producer-login\producer-login.component.spec.ts" />
+    <TypeScriptCompile Remove="ClientApp\src\app\registration\producer-login\producer-login.component.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -76,7 +87,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Update="ClientApp\src\app\authGuard\loginGuard.ts">
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\clientLoginGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\delivererGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\delivererLoginGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\producerGuard.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="ClientApp\src\app\authGuard\producerLoginGuard.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>

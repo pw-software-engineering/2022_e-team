@@ -13,9 +13,11 @@ namespace ECaterer.Contracts.Orders
 
         public string Description { get; set; }
 
-        public MealModel Meals { get; set; }
+        public MealModel[] Meals { get; set; }
 
         public int Price { get; set; }
+
+        public int Calories { get; set; }
 
         public bool Vegan { get; set; }
     }

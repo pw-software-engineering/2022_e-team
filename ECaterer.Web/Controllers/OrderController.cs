@@ -12,6 +12,8 @@ using ECaterer.Contracts.Orders;
 using ECaterer.Web.Converters;
 using System.Web;
 using System.Collections.Generic;
+using System.Linq;
+using ECaterer.Contracts.Deliverer;
 
 namespace ECaterer.Web.Controllers
 {
@@ -66,6 +68,51 @@ namespace ECaterer.Web.Controllers
             });
         }
 
+        [HttpGet("getDelivererHistory")]
+        public async Task<ActionResult<IEnumerable<DelivererHistoryDTO>>> GetDelivererHistory()
+        {
+            var response = await _apiClient.GetAsync("/deliverer/history");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadFromJsonAsync<HistoryDelivererModel[]>();
+
+                return Ok(content.Select(d => HistoryDelivererConverter.Convert(d)));
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            //return Ok(new DelivererHistoryDTO[]
+            //{
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "",
+            //        DeliveryDate = DateTime.Now
+            //    },
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "nie dzwonić",
+            //        DeliveryDate = DateTime.Now
+            //    },
+            //    new DelivererHistoryDTO()
+            //    {
+            //        OrderNumber = "1234",
+            //        Address = "Długa 15, Warszawa",
+            //        Phone = "666-666-666",
+            //        Comment = "",
+            //        DeliveryDate = DateTime.Now
+            //    }
+            //});
+        }
+
         [HttpPatch("deliverOrder/{orderNumber}")]
         public async Task<ActionResult> DeliverOrder(string orderNumber)
         {
@@ -101,6 +148,7 @@ namespace ECaterer.Web.Controllers
         [HttpGet("previewOrder/{orderNumber}")]
         public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
         {
+            // meals concatenated should be all meals from diets, concatenated into single string array
             if (orderNumber == "1")
                 return Ok(new PreviewOrderDTO()
                 {
@@ -113,7 +161,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = true
+                    HasComplaint = true,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else if (orderNumber == "2")
                 return Ok(new PreviewOrderDTO()
@@ -127,7 +176,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = true
+                    HasComplaint = true,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else if(orderNumber == "3")
                 return Ok(new PreviewOrderDTO()
@@ -141,7 +191,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = false
+                    HasComplaint = false,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
             else
                 return Ok(new PreviewOrderDTO()
@@ -155,7 +206,8 @@ namespace ECaterer.Web.Controllers
                     Cost = 100.05M,
                     OrderDate = DateTime.Now,
                     DeliverDate = DateTime.Now,
-                    HasComplaint = false
+                    HasComplaint = false,
+                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
                 });
         }
 
@@ -176,6 +228,24 @@ namespace ECaterer.Web.Controllers
                 ClientName = "120231",
                 ComplaintDate = DateTime.Now
             });
+        }
+
+        [HttpPost("makeComplaint")]
+        public async Task<ActionResult> MakeComplaint([FromBody] MakeComplaintDTO model)
+        {
+            return Ok();
+        }
+
+        [HttpPatch("cancelComplaint/{orderNumber}")]
+        public async Task<ActionResult> CancelComplaint(string orderNumber)
+        {
+            return Ok();
+        }
+
+        [HttpPost("answerComplaint")]
+        public async Task<ActionResult> AnswerComplaint([FromBody] AnswerComplaintDTO model)
+        {
+            return Ok();
         }
     }
 }

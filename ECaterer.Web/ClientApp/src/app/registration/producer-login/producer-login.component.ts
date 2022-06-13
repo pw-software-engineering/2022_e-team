@@ -3,19 +3,21 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Title } from '@angular/platform-browser';
 import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
+import { ILoginData } from '../api/registrationDtos';
 
 @Component({
-  selector: 'app-worker-login',
-  templateUrl: './worker-login.component.html',
-  styleUrls: ['./worker-login.component.scss'],
+  selector: 'app-producer-login',
+  templateUrl: './producer-login.component.html',
+  styleUrls: ['./producer-login.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 
-export class WorkerLogin implements OnInit {
+export class ProducerLogin implements OnInit {
 
   public loginData: ILoginData = {
-    login: "",
-    password: ""
+    email: "",
+    password: "",
+    userType: 3
   }
 
   public errorMessage = '';
@@ -27,7 +29,7 @@ export class WorkerLogin implements OnInit {
     this.TitleService.setTitle("Logowanie");
 
     this.form = new FormGroup({
-      login: new FormControl(this.loginData.login, [Validators.required, Validators.minLength(1), Validators.maxLength(250)]),
+      email: new FormControl(this.loginData.email, [Validators.required, Validators.minLength(1), Validators.maxLength(250), Validators.email]),
       password: new FormControl(this.loginData.password, [
         Validators.required, Validators.minLength(1), Validators.maxLength(25)])
     });
@@ -42,12 +44,15 @@ export class WorkerLogin implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      this.registrationService.loginWorker()
+      this.registrationService.login(this.loginData)
         .then(() => {
-          console.log("Pomyślnie zalogowano.");
+          this.router.navigate(['producer/orders']);
         })
         .catch((err) => {
-          this.showError(err);
+          if (err.status == 401)
+            this.showError("Nieprawidłowy mail lub hasło");
+          else
+            this.showError("Wystąpił błąd serwera. Spróbuj ponownie później.");
         });
     }
     else {
@@ -62,9 +67,4 @@ export class WorkerLogin implements OnInit {
   showError(message: string) {
     this.errorMessage = message;
   }
-}
-
-export interface ILoginData {
-  login: string,
-  password: string
 }

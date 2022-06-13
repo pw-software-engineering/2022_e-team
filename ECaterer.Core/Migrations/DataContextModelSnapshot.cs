@@ -155,6 +155,9 @@ namespace ECaterer.Core.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<DateTime>("DeliveryDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -182,6 +185,9 @@ namespace ECaterer.Core.Migrations
 
                     b.Property<string>("OrderId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -328,9 +334,11 @@ namespace ECaterer.Core.Migrations
 
             modelBuilder.Entity("ECaterer.Core.Models.Meal", b =>
                 {
-                    b.HasOne("ECaterer.Core.Models.Diet", null)
+                    b.HasOne("ECaterer.Core.Models.Diet", "Diet")
                         .WithMany("Meals")
                         .HasForeignKey("DietId");
+
+                    b.Navigation("Diet");
                 });
 
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>

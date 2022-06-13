@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GridModule } from '@progress/kendo-angular-grid';
 
-import { HomeComponent } from './home.component';
+import { ProducerDietsComponent } from './producerDiets.component';
 
-describe('AppComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('DietsList', () => {
+  let component: ProducerDietsComponent;
+  let fixture: ComponentFixture<ProducerDietsComponent>;
 
   beforeAll(function () {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 999999;
@@ -13,14 +13,14 @@ describe('AppComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HomeComponent],
+      declarations: [ProducerDietsComponent],
       imports: [GridModule]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(ProducerDietsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

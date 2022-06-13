@@ -3,16 +3,20 @@ name: DeployBackendApp
 on:
   workflow_dispatch:
 
+  push:
+    branches: [develop]
+    paths:
+    - 'ECaterer.WebApi/**'
+    - 'deployment/back-ecaterer.yaml'
+  
 env:
   ACR_URL: 'powoeuwacr.azurecr.io'
   NAMESPACE: 'eteam'                         # Name of your team {b, j, n}
   APP_NAME: 'eteam-api'                      # Name of your application {client, server, hotel}
   DEPLOYMENT_DIRECTORY: 'deployment'          # Path to directory where DEPLOYMENT_FILE_NAME is located
-  DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location
-  IMAGE_ID_TEMP: 'powoeuwcrossteamacr.azurecr.io/e_backend:latest'
+  DEPLOYMENT_FILE_NAME: 'back-ecaterer.yaml'      # Name of deployment file for application in deployment location  
   ACR_NAME: 'powoeuwcrossteamacr'
-  SP_APP_ID: '405327e7-57dc-4ba0-9f23-78a26f2ee5ca'
-  SP_PASSWD: 'T2_QcS6J-atMwx0FypJNyW-ze2j01s4wm4'
+  PATH_TO_DOCKERFILE: 'ECaterer.WebApi/Dockerfile'
   A_LOGIN: ${{ secrets.A_LOGIN }}
   A_PASSWORD: ${{ secrets.A_PASSWORD }}
 
@@ -20,8 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Pull docker image
-      run: docker login ${ACR_NAME}.azurecr.io --username ${SP_APP_ID} --password ${SP_PASSWD} && docker pull ${{ env.IMAGE_ID_TEMP }}
+    - uses: actions/checkout@v2
     - name: Login to ACR
       uses: docker/login-action@v1
       with:
@@ -30,8 +33,9 @@ jobs:
         password: ${{ secrets.ACR_USER_PASSWORD }}
     - name: Set IMAGE_ID as env variable
       run: echo "IMAGE_ID=${{ env.ACR_URL }}/${{ env.APP_NAME }}:v${{ github.run_number }}" >> $GITHUB_ENV
-    - name: Tag image
-      run: docker tag ${{ env.IMAGE_ID_TEMP }} ${{ env.IMAGE_ID }} 
+    - run: ls
+    - name: Build docker image
+      run: docker build -t ${{ env.IMAGE_ID }} -f ${{ env.PATH_TO_DOCKERFILE }} .
     - name: Push image
       run: docker push ${{ env.IMAGE_ID }}
 

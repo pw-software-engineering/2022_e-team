@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Title } from '@angular/platform-browser';
 import { RegistrationService } from '../api/registration.service';
 import { Router } from "@angular/router";
+import { ILoginData } from '../api/registrationDtos';
 
 @Component({
   selector: 'app-client-login',
@@ -15,7 +16,8 @@ export class ClientLogin implements OnInit {
 
   public loginData: ILoginData = {
     email: "",
-    password: ""
+    password: "",
+    userType: 1
   }
 
   public errorMessage = '';
@@ -42,7 +44,7 @@ export class ClientLogin implements OnInit {
     this.form.markAllAsTouched();
     this.clearError();
     if (this.form.valid) {
-      this.registrationService.loginUser(this.loginData)
+      this.registrationService.login(this.loginData)
         .then(() => {
           this.router.navigate(['client/diets']);
         })
@@ -69,9 +71,4 @@ export class ClientLogin implements OnInit {
   showError(message: string) {
     this.errorMessage = message;
   }
-}
-
-export interface ILoginData {
-  email: string,
-  password: string
 }

@@ -52,6 +52,7 @@ namespace ECaterer.WebApi
                     Configuration.GetConnectionString("CoreDbConnection")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllers();
@@ -117,6 +118,8 @@ namespace ECaterer.WebApi
 
                 });
 
+
+            services.AddScoped<IDietRepository, DietRepository>();
             services.AddScoped<IMealRepository, MealRepository>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IComplaintService, ComplaintService>();

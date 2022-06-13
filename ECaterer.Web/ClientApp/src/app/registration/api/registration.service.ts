@@ -2,10 +2,10 @@
 
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { loginDto, registerDto, authDto } from './registrationDtos';
+import { loginDto, registerDto, authDto, ILoginData } from './registrationDtos';
 import { CookieOptions, CookieService } from 'ngx-cookie';
-import { ILoginData } from '../client-login/client-login.component';
 import { IAddressData, IRegistrationData } from '../client-registration/client-registration.component';
+import { User } from 'oidc-client';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +16,7 @@ export class RegistrationService {
   private commonHeaders = new HttpHeaders();
 
   private TOKEN_KEY = "SESSIONID";
+  private USER_TYPE = "USER_TYPE";
   private clientUrl: string;
 
   // in seconds
@@ -51,39 +52,39 @@ export class RegistrationService {
       .then(
         (data: authDto) => {
           this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
+          this.cookieService.put(this.USER_TYPE, "CommonUser", this.getNewJWTOptions());
         }
     );
   }
 
-  public loginUser(loginData: ILoginData): Promise<void | authDto> {
+  public login(loginData: ILoginData): Promise<void | authDto> {
 
     var loginData: loginDto = {
       email: loginData.email,
-      password: loginData.password
+      password: loginData.password,
+      userType: loginData.userType
     };
 
-    return this.http.post<authDto>(this.clientUrl + "loginuser", loginData, { headers: this.commonHeaders }).toPromise()
+    return this.http.post<authDto>(this.clientUrl + "loginall", loginData, { headers: this.commonHeaders }).toPromise()
       .then(
         (data) => {
           this.cookieService.put(this.TOKEN_KEY, data.tokenJWT, this.getNewJWTOptions());
+          var userType: string;
+          switch (loginData.userType)
+            {
+            case 1:
+              userType = "CommonUser";
+              break;
+            case 2:
+              userType = "Deliverer";
+              break;
+            case 3:
+              userType = "Producer";
+              break;
+          }
+          this.cookieService.put(this.USER_TYPE, userType, this.getNewJWTOptions());
         }
       );
-  }
-
-  public loginWorker(): Promise<object> {
-    return new Promise<object>((resolve, reject) => {
-      $.get("someinvalidurl")
-        .then((data) => resolve(data))
-        .catch((err: any) => {
-          switch (err.status) {
-            case "501":
-              reject(err.responseText);
-              break;
-            default:      
-              reject("Wystąpił błąd serwera. Spróbuj później.");
-          }
-        });
-    });
   }
 
   public getToken(): string | null {
@@ -93,6 +94,7 @@ export class RegistrationService {
 
   public logout() {
     this.cookieService.remove(this.TOKEN_KEY);
+    this.cookieService.remove(this.USER_TYPE);
 }
 
   private getNewJWTOptions() {
@@ -105,6 +107,18 @@ export class RegistrationService {
     };
 
     return jwtOptions;
+  }
+
+  public isCommonUser() {
+    return this.cookieService.get(this.USER_TYPE) === "CommonUser";
+  }
+
+  public isDeliverer() {
+    return this.cookieService.get(this.USER_TYPE) === "Deliverer";
+  }
+
+  public isProducer() {
+    return this.cookieService.get(this.USER_TYPE) === "Producer";
   }
 }
 

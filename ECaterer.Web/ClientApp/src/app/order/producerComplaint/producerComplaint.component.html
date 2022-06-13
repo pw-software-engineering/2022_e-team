@@ -39,7 +39,23 @@
       </fieldset>
     </form>
     <div class="parallel-wrapper">
-      <button [disabled]="true" kendoButton themeColor="primary" id="answerBtn">Odpowiedz</button>
+      <button kendoButton themeColor="primary" id="answerBtn" (click)="showAnswerComplaint()">Odpowiedz</button>
     </div>
     </div>
 </main>
+
+<kendo-dialog tile="Odpowiedz na reklamację"
+              *ngIf="answerComplaintShown"
+              (close)="closeAnswerComplaint()"
+              [minWidth]="250"
+              [width]="450">
+  <p>Odpowiedź</p>
+  <kendo-textarea [style.width.px]="400"
+                  resizable="auto"
+                  [(ngModel)]="answerComplaintModel.answer">
+  </kendo-textarea>
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closeAnswerComplaint()" themeColor="secondary">Anuluj</button>
+    <button kendoButton (click)="answerComplaint()" themeColor="primary">Potwierdź</button>
+  </kendo-dialog-actions>
+</kendo-dialog>

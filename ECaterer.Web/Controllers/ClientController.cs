@@ -13,6 +13,8 @@ using ECaterer.Web.Converters;
 using ECaterer.Contracts;
 using ECaterer.Contracts.Client;
 using System.Linq;
+using ECaterer.Web.DTO;
+using System.Collections.Generic;
 
 namespace ECaterer.Web.Controllers
 {
@@ -31,10 +33,26 @@ namespace ECaterer.Web.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPost("loginuser")]
+        [HttpPost("loginall")]
         public async Task<ActionResult<AuthDTO>> Login([FromBody] LoginDTO authData)
         {
-            var response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/Client/Login", LoginConverter.Convert(authData));
+            HttpResponseMessage response;
+
+            switch (authData.UserType)
+            {
+                case UserType.Common:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/client/login", LoginConverter.Convert(authData));
+                    break;
+                case UserType.Deliverer:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/deliverer/login", LoginConverter.Convert(authData));
+                    break;
+                case UserType.Producer:
+                    response = await _apiClient.PostAsJsonAsync<LoginUserModel>("/producer/login", LoginConverter.Convert(authData));
+                    break;
+                default:
+                    return BadRequest();
+            }
+            
 
             if (response.IsSuccessStatusCode)
             {
@@ -49,8 +67,6 @@ namespace ECaterer.Web.Controllers
             {
                 return BadRequest();
             }
-
-
         }
 
         [HttpPost("registeruser")]
@@ -66,40 +82,90 @@ namespace ECaterer.Web.Controllers
             return BadRequest();
         }
 
-        [HttpGet("account")]
-        public async Task<ActionResult<Client>> GetClientData()
+        [HttpGet("getClientOrders")]
+        public async Task<ActionResult<ClientOrdersDTO[]>> GetClientOrders()
         {
-            return BadRequest();
+            return Ok(new List<ClientOrdersDTO>()
+            {
+                new ClientOrdersDTO()
+                {
+                    OrderNumber = "1",
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    Status = "Paid",
+                    Price = 100.0M,
+                    ComplaintStatus = ""
+                },
+                new ClientOrdersDTO()
+                {
+                    OrderNumber = "2",
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    Status = "Paid",
+                    Price = 100.0M,
+                    ComplaintStatus = "Opened"
+                },
+                new ClientOrdersDTO()
+                {
+                    OrderNumber = "2X",
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    Status = "Paid",
+                    Price = 100.0M,
+                    ComplaintStatus = "Closed"
+                },
+                new ClientOrdersDTO()
+                {
+                    OrderNumber = "3",
+                    EndDate = DateTime.Now,
+                    StartDate = DateTime.Now,
+                    Status = "Paid",
+                    Price = 100.0M,
+                    ComplaintStatus = ""
+                }
+            });
         }
 
-        [HttpPut("account")]
-        public async Task<ActionResult> EditClientData([FromBody] Client clientData)
-        {
-            return BadRequest();
-        }
+        //[HttpGet("account")]
+        //public async Task<ActionResult<ClientDTO>> GetClientData()
+        //{
+        //    var response = await _apiClient.GetAsync("/Client/Account");
 
-        [HttpGet("orders")] //wartosci domyslne do ustalenia
-        public async Task<ActionResult<Order[]>> GetOrders(int offset = 0, int limit = 0, string sort = "startDate(asc)", DateTime? startDate = null, DateTime? endDate = null, int price = 0, int price_lt = 0, int price_ht = 0) 
-        {
-            return BadRequest();
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        return Ok()
+        //    }
+        //    return BadRequest();
+        //}
 
-        [HttpPost("orders")]
-        public async Task<ActionResult> PostOrder([FromBody] OrderDTO orderDTO)
-        {
-            return BadRequest();
-        }
+        //[HttpPut("account")]
+        //public async Task<ActionResult> EditClientData([FromBody] Client clientData)
+        //{
+        //    return BadRequest();
+        //}
 
-        [HttpPost("orders/{orderId}/complain")]
-        public async Task<ActionResult> PostComplaint(int orderId, [FromBody] ComplaintDTO complaintDTO)
-        {
-            return BadRequest();
-        }
+        //[HttpGet("orders")] //wartosci domyslne do ustalenia
+        //public async Task<ActionResult<Order[]>> GetOrders(int offset = 0, int limit = 0, string sort = "startDate(asc)", DateTime? startDate = null, DateTime? endDate = null, int price = 0, int price_lt = 0, int price_ht = 0) 
+        //{
+        //    return BadRequest();
+        //}
 
-        [HttpGet("orders/{orderId}/pay")]
-        public async Task<ActionResult> PayOrder(int orderId)
-        {
-            return BadRequest();
-        }
+        //[HttpPost("orders")]
+        //public async Task<ActionResult> PostOrder([FromBody] OrderDTO orderDTO)
+        //{
+        //    return BadRequest();
+        //}
+
+        //[HttpPost("orders/{orderId}/complain")]
+        //public async Task<ActionResult> PostComplaint(int orderId, [FromBody] ComplaintDTO complaintDTO)
+        //{
+        //    return BadRequest();
+        //}
+
+        //[HttpGet("orders/{orderId}/pay")]
+        //public async Task<ActionResult> PayOrder(int orderId)
+        //{
+        //    return BadRequest();
+        //}
     }
 }

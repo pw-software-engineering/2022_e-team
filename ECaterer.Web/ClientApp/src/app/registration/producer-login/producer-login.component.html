@@ -1,0 +1,28 @@
+
+<main id="producer-login">
+  <h1>Zaloguj się</h1>
+  <div id="registrationForm">
+    <div *ngIf="errorMessage.length > 0" class="notification notification-error">{{ errorMessage }}</div>
+    <form class="k-form" [formGroup]="form">
+      <fieldset class="k-form-fieldset">
+        <kendo-formfield>
+          <kendo-label [for]="email" text="Email pracownika"></kendo-label>
+          <kendo-textbox formControlName="email"
+                         #email
+                         required
+                         placeholder="Wpisz swój email"></kendo-textbox>
+        </kendo-formfield>
+        <kendo-formfield>
+          <kendo-label [for]="password" text="Hasło pracownika"></kendo-label>
+          <kendo-textbox formControlName="password"
+                               #password
+                               required
+                               placeholder="Wpisz hasło"
+                               id="passwordTextBox">
+          </kendo-textbox>
+        </kendo-formfield>
+        <button class="wideBtn" kendoButton themeColor="primary" (click)="submitForm()">Zaloguj się</button>
+      </fieldset>
+    </form>
+  </div>
+</main>
