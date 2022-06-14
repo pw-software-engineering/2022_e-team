@@ -23,8 +23,9 @@ export class EditDietComponent implements OnInit {
     this.TitleService.setTitle("Edycja diety");
   }
 
+  private dietId: string;
 
-  private dietId: number;
+  public uniqueMealId: number = 0;
 
   public addMealDialog: boolean = false;
   
@@ -33,9 +34,11 @@ export class EditDietComponent implements OnInit {
   public mealsInDiet: mealDto[] = [];
 
   public editModel: EditDietDTO = {
+    id: "",
+    price: 0,
+    name: "",
     calories: 0,
     description: "",
-    id: "",
     vegan: true,
     veganString: ""
   };
@@ -64,20 +67,24 @@ export class EditDietComponent implements OnInit {
     this.mealsService.getMeals(this.dietId)
       .then((data) => {
         this.mealsInDiet.push(...(data as mealDto[]));
+        this.updateCaloriesAndVegan();
       });
     this.dietsService.getEditModelDiet(this.dietId)
       .then((data) => {
         this.editModel = data as EditDietDTO;
-        this.updateCaloriesAndVegan();
+        this.updateVeganString();
       });
   }
 
   updateCaloriesAndVegan() {
     this.editModel.vegan = this.mealsInDiet.every(m => m.vegan);
-    this.editModel.veganString = this.editModel.vegan ? 'Tak' : 'Nie';
     this.editModel.calories = this.mealsInDiet.map(m => m.calories).reduce(
       (prev, curr) => prev + curr, 0
     );
+  }
+
+  updateVeganString() {
+    this.editModel.veganString = this.editModel.vegan ? 'Tak' : 'Nie';
   }
 
   public openMealDialog() {
@@ -96,15 +103,18 @@ export class EditDietComponent implements OnInit {
     this.newMealData.allergentList = this.newMealData.allergentString.split(';');
     this.newMealData.ingredientList = this.newMealData.ingredientString.split(';');
     // this is temporary id for uniqueness while removing
-    this.newMealData.id = (-this.mealsInDiet.length).toString();
-    this.mealsInDiet.push(this.newMealData);
+    this.newMealData.id = this.uniqueMealId.toString();
+    this.uniqueMealId++;
+    this.mealsInDiet.push(Object.assign({}, this.newMealData));
     this.updateCaloriesAndVegan();
+    this.updateVeganString();
     this.addMealDialog = false;
   }
 
   public removeFromDiet(mealId: string) {
     this.mealsInDiet = this.mealsInDiet.filter(m => m.id != mealId);
     this.updateCaloriesAndVegan();
+    this.updateVeganString();
   }
 
   public previewMeal(mealId: string) {
@@ -117,10 +127,13 @@ export class EditDietComponent implements OnInit {
   }
 
   public saveDiet() {
+    if (this.mealsInDiet.length == 0) {
+      alert("Dieta nie może być pusta");
+      return;
+    }
     this.dietsService.editDiet(this.mealsInDiet, this.editModel)
       .then((data) => {
         this.router.navigate(["/producer/diets"]);
       });
   }
-
 }

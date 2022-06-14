@@ -31,10 +31,13 @@ export class ProducerDietsComponent implements OnInit {
       });
   }
 
-  deleteDiet(dietId: number) {
+  deleteDiet(dietId: string) {
     this.dietsService.deleteDiet(dietId)
-      .then(this.resolveDiets)
-      .catch(() => { alert("Server side error occured") });
+      .then((data) => {
+        this.resolveDiets()
+      })
+      //.catch(() => { alert("Server side error occured") })
+      ;
   }
 
   goToDiet(dietId: number) {

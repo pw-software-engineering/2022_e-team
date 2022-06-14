@@ -11,7 +11,7 @@ namespace ECaterer.WebApi.Common.Interfaces
     {
         Task<IEnumerable<Meal>> GetMeals(GetMealsQueryModel getMealsQuery);
         Task<Meal> GetMealById(string mealId);
-        Task<Meal> AddMeal(MealModel mealModel);
+        Task<Meal> AddMeal(AddMealModel mealModel);
         Task<Meal> EditMeal(string mealId, MealModel mealModel);
         Task<Meal> DeleteMeal(string mealId);
     }

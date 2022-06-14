@@ -24,7 +24,7 @@ namespace ECaterer.WebApi.Services
             _context = context;
         }
 
-        public async Task<Meal> AddMeal(MealModel mealModel)
+        public async Task<Meal> AddMeal(AddMealModel mealModel)
         {
             var ingredients = mealModel.IngredientList
                 .Select(i => new Ingredient() { Name = i })

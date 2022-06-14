@@ -98,14 +98,19 @@ namespace ECaterer.WebApi.Services
             diet.Title = dietModel.Name;
             diet.Price = dietModel.Price;
 
-            var meals = _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToArray();
+            var oldMeals = _context.Meals.Where(m => m.DietId == dietId).ToList();
 
-            if (meals.Length != dietModel.MealIds.Length)
+            //oldMeals.ForEach(m => m.DietId = null);
+
+            var meals = _context.Meals.Where(m => dietModel.MealIds.Contains(m.MealId)).ToList();
+
+            if (meals.Count() != dietModel.MealIds.Length)
                 return null;
 
             diet.Vegan = IsVegan(meals);
             diet.Calories = CalculateCalories(meals);
-            diet.Meals = meals;
+            oldMeals.ForEach(m => diet.Meals.Remove(m));
+            meals.ForEach(m => diet.Meals.Add(m));
 
             _context.Diets.Update(diet);
             await _context.SaveChangesAsync();
@@ -121,7 +126,7 @@ namespace ECaterer.WebApi.Services
                 return (false, false);
 
             var ordersWithDiet = _context.Orders.Include(d => d.Diets).Where(o => o.Diets.Any(d => d.DietId == dietId));
-            var allowedStatuses = new List<OrderStatus>() { OrderStatus.Canceled, OrderStatus.Finished };
+            //var allowedStatuses = new List<OrderStatus>() { OrderStatus.Canceled, OrderStatus.Finished };
 
             await ordersWithDiet.ForEachAsync(o =>
             {

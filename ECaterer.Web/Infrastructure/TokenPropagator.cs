@@ -14,7 +14,8 @@ namespace ECaterer.Web.Infrastructure
         {
             if (inRequest.Headers.TryGetValue("api-key", out var token))
             {
-                outRequest.Headers.Add("api-key", token.ToString());
+                outRequest.Headers.Add("Authorization", "api-key " + token.ToString());
+                //outRequest.Headers.Add("api-key", token.ToString());
             }
         }
     
