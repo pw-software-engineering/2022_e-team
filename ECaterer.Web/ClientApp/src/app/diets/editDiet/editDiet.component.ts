@@ -23,8 +23,9 @@ export class EditDietComponent implements OnInit {
     this.TitleService.setTitle("Edycja diety");
   }
 
-
   private dietId: string;
+
+  public uniqueMealId: number = 0;
 
   public addMealDialog: boolean = false;
   
@@ -66,11 +67,11 @@ export class EditDietComponent implements OnInit {
     this.mealsService.getMeals(this.dietId)
       .then((data) => {
         this.mealsInDiet.push(...(data as mealDto[]));
+        this.updateCaloriesAndVegan();
       });
     this.dietsService.getEditModelDiet(this.dietId)
       .then((data) => {
         this.editModel = data as EditDietDTO;
-        this.updateCaloriesAndVegan();
       });
   }
 
@@ -98,8 +99,9 @@ export class EditDietComponent implements OnInit {
     this.newMealData.allergentList = this.newMealData.allergentString.split(';');
     this.newMealData.ingredientList = this.newMealData.ingredientString.split(';');
     // this is temporary id for uniqueness while removing
-    this.newMealData.id = (-this.mealsInDiet.length).toString();
-    this.mealsInDiet.push(this.newMealData);
+    this.newMealData.id = this.uniqueMealId.toString();
+    this.uniqueMealId++;
+    this.mealsInDiet.push(Object.assign({}, this.newMealData));
     this.updateCaloriesAndVegan();
     this.addMealDialog = false;
   }
