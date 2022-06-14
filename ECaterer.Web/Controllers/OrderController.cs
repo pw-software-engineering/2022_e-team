@@ -14,6 +14,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using ECaterer.Contracts.Deliverer;
+using System.Net.Http;
 
 namespace ECaterer.Web.Controllers
 {
@@ -41,76 +42,48 @@ namespace ECaterer.Web.Controllers
         [HttpGet("getDelivererOrders")]
         public async Task<ActionResult<DelivererOrderDTO[]>> GetDelivererOrders()
         {
-            // we need a way to convert address to string, probably...
-            return Ok(new DelivererOrderDTO[]
+            var message = new HttpRequestMessage(HttpMethod.Get, "deliverer/orders");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if(response.IsSuccessStatusCode)
             {
-                new DelivererOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Comment = ""
-                },
-                new DelivererOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Comment = "nie dzwonić"
-                },
-                new DelivererOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Comment = ""
-                }
-            });
-        }
-
-        [HttpGet("getDelivererHistory")]
-        public async Task<ActionResult<IEnumerable<DelivererHistoryDTO>>> GetDelivererHistory()
-        {
-            var response = await _apiClient.GetAsync("/deliverer/history");
-
-            if (response.IsSuccessStatusCode)
+                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
+                return Ok(result);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var content = await response.Content.ReadFromJsonAsync<HistoryDelivererModel[]>();
-
-                return Ok(content.Select(d => HistoryDelivererConverter.Convert(d)));
+                return Unauthorized();
             }
             else
             {
                 return BadRequest();
             }
 
-            //return Ok(new DelivererHistoryDTO[]
-            //{
-            //    new DelivererHistoryDTO()
-            //    {
-            //        OrderNumber = "1234",
-            //        Address = "Długa 15, Warszawa",
-            //        Phone = "666-666-666",
-            //        Comment = "",
-            //        DeliveryDate = DateTime.Now
-            //    },
-            //    new DelivererHistoryDTO()
-            //    {
-            //        OrderNumber = "1234",
-            //        Address = "Długa 15, Warszawa",
-            //        Phone = "666-666-666",
-            //        Comment = "nie dzwonić",
-            //        DeliveryDate = DateTime.Now
-            //    },
-            //    new DelivererHistoryDTO()
-            //    {
-            //        OrderNumber = "1234",
-            //        Address = "Długa 15, Warszawa",
-            //        Phone = "666-666-666",
-            //        Comment = "",
-            //        DeliveryDate = DateTime.Now
-            //    }
-            //});
+        }
+
+        [HttpGet("getDelivererHistory")]
+        public async Task<ActionResult<IEnumerable<DelivererHistoryDTO>>> GetDelivererHistory()
+        {
+            var message = new HttpRequestMessage(HttpMethod.Get, "/deliverer/history");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<DelivererHistoryDTO>();
+                return Ok(result);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPatch("deliverOrder/{orderNumber}")]
@@ -122,27 +95,24 @@ namespace ECaterer.Web.Controllers
         [HttpGet("getProducerOrders")]
         public async Task<ActionResult<DelivererOrderDTO[]>> GetProducerOrders()
         {
-            return Ok(new ProducerOrderDTO[]
+            var message = new HttpRequestMessage(HttpMethod.Get, "/producer/orders");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
             {
-                new ProducerOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    OrderDate = DateTime.Now,
-                    Status = "Dostarczone"
-                },
-                new ProducerOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    OrderDate = DateTime.Now,
-                    Status = "Dostarczone"
-                },
-                new ProducerOrderDTO()
-                {
-                    OrderNumber = "2345",
-                    OrderDate = DateTime.Now,
-                    Status = "Nie dostarczone"
-                }
-            });
+                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
+                return Ok(result);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("previewOrder/{orderNumber}")]
