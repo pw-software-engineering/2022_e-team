@@ -33,7 +33,9 @@ export class ProducerDietsComponent implements OnInit {
 
   deleteDiet(dietId: string) {
     this.dietsService.deleteDiet(dietId)
-      .then(this.resolveDiets)
+      .then((data) => {
+        this.resolveDiets()
+      })
       //.catch(() => { alert("Server side error occured") })
       ;
   }
