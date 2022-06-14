@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace ECaterer.WebApi.Integration.Test
 {
-    public static class TokenHandler
+    public class TokenHandler
     {
-        private static string _token;
+        private string _token;
 
-        public static void SetToken(string token)
+        public void SetToken(string token)
         {
             _token = token;
         }
 
-        public static string GetToken()
+        public string GetToken()
         {
             return _token;
         }

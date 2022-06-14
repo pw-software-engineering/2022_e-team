@@ -22,6 +22,7 @@ namespace ECaterer.WebApi.Integration.Test
         private HttpClient Client;
         private static string dietId;
         private static string[] mealsIds;
+        private static TokenHandler TokenHandler = new TokenHandler();
 
         public DietsTests(TestFixture<Startup> fixture)
         {

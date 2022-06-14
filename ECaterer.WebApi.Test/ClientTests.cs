@@ -24,6 +24,7 @@ namespace ECaterer.WebApi.Integration.Test
 
         private static string random = new Random().Next().ToString();
         private static string orderId;
+        private static TokenHandler TokenHandler = new TokenHandler();
 
         public ClientTests(TestFixture<Startup> fixture)
         {
