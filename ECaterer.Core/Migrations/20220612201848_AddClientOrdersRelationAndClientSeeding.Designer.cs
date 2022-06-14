@@ -4,35 +4,22 @@ using ECaterer.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ECaterer.Core.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220612201848_AddClientOrdersRelationAndClientSeeding")]
+    partial class AddClientOrdersRelationAndClientSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("DietOrder", b =>
-                {
-                    b.Property<string>("DietsDietId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OrdersOrderId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("DietsDietId", "OrdersOrderId");
-
-                    b.HasIndex("OrdersOrderId");
-
-                    b.ToTable("DietOrder");
-                });
 
             modelBuilder.Entity("ECaterer.Core.Models.Address", b =>
                 {
@@ -221,6 +208,9 @@ namespace ECaterer.Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
@@ -233,6 +223,8 @@ namespace ECaterer.Core.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("DietId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Diet");
                 });
@@ -319,36 +311,6 @@ namespace ECaterer.Core.Migrations
                     b.ToTable("Order");
                 });
 
-            modelBuilder.Entity("ECaterer.Core.Models.OrderDiet", b =>
-                {
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DietId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("OrderId", "DietId");
-
-                    b.HasIndex("DietId");
-
-                    b.ToTable("OrdersDiets");
-                });
-
-            modelBuilder.Entity("DietOrder", b =>
-                {
-                    b.HasOne("ECaterer.Core.Models.Diet", null)
-                        .WithMany()
-                        .HasForeignKey("DietsDietId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECaterer.Core.Models.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ECaterer.Core.Models.Allergent", b =>
                 {
                     b.HasOne("ECaterer.Core.Models.Meal", "Meal")
@@ -387,6 +349,13 @@ namespace ECaterer.Core.Migrations
                     b.Navigation("Address");
                 });
 
+            modelBuilder.Entity("ECaterer.Core.Models.Diet", b =>
+                {
+                    b.HasOne("ECaterer.Core.Models.Order", null)
+                        .WithMany("Diets")
+                        .HasForeignKey("OrderId");
+                });
+
             modelBuilder.Entity("ECaterer.Core.Models.Ingredient", b =>
                 {
                     b.HasOne("ECaterer.Core.Models.Meal", "Meal")
@@ -422,25 +391,6 @@ namespace ECaterer.Core.Migrations
                     b.Navigation("DeliveryDetails");
                 });
 
-            modelBuilder.Entity("ECaterer.Core.Models.OrderDiet", b =>
-                {
-                    b.HasOne("ECaterer.Core.Models.Diet", "Diet")
-                        .WithMany()
-                        .HasForeignKey("DietId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECaterer.Core.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Diet");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("ECaterer.Core.Models.Client", b =>
                 {
                     b.Navigation("Orders");
@@ -461,6 +411,8 @@ namespace ECaterer.Core.Migrations
             modelBuilder.Entity("ECaterer.Core.Models.Order", b =>
                 {
                     b.Navigation("Complaint");
+
+                    b.Navigation("Diets");
                 });
 #pragma warning restore 612, 618
         }

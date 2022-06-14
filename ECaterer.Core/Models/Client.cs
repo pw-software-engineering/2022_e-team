@@ -24,10 +24,12 @@ namespace ECaterer.Core.Models
         [StringLength(250)]
         public virtual string Email { get; set; }
         [Required]
+        public virtual string AddressId { get; set; }
         public virtual Address Address { get; set; }
         [Required]
         [StringLength(20)]
         public virtual string PhoneNumber { get; set; }
+        public virtual ICollection<Order> Orders {get;set;}
 
     }
 }

@@ -10,7 +10,7 @@ namespace ECaterer.WebApi.Common.Interfaces
 {
     public interface IOrderService
     {
-        Task<IEnumerable<Order>> GetOrders(GetOrdersClientQueryModel getOrdersQuery);
+        Task<IEnumerable<Order>> GetOrders(string userId, GetOrdersClientQueryModel getOrdersQuery);
         Task<IEnumerable<Order>> GetOrders(GetOrdersProducerQueryModel getOrdersQuery);
         Task<IEnumerable<Order>> GetOrders(GetOrdersDelivererQueryModel getOrdersQuery);
         Task<IEnumerable<Order>> GetOrders(GetHistoryDelivererQueryModel getOrdersQuery);

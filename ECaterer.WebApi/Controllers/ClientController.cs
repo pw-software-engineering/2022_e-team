@@ -32,6 +32,7 @@ namespace ECaterer.WebApi.Controllers
         private readonly DataContext _context;
 
         private readonly IOrderService _orderService;
+        private readonly IComplaintService _complaintService;
         private readonly Mapper _mapper;
 
         public ClientController(
@@ -39,13 +40,15 @@ namespace ECaterer.WebApi.Controllers
             SignInManager<IdentityUser> signInManager,
             TokenService tokenService,
             DataContext context,
-            IOrderService ordersService)
+            IOrderService ordersService,
+            IComplaintService complaintService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _context = context;
             _orderService = ordersService;
+            _complaintService = complaintService;
 
             var mappingConfig = new MapperConfiguration(cfg =>
             {
@@ -55,7 +58,8 @@ namespace ECaterer.WebApi.Controllers
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((ComplaintStatus)col.Status).ToString()));
                 cfg.CreateMap<Order, OrderClientModel>()
                     .ForMember(dest => dest.Status, opt => opt.MapFrom(col => ((OrderStatus)col.Status).ToString()))
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId));
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(col => col.OrderId))
+                    .ForMember(dest => dest.DietIDs, opt => opt.MapFrom(col => col.Diets.Select(d => d.DietId).ToArray()));
             });
             _mapper = new Mapper(mappingConfig);
         }
@@ -202,7 +206,9 @@ namespace ECaterer.WebApi.Controllers
         [Authorize(Roles = "client")]
         public async Task<ActionResult<OrderClientModel[]>> GetOrders([FromQuery] GetOrdersClientQueryModel getOrdersQuery)
         {
-            var orders = (await _orderService.GetOrders(getOrdersQuery));
+            var email = this.User.FindFirstValue(ClaimTypes.Email);
+            var userId = (await _context.Clients.FirstOrDefaultAsync(c => c.Email == email)).ClientId;
+            var orders = (await _orderService.GetOrders(userId, getOrdersQuery));
             if (orders == null)
                 return BadRequest("Pobranie nie powiodło się");
 
@@ -242,6 +248,21 @@ namespace ECaterer.WebApi.Controllers
                 return BadRequest("Opłacenie zamówienia nie powiodło się");
 
             return Ok("Opłacono zamówienie");
+        }
+
+        [HttpPost("orders/{orderId}/complain")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> AddComplain(string orderId, [FromBody] AddComplaintModel model)
+        {
+            var (exists, added) = await _complaintService.AddComplaint(orderId, model.Complain_description);
+
+            if (!exists)
+                return NotFound("Podane zamówienie nie istnieje");
+
+            if (!added)
+                return BadRequest("Zapisanie nie powiodło się");
+
+            return Ok("Zapisano reklamację");
         }
     }
 }
