@@ -102,7 +102,7 @@ export class RegistrationService {
     targetDate.setTime(targetDate.getTime() + this.expireTime * 1000);
 
      var jwtOptions: CookieOptions = {
-       secure: true,
+       secure: false,
        expires: targetDate
     };
 
