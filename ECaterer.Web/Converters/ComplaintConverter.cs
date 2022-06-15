@@ -16,10 +16,10 @@ namespace ECaterer.Web.Converters
             return new ComplaintOrderDTO
             {
                 ClientName = dto.ComplaintId,
-                Status =dto.Status,
+                Status = dto.Status,
                 ComplaintDate = dto.Date,
                 Description = dto.Description
-            }
+            };
         }
     }
 }
