@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ECaterer.Contracts.Deliverer;
 using System.Net.Http;
+using ECaterer.Contracts.Client;
+using ECaterer.Contracts.Producer;
 
 namespace ECaterer.Web.Controllers
 {
@@ -40,8 +42,7 @@ namespace ECaterer.Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
-                return Ok(result);
+                return Ok();
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -63,8 +64,15 @@ namespace ECaterer.Web.Controllers
 
             if(response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
-                return Ok(result);
+                var resultQuery = await response.Content.ReadFromJsonAsync<OrderDelivererModel[]>();
+                var resultList = new List<DelivererOrderDTO>();
+
+                foreach (var r in resultQuery)
+                {
+                    resultList.Add(DelivererOrderConverter.ConvertBack(r));
+                }
+
+                return Ok(resultList.ToArray());
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -103,7 +111,23 @@ namespace ECaterer.Web.Controllers
         [HttpPatch("deliverOrder/{orderNumber}")]
         public async Task<ActionResult> DeliverOrder(string orderNumber)
         {
-            return Ok();
+            var message = new HttpRequestMessage(HttpMethod.Post, "deliverer/orders/" + orderNumber + "/deliver");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("getProducerOrders")]
@@ -116,7 +140,63 @@ namespace ECaterer.Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
+                var resultQuery = await response.Content.ReadFromJsonAsync<OrderDelivererModel[]>();
+                var resultList = new List<DelivererOrderDTO>();
+
+                foreach (var r in resultQuery)
+                {
+                    resultList.Add(DelivererOrderConverter.ConvertBack(r));
+                }
+
+                return Ok(resultList.ToArray());
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+
+        [HttpGet("previewOrder/{orderNumber}")]
+        public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Get, "/client/orders");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var resultQuery = await response.Content.ReadFromJsonAsync<OrderClientModel[]>();
+                var resultList = new List<PreviewOrderDTO>();
+
+                foreach (var r in resultQuery)
+                {
+                    resultList.Add(ClientOrderConverter.ConvertBack(r));
+                }
+
+                var result = resultList.Where(x => x.OrderNumber == orderNumber).FirstOrDefault();
+                if (result != null)
+                {
+                    foreach (var diet in result.DietNames)
+                    {
+                        var message2 = new HttpRequestMessage(HttpMethod.Get, "/diets/" + diet);
+                        TokenPropagator.Propagate(Request, message2);
+
+                        var response2 = await _apiClient.SendAsync(message2);
+                        if (response2.IsSuccessStatusCode)
+                        {
+                            var result2 = await response.Content.ReadFromJsonAsync<DietModel>();
+
+                            foreach (var meal in result2.Meals)
+                                result.MealsConcatenated.Append(meal.Name);
+                        }
+                    }
+                }
                 return Ok(result);
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -127,72 +207,8 @@ namespace ECaterer.Web.Controllers
             {
                 return BadRequest();
             }
-        }
-
-        [HttpGet("previewOrder/{orderNumber}")]
-        public async Task<ActionResult<PreviewOrderDTO>> PreviewOrder(string orderNumber)
-        {
             // meals concatenated should be all meals from diets, concatenated into single string array
-            if (orderNumber == "1")
-                return Ok(new PreviewOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    DietNames = new List<string>() { "diet1", "diet2" },
-                    Comment = "xd",
-                    Status = "ToRealized",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Cost = 100.05M,
-                    OrderDate = DateTime.Now,
-                    DeliverDate = DateTime.Now,
-                    HasComplaint = true,
-                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
-                });
-            else if (orderNumber == "2")
-                return Ok(new PreviewOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    DietNames = new List<string>() { "diet1", "diet2" },
-                    Comment = "xd",
-                    Status = "Paid",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Cost = 100.05M,
-                    OrderDate = DateTime.Now,
-                    DeliverDate = DateTime.Now,
-                    HasComplaint = true,
-                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
-                });
-            else if(orderNumber == "3")
-                return Ok(new PreviewOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    DietNames = new List<string>() { "diet1", "diet2" },
-                    Comment = "xd",
-                    Status = "ToRealized",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Cost = 100.05M,
-                    OrderDate = DateTime.Now,
-                    DeliverDate = DateTime.Now,
-                    HasComplaint = false,
-                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
-                });
-            else
-                return Ok(new PreviewOrderDTO()
-                {
-                    OrderNumber = "1234",
-                    DietNames = new List<string>() { "diet1", "diet2" },
-                    Comment = "xd",
-                    Status = "Paid",
-                    Address = "Długa 15, Warszawa",
-                    Phone = "666-666-666",
-                    Cost = 100.05M,
-                    OrderDate = DateTime.Now,
-                    DeliverDate = DateTime.Now,
-                    HasComplaint = false,
-                    MealsConcatenated = new List<string> { "meatballs", "meatballs2" }
-                });
+           
         }
 
 
@@ -205,30 +221,84 @@ namespace ECaterer.Web.Controllers
         [HttpGet("{orderNumber}/complaint")]
         public async Task<ActionResult<ComplaintOrderDTO>> GetComplaint()
         {
-            return Ok(new ComplaintOrderDTO
+            var message = new HttpRequestMessage(HttpMethod.Get, "/producer/orders/complaints");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
             {
-                Description = "opis reklamacji",
-                Status = "Do rozpatrzenia",
-                ClientName = "120231",
-                ComplaintDate = DateTime.Now
-            });
+                var resultQuery = await response.Content.ReadFromJsonAsync<ComplaintModel[]>();
+                var resultList = new List<ComplaintOrderDTO>();
+
+                foreach (var r in resultQuery)
+                {
+                    resultList.Add(ComplaintConverter.ConvertBack(r));
+                }
+
+                return Ok(resultList.First());
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
         }
 
         [HttpPost("makeComplaint")]
         public async Task<ActionResult> MakeComplaint([FromBody] MakeComplaintDTO model)
         {
-            return Ok();
+            var message = new HttpRequestMessage(HttpMethod.Post, "client/orders/" + model.OrderNumber + "/complain");
+            TokenPropagator.Propagate(Request, message);
+            message.Content = JsonContent.Create(new AddComplaintModel { Complain_description = model.Description });
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPatch("cancelComplaint/{orderNumber}")]
         public async Task<ActionResult> CancelComplaint(string orderNumber)
         {
-            return Ok();
+           
+                return Ok();
+            
         }
 
         [HttpPost("answerComplaint")]
         public async Task<ActionResult> AnswerComplaint([FromBody] AnswerComplaintDTO model)
         {
+            var message = new HttpRequestMessage(HttpMethod.Post, "producer/orders/" + model.OrderNumber + "/answer-complaint");
+            TokenPropagator.Propagate(Request, message);
+            message.Content = JsonContent.Create(new AnswerComplaintModel { Complaint_answer = model.Answer });
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }
