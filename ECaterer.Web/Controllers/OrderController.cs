@@ -32,11 +32,25 @@ namespace ECaterer.Web.Controllers
         [HttpPost("sendOrder")]
         public async Task<ActionResult> SendOrder([FromBody]ClientOrderDTO model)
         {
-            //if (model.address == null)
-            //{
-            //    /* fetch address for current user */
-            //}
-            return Ok();
+            var message = new HttpRequestMessage(HttpMethod.Post, "client/orders");
+            TokenPropagator.Propagate(Request, message);
+            message.Content = JsonContent.Create(OrderConverter.Convert(model));
+            
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<DelivererOrderDTO[]>();
+                return Ok(result);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("getDelivererOrders")]
