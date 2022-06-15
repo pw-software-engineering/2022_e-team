@@ -18,11 +18,11 @@ namespace ECaterer.Web.Converters
                 {
                     Address = new Contracts.Client.AddressModel
                     {
-                        Street = dto.address.Street,
-                        BuildingNumber = dto.address.Building,
-                        ApartmentNumber = dto.address.Apartment,
-                        PostCode = dto.address.Code,
-                        City = dto.address.City
+                        Street = dto.address?.Street,
+                        BuildingNumber = dto.address?.Building,
+                        ApartmentNumber = dto.address?.Apartment,
+                        PostCode = dto.address?.Code,
+                        City = dto.address?.City
                     },
                     CommentForDeliverer = dto.Comment,
                     PhoneNumber = null
