@@ -15,6 +15,8 @@ using ECaterer.Contracts.Client;
 using System.Linq;
 using ECaterer.Web.DTO;
 using System.Collections.Generic;
+using ECaterer.Contracts.Orders;
+using System.Net;
 
 namespace ECaterer.Web.Controllers
 {
@@ -85,45 +87,30 @@ namespace ECaterer.Web.Controllers
         [HttpGet("getClientOrders")]
         public async Task<ActionResult<ClientOrdersDTO[]>> GetClientOrders()
         {
-            return Ok(new List<ClientOrdersDTO>()
+            var message = new HttpRequestMessage(HttpMethod.Get, "client/orders");
+            TokenPropagator.Propagate(Request, message);
+
+            var response = await _apiClient.SendAsync(message);
+
+            if (response.IsSuccessStatusCode)
             {
-                new ClientOrdersDTO()
+                var content = await response.Content.ReadFromJsonAsync<OrderClientModel[]>();
+                var orders = new ClientOrdersDTO[content.Length];
+                for (int i = 0; i < content.Length; i++)
                 {
-                    OrderNumber = "1",
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    Status = "Paid",
-                    Price = 100.0M,
-                    ComplaintStatus = ""
-                },
-                new ClientOrdersDTO()
-                {
-                    OrderNumber = "2",
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    Status = "Paid",
-                    Price = 100.0M,
-                    ComplaintStatus = "Opened"
-                },
-                new ClientOrdersDTO()
-                {
-                    OrderNumber = "2X",
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    Status = "Paid",
-                    Price = 100.0M,
-                    ComplaintStatus = "Closed"
-                },
-                new ClientOrdersDTO()
-                {
-                    OrderNumber = "3",
-                    EndDate = DateTime.Now,
-                    StartDate = DateTime.Now,
-                    Status = "Paid",
-                    Price = 100.0M,
-                    ComplaintStatus = ""
+                    orders[i] = OrderConverter.ConvertBack(content[i]);
                 }
-            });
+                return Ok(orders);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
 
         //[HttpGet("account")]
