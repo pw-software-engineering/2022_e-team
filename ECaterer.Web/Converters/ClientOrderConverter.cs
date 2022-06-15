@@ -17,7 +17,7 @@ namespace ECaterer.Web.Converters
                 DietNames = dto.DietIDs,
                 Cost = dto.Price,
                 Status = dto.Status,
-                Address = dto.DeliveryDetails.Address.ToString(),
+                Address = dto.DeliveryDetails?.Address?.ToString(),
                 Phone = dto.DeliveryDetails.PhoneNumber,
                 OrderDate = dto.StartDate,
                 DeliverDate = dto.EndDate,

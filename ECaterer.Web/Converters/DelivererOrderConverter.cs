@@ -16,7 +16,7 @@ namespace ECaterer.Web.Converters
               OrderNumber = dto.Id,
               Comment = dto.DeliveryDetails.CommentForDeliverer,
               Phone = dto.DeliveryDetails.PhoneNumber,
-              Address = dto.DeliveryDetails.Address.ToString()
+              Address = dto.DeliveryDetails.Address?.ToString()
             };
         }
     }
